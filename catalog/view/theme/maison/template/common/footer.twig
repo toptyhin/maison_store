@@ -1,0 +1,143 @@
+{# <footer>
+  <div class="container">
+    <div class="row">
+      {% if informations %}
+      <div class="col-sm-3">
+        <h5>{{ text_information }}</h5>
+        <ul class="list-unstyled">
+         {% for information in informations %}
+          <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="col-sm-3">
+        <h5>{{ text_service }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+          <li><a href="{{ return }}">{{ text_return }}</a></li>
+          <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h5>{{ text_extra }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
+          <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
+          <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>
+          <li><a href="{{ special }}">{{ text_special }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h5>{{ text_account }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ account }}">{{ text_account }}</a></li>
+          <li><a href="{{ order }}">{{ text_order }}</a></li>
+          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
+          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <p>{{ powered }}</p>
+  </div>
+</footer> #}
+        <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-white">
+                        <div class="size-6 text-primary-light">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold tracking-wide">Maison Textile</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
+                        чистые линии и спокойствие в каждой детали вашего дома.</p>
+                    <div class="flex flex-col gap-3">
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="tel:88005553535">
+                            <span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                        </a>
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="mailto:info@maisontextile.ru">
+                            <span class="material-symbols-outlined text-[20px]">mail</span> info@maisontextile.ru
+                        </a>
+                    </div>
+                    <div class="flex gap-4 mt-2">
+                        <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                class="material-symbols-outlined">public</span></a>
+                        <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                class="material-symbols-outlined">camera_alt</span></a>
+                        <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                class="material-symbols-outlined">share</span></a>
+                    </div>
+                </div>
+                <div class="md:pl-8">
+                    <h3 class="text-white text-lg mb-6">О компании</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">О компании</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Новости</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Контакты</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Сертификаты</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg mb-6">Покупателям</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Доставка</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Обмен и возврат</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Бонусная программа</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Акции</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg mb-6">Сотрудничество</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Оптовикам</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>© {{"now" | date('Y')}} Maison Textile. Все права защищены.</p>
+                <div class="flex gap-8">
+                    <a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+                    <a class="hover:text-white transition-colors" href="#">Условия использования</a>
+                    <a class="hover:text-white transition-colors" href="#">Cookies</a>
+                </div>
+            </div>
+        </footer>
+{% for style in styles %}
+<link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
+{% endfor %}
+<script src="catalog/view/theme/maison/js/main.js" type="text/javascript"></script>
+{% for script in scripts %}
+<script src="{{ script }}" type="text/javascript"></script>
+{% endfor %}
+{% if cookie_info %}
+	<div id="cookie-warning" class="cookie-notification">
+		<div class="cookie-notification__container container">
+			<div class="cookie-notification__info">{{ cookie_info|raw }}</div>
+			<button id="accept-cookie" class="cookie-notification__btn btn btn-primary">{{ button_continue }}</button>
+		</div>
+	</div>
+	<script>
+		$('#accept-cookie').on('click', () => {
+			$.get('index.php?route=common/footer/applyCookieNotification');
+			$('#cookie-warning').hide();
+		});
+	</script>
+{% endif %}
+
+<!--
+OpenCart is open source software and you are free to remove the powered by OpenCart if you want, but its generally accepted practise to make a small donation.
+Please donate via PayPal to donate@opencart.com
+//-->
+
+</div>
+
+</body></html>

@@ -1,0 +1,117 @@
+<section class="bg-background-section py-20 border-t border-gray-200">
+    <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+        <h2 class="text-3xl font-serif text-luxury-charcoal mb-4">{{ heading_title }}</h2>
+        {% if description %}
+        <p class="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed text-sm">{{ description }}</p>
+        {% endif %}
+        {% set single_field = not show_name and not show_phone and not show_message %}
+        <form id="contact-form-module" class="flex {% if single_field %}flex-col sm:flex-row{% else %}flex-col{% endif %} gap-4 justify-center max-w-lg mx-auto">
+            {% if show_name %}
+            <input
+                name="name"
+                class="w-full bg-white border border-gray-300 rounded-sm px-4 py-3 text-luxury-charcoal focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 text-sm"
+                placeholder="{{ name_placeholder }}" required type="text" />
+            <div id="error-name" class="text-red-500 text-xs text-left hidden"></div>
+            {% endif %}
+            
+            <input
+                name="email"
+                class="{% if single_field %}flex-1{% else %}w-full{% endif %} bg-white border border-gray-300 rounded-sm px-4 py-3 text-luxury-charcoal focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 text-sm"
+                placeholder="{{ email_placeholder }}" required type="email" />
+            <div id="error-email" class="text-red-500 text-xs text-left hidden"></div>
+            
+            {% if show_phone %}
+            <input
+                name="phone"
+                class="w-full bg-white border border-gray-300 rounded-sm px-4 py-3 text-luxury-charcoal focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 text-sm"
+                placeholder="{{ phone_placeholder }}" type="tel" />
+            <div id="error-phone" class="text-red-500 text-xs text-left hidden"></div>
+            {% endif %}
+            
+            {% if show_message %}
+            <textarea
+                name="message"
+                rows="4"
+                class="w-full bg-white border border-gray-300 rounded-sm px-4 py-3 text-luxury-charcoal focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-400 text-sm resize-none"
+                placeholder="{{ message_placeholder }}"></textarea>
+            <div id="error-message" class="text-red-500 text-xs text-left hidden"></div>
+            {% endif %}
+            
+            {{ captcha }}
+            <div id="error-captcha" class="text-red-500 text-xs text-left hidden"></div>
+            
+            <div id="success-message" class="text-green-600 text-sm hidden mb-2 {% if single_field %}w-full{% endif %}"></div>
+            
+            <button
+                type="submit"
+                class="bg-[#263238] text-white font-bold uppercase tracking-[0.15em] text-xs px-8 py-3 rounded-sm hover:bg-[#37474F] transition-all shadow-md {% if single_field %}w-full sm:w-auto{% else %}w-full{% endif %}">
+                {{ button_text }}
+            </button>
+        </form>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contact-form-module');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Очистка предыдущих ошибок
+        const errorElements = form.querySelectorAll('[id^="error-"]');
+        errorElements.forEach(el => {
+            el.classList.add('hidden');
+            el.textContent = '';
+        });
+        
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            successMessage.classList.add('hidden');
+        }
+        
+        const formData = new FormData(form);
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        
+        submitButton.disabled = true;
+        submitButton.textContent = 'Отправка...';
+        
+        fetch('{{ action }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                form.reset();
+                if (successMessage) {
+                    successMessage.textContent = data.success;
+                    successMessage.classList.remove('hidden');
+                }
+            } else if (data.error) {
+                Object.keys(data.error).forEach(function(key) {
+                    const errorElement = document.getElementById('error-' + key);
+                    if (errorElement) {
+                        errorElement.textContent = data.error[key];
+                        errorElement.classList.remove('hidden');
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const errorElement = document.getElementById('error-name');
+            if (errorElement) {
+                errorElement.textContent = 'Произошла ошибка при отправке формы';
+                errorElement.classList.remove('hidden');
+            }
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        });
+    });
+});
+</script>

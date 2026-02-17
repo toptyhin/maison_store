@@ -1,0 +1,8 @@
+<section class="max-w-7xl mx-auto px-6 lg:px-12 pt-16 pb-8">
+    <h2 class="text-2xl font-serif text-luxury-charcoal mb-8 text-center">{{ heading_title }}</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {% for product in products %}
+        {{ include('maison/template/common/product_card.twig', { product: product }) }}
+        {% endfor %}
+    </div>
+</section>

@@ -1,0 +1,902 @@
+{{ header }}
+<main class="flex-1 mt-24">
+	<nav class="max-w-7xl mx-auto px-6 lg:px-12 py-6 text-xs uppercase tracking-wider text-gray-500 flex flex-wrap gap-2 items-center">
+		{% for breadcrumb in breadcrumbs %}
+			<a class="hover:text-primary transition-colors" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+			{% if not loop.last %}
+				<span class="text-gray-300">/</span>
+			{% endif %}
+		{% endfor %}
+	</nav>
+
+	<section class="max-w-7xl mx-auto px-6 lg:px-12 pb-6 lg:pb-8">
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+			<div class="lg:col-span-7 flex flex-col-reverse lg:flex-row gap-4">
+				<div class="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible w-full lg:w-24 shrink-0 no-scrollbar py-1 px-1 lg:py-0 lg:px-0">
+
+					{% for image in images %}
+						<button class="relative w-20 lg:w-full aspect-[3/4] rounded-sm overflow-hidden border-2 border-primary cursor-pointer transition-all hover:opacity-90 focus:outline-none" onclick="changeMainImage('{{ image.thumb }}')">
+							<img alt="{{ product.name }}" class="w-full h-full object-cover" src="{{ image.thumb }}"/>
+						</button>
+					{% endfor %}
+				</div>
+				<div class="flex-1 relative bg-white rounded-sm overflow-hidden shadow-soft aspect-[3/4] lg:aspect-auto lg:h-[700px] border border-gray-100 group">
+					<img alt="{{ heading_title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" id="main-product-image" src="{{ thumb }}"/>
+					<div class="absolute top-4 right-4 z-10">
+						<button class="bg-white p-3 rounded-full text-luxury-charcoal hover:text-primary shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md">
+							<span class="material-symbols-outlined">favorite_border</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="lg:col-span-5 flex flex-col h-full">
+				<div class="mb-6">
+					<div class="flex justify-between items-start mb-2">
+						<span class="text-xs font-bold {% if stock == 'В наличии' %} text-green-600 bg-green-50 {% else %} text-red-600 bg-red-50 {% endif %} px-2 py-1 rounded-sm uppercase tracking-wider flex items-center gap-1" id="product-stock">
+							<span class="material-symbols-outlined text-[14px]">check_circle</span>
+							<span id="product-stock-text">{{ stock }}</span>
+						</span>
+						<span class="text-xs text-gray-400 tracking-wider">Артикул:
+							<span id="product-code">{{ model }}</span></span>
+					</div>
+					<h1 class="text-3xl lg:text-4xl font-serif font-medium text-luxury-charcoal mb-4">{{ heading_title }}</h1>
+					<div class="flex items-center gap-4 mb-6">
+						<div class="flex text-primary">
+							{% for i in 1..rating %}
+								<span class="material-symbols-outlined text-[20px] 111" style="font-variation-settings: 'FILL' 1;">star</span>
+							{% endfor %}
+							{% for i in 1..(5 - rating) %}
+								<span class="material-symbols-outlined text-[20px] 000" style="font-variation-settings: 'FILL' 0;">star</span>
+							{% endfor %}
+						</div>
+						<a class="text-sm text-gray-500 underline decoration-gray-300 hover:text-luxury-charcoal transition-colors" href="#reviews">{{ reviews }}</a>
+					</div>
+					{% if option_image %}
+						{% set first_ov = null %}
+						{% for ov in option_image.product_option_value %}
+							{% if ov.option_image_thumb and first_ov == null %}
+								{% set first_ov = ov %}
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+					<div class="flex flex-col mb-8">
+						<div class="flex items-center gap-4 mb-2">
+							{% if option_image and first_ov %}
+								{% set disp_price = first_ov.discounted_price ? first_ov.discounted_price : first_ov.price %}
+								{% set disp_old = first_ov.discounted_price ? first_ov.price : '' %}
+								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ disp_price }}</span>
+								<span class="text-xl text-red-500 line-through mb-1 font-medium relative {{ disp_old ? '' : 'hidden' }}" id="product-old-price">{{ disp_old }}</span>
+								<span id="product-price-badge" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1 {{ disp_old ? '' : 'hidden' }}">-15%</span>
+							{% elseif special %}
+								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ special }}</span>
+								<span class="text-xl text-red-500 line-through mb-1 font-medium relative" id="product-old-price">{{ price}}</span>
+								<span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1">-15%</span>
+							{% else %}
+								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ price }}</span>
+								<span class="text-xl text-red-500 line-through mb-1 font-medium relative hidden" id="product-old-price"></span>
+							{% endif %}
+						</div>
+						<div class="flex items-center gap-2 text-sm mt-1">
+							<span class="text-gray-500">Для оптовиков:</span>
+							<span class="font-bold text-luxury-charcoal">от 26 600 ₽</span>
+							<span class="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">-40%</span>
+						</div>
+					</div>
+					{% if products %}
+						{# <input type="hidden" name="option[{{ option_image.product_option_id }}]" value="{{ first_ov ? first_ov.product_option_value_id : '' }}" id="input-option-{{ option_image.product_option_id }}"/> #}
+						<div class="mb-6 option-color-block">
+							<span class="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">Цвет</span>
+							<div class="flex gap-4 overflow-x-auto pb-2">
+								{% for product in products %}
+									{# {{ include('maison/template/common/product_card.twig', { product: product }) }} #}
+									<div class="group cursor-pointer min-w-[60px] option-swatch" onclick="window.location.href = '{{ product.href }}';">
+										<div class="w-14 h-14 overflow-hidden border border-gray-200 group-hover:border-luxury-charcoal transition-colors mb-2 rounded-sm">
+											<img alt="{{ product.name }}" class="w-full h-auto object-cover" src="{{ product.thumb }}"/>
+										</div>
+									</div>									
+								{% endfor %}
+							
+							{# {% for ov in option_image.product_option_value %}
+																									{% if ov.option_image_thumb %}
+																									{% set option_code = ov.custom_fields.code|default(model) %}
+																									{% set option_stock = ov.quantity > 0 ? 'В наличии' : (ov.custom_fields.stock_status|default('Нет в наличии')) %}
+																									<div class="group cursor-pointer min-w-[60px] option-swatch {% if loop.first %}selected{% endif %}" data-product-option-value-id="{{ ov.product_option_value_id }}" data-product-option-id="{{ option_image.product_option_id }}" data-price="{{ ov.discounted_price ? ov.discounted_price : ov.price }}" data-old-price="{{ ov.discounted_price ? ov.price : '' }}" data-popup="{{ ov.option_image_popup }}" data-code="{{ option_code }}" data-stock="{{ option_stock }}" onclick="selectProductOption(this)">
+																										<div class="w-14 h-14 overflow-hidden border border-gray-200 group-hover:border-luxury-charcoal transition-colors mb-2 rounded-sm {% if loop.first %}ring-1 ring-offset-2 ring-luxury-charcoal{% endif %}">
+																											<img alt="{{ ov.name }}" class="w-full h-full object-cover" src="{{ ov.option_image_thumb }}"/>
+																										</div>
+																									</div>
+																									{% endif %}
+																									{% endfor %} #}
+							</div>
+						</div>
+					{% endif %}
+					<div class="mb-6 option-size-block">
+						{% if option_size %}
+								<span class="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">{{ option_size.name }}</span>
+								<div class="grid grid-cols-2 gap-3 mb-6">
+									{% for key, ov in option_size.product_option_value %}
+										<div>
+											<input class="hidden size-selector" 
+												checked id="size-{{ ov.product_option_value_id }}" 
+												name="option[{{ option_size.product_option_id }}]" 
+												value="{{ ov.product_option_value_id }}" 
+												type="radio" 
+												{% if loop.first %} checked {% endif %} 
+												data-price="{{ ov.discounted_price ? ov.discounted_price : ov.price }}" 
+												data-old-price="{{ ov.discounted_price ? ov.price : '' }}" 
+												data-popup="{{ ov.option_image_popup }}" 
+												data-sheet-options="{{ ov.sheet_options|default([])|json_encode|e('html_attr') }}" 
+												data-stock="{{ ov.stock_status ? 'В наличии' : 'Нет в наличии' }}" 
+												data-code="{{ ov.custom_fields.code|default(model) }}" 
+												data-pillow-options="{{ ov.pillow_options|default([])|json_encode|e('html_attr') }}" 
+												onchange="selectSizeOption(this)"
+											/>
+											<label class="block w-full text-center py-3 border border-gray-200 rounded-sm cursor-pointer hover:border-luxury-charcoal transition-all text-sm font-medium text-luxury-charcoal" for="size-{{ ov.product_option_value_id }}">
+												{{ ov.name }}
+											</label>
+										</div>
+									{% endfor %}
+								</div>
+						{% endif %}
+						{% if option_size and option_size.all_sheet_sizes %}
+								<div class="mb-6" id="sheet-section">
+									<span class="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">Размер простыни</span>
+									<div class="flex flex-wrap gap-3" id="sheet-options">
+										{% set first_size_id = option_size.product_option_value|first.product_option_value_id %}
+										{% for item in option_size.all_sheet_sizes %}
+											<label class="sheet-option-item cursor-pointer block px-6 py-3 border border-gray-200 rounded-sm hover:border-luxury-charcoal transition-all text-sm font-medium text-luxury-charcoal min-w-[100px] text-center {% if first_size_id in item.option_ids %}selected{% else %}opacity-60{% endif %}" data-option-ids="{{ item.option_ids|json_encode|e('html_attr') }}" onclick="selectSizeBySheetOrPillow(this, 'sheet')">{{ item.value }}</label>
+										{% endfor %}
+									</div>
+								</div>
+						{% endif %}
+						{% if option_size and option_size.all_pillow_sizes %}
+								<div class="mb-4" id="pillow-section">
+									<span class="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">Размер наволочки</span>
+									<div class="flex flex-wrap gap-3" id="pillow-options">
+										{% set first_size_id = option_size.product_option_value|first.product_option_value_id %}
+										{% for item in option_size.all_pillow_sizes %}
+											<div class="pillow-option-item cursor-pointer block px-6 py-3 border border-gray-200 rounded-sm hover:border-luxury-charcoal transition-all text-sm font-medium text-luxury-charcoal min-w-[100px] text-center {% if first_size_id in item.option_ids %}selected{% else %}opacity-60{% endif %}" data-option-ids="{{ item.option_ids|json_encode|e('html_attr') }}" onclick="selectSizeBySheetOrPillow(this, 'pillow')">{{ item.value }}</div>
+										{% endfor %}
+									</div>
+								</div>
+						{% endif %}
+					</div>
+					<div class="flex flex-col gap-3 mb-4" id="product-add-form">
+						<input type="hidden" name="product_id" value="{{ product_id }}"/>
+						<button type="button" id="button-add-to-cart" class="w-full bg-[#263238] text-white border border-[#263238] py-4 font-bold uppercase text-sm tracking-[0.1em] hover:bg-[#37474F] hover:border-[#37474F] transition-all duration-300 shadow-lg flex items-center justify-center gap-2" onclick="addToCartWithOptions(event)">
+							<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+							Добавить в корзину
+						</button>
+						<button class="w-full bg-transparent text-[#263238] border border-[#263238] py-4 font-bold uppercase text-sm tracking-[0.1em] hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2" onclick="toggleModal('modal-one-click')">
+							<span class="material-symbols-outlined text-[20px]">touch_app</span>
+							Купить в 1 клик
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="max-w-7xl mx-auto px-6 lg:px-12 pt-12 pb-12">
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+			<div class="lg:col-span-7 flex flex-col gap-10">
+				{% if attribute_groups %}
+					<div>
+						<h3 class="text-3xl font-serif text-luxury-charcoal mb-6">Характеристики</h3>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm">
+							{% for attribute_group in attribute_groups  | filter(attribute_group => attribute_group.attribute_group_id == 7) %}
+								{% for attribute in attribute_group.attribute %}
+								<div class="flex justify-between items-end border-b border-gray-200 pb-2">
+										<span class="text-gray-500">{{ attribute.name }}</span>
+										<span class="text-luxury-charcoal font-medium text-right">{{ attribute.text }}</span>
+									</div>
+								{% endfor %}
+							{% endfor %}
+						</div>
+					</div>
+				{% endif %}
+
+				<div>
+					<h3 class="text-3xl font-serif text-luxury-charcoal mb-6">Описание</h3>
+					<div class="text-gray-600 leading-relaxed text-sm">
+						<div class="mb-4" id="product-description">{{ description }}</div>
+						<a id="toggle-description-btn" class="text-[#C1A687] hover:text-[#263238] transition-colors mt-2 inline-block border-b border-[#C1A687] pb-0.5 text-xs font-bold uppercase tracking-wider cursor-pointer hidden" href="#" onclick="toggleDescription(event)">Развернуть</a>
+					</div>
+				</div>
+			</div>
+			<div class="lg:col-span-5 flex flex-col gap-4">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden accordion-group" onclick="toggleAccordion(this)">
+					<button class="w-full flex justify-between items-center p-5 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none">
+						<span class="text-base font-medium text-[#263238]">Доставка</span>
+						<span class="material-symbols-outlined text-gray-400 accordion-icon">keyboard_arrow_down</span>
+					</button>
+					<div class="accordion-content">
+						<div class="px-5 pb-5 pt-0">
+							<ul class="text-sm text-gray-600 space-y-2.5 pt-2">
+								{% for delivery_item in delivery_info %}
+								<li class="flex gap-2 items-start {% if delivery_item.highlighted %}text-[#C1A687]{% endif %}">
+									<span class="{% if delivery_item.highlighted %}text-[#C1A687]{% else %}text-gray-400{% endif %}">—</span>
+									{{ delivery_item.text }}
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden accordion-group" onclick="toggleAccordion(this)">
+					<button class="w-full flex justify-between items-center p-5 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none">
+						<span class="text-base font-medium text-[#263238]">Упаковка</span>
+						<span class="material-symbols-outlined text-gray-400 accordion-icon">keyboard_arrow_down</span>
+					</button>
+					<div class="accordion-content">
+						<div class="px-5 pb-5 pt-0">
+							<div class="flex flex-col gap-3 text-sm pt-2">
+								{% if dimensions %}
+									{% for key, dimension in dimensions %}
+										{% if dimension[0] > 0 %}
+										<div class="flex justify-between items-end border-b border-gray-100 pb-1">
+											<span class="text-gray-400">{{ key }}</span>
+											<span class="text-luxury-charcoal font-medium text-right">{{ dimension[1] }}</span>
+										</div>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+								{# <div class="flex justify-between items-end border-b border-gray-100 pb-1">
+									<span class="text-gray-400">ВГХ Ширина</span>
+									<span class="text-luxury-charcoal font-medium text-right">38.0 см</span>
+								</div>
+								<div class="flex justify-between items-end border-b border-gray-100 pb-1">
+									<span class="text-gray-400">ВГХ Высота</span>
+									<span class="text-luxury-charcoal font-medium text-right">10.0 см</span>
+								</div>
+								<div class="flex justify-between items-end border-b border-gray-100 pb-1">
+									<span class="text-gray-400">ВГХ Длина</span>
+									<span class="text-luxury-charcoal font-medium text-right">45.0 см</span>
+								</div>
+								<div class="flex justify-between items-end border-b border-gray-100 pb-1">
+									<span class="text-gray-400">Вес</span>
+									<span class="text-luxury-charcoal font-medium text-right">2.85 кг</span>
+								</div> #}
+								{% for attribute_group in attribute_groups  | filter(attribute_group => attribute_group.attribute_group_id == 8) %}
+									{% for attribute in attribute_group.attribute %}
+									<div class="flex justify-between items-end border-b border-gray-100 pb-1">
+										<span class="text-gray-400">Тип</span>
+										<span class="text-luxury-charcoal font-medium text-right">{{ attribute.text }}</span>
+									</div>
+									{% endfor %}
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden accordion-group" onclick="toggleAccordion(this)">
+					<button class="w-full flex justify-between items-center p-5 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none">
+						<span class="text-base font-medium text-[#263238]">Обмен и возврат</span>
+						<span class="material-symbols-outlined text-gray-400 accordion-icon">keyboard_arrow_down</span>
+					</button>
+					<div class="accordion-content">
+						<div class="px-5 pb-5 pt-0">
+							<p class="text-sm text-gray-600 pt-2">
+								{{ return_info }}
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden accordion-group" onclick="toggleAccordion(this)">
+					<button class="w-full flex justify-between items-center p-5 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none">
+						<span class="text-base font-medium text-[#263238]">Уход за изделием</span>
+						<span class="material-symbols-outlined text-gray-400 accordion-icon">keyboard_arrow_down</span>
+					</button>
+					<div class="accordion-content">
+						<div class="px-5 pb-5 pt-0">
+							<div class="grid grid-cols-1 gap-3 pt-2">
+								{% for attribute_group in attribute_groups  | filter(attribute_group => attribute_group.attribute_group_id == 9) %}
+									{% for attribute in attribute_group.attribute %}
+										<div class="flex items-center gap-3 text-sm text-gray-600">
+											{% if attribute.attribute_id == 17 %}
+												<span class="material-symbols-outlined text-gray-400 text-[20px]">local_laundry_service</span>
+											{% elseif attribute.attribute_id == 18 %}
+												<span class="material-symbols-outlined text-gray-400 text-[20px]">do_not_disturb_on</span>
+											{% elseif attribute.attribute_id == 19 %}
+												<span class="material-symbols-outlined text-gray-400 text-[20px]">iron</span>
+											{% elseif attribute.attribute_id == 20 %}
+												<span class="material-symbols-outlined text-gray-400 text-[20px]">dry_cleaning</span>
+											{% endif %}
+											{# <span class="material-symbols-outlined text-gray-400 text-[20px]">local_laundry_service</span> #}
+											<span>{{ attribute.name }} {{ attribute.text }}</span>
+										</div>
+									{% endfor %}
+								{% endfor %}							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-background-section py-20 border-t border-gray-200" id="reviews">
+		<div class="max-w-4xl mx-auto px-6 lg:px-12">
+			<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+				<div>
+					<h2 class="text-3xl font-serif text-luxury-charcoal mb-2">Отзывы покупателей</h2>
+					<div
+						class="flex items-center gap-2">
+						{# <span class="text-2xl font-bold text-luxury-charcoal">{{ rating }}</span> #}
+						<div class="flex text-primary">
+							{% for i in 1..rating %}
+								<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+							{% endfor %}
+							{% for i in 1..(5 - rating) %}
+								<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">star</span>
+							{% endfor %}
+						</div>
+						<span class="text-gray-500 text-sm ml-2">На основе
+							{{ reviews }}</span>
+					</div>
+				</div>
+				<button class="px-8 py-3 bg-white border border-gray-300 text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all shadow-sm rounded-sm" onclick="toggleModal('modal-review')">
+					Написать отзыв
+				</button>
+			</div>
+			<div id="reviews-list" class="flex flex-col gap-6"></div>
+			<div class="mt-10 text-center">
+				<button id="load-more-reviews" class="hidden text-luxury-charcoal border-b border-luxury-charcoal pb-0.5 hover:text-primary hover:border-primary transition-colors text-sm uppercase tracking-widest font-bold">
+					Загрузить еще отзывы
+				</button>
+			</div>
+		</div>
+	</section>
+
+	{{ content_bottom }}
+
+        <div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[100] hidden modal-fade-in" id="modal-one-click"
+            role="dialog">
+            <div class="fixed inset-0 bg-luxury-charcoal/70 backdrop-blur-sm transition-opacity"
+                onclick="toggleModal('modal-one-click')"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-200">
+                        <button
+                            class="absolute top-4 right-4 text-gray-400 hover:text-luxury-charcoal transition-colors"
+                            onclick="toggleModal('modal-one-click')">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                        <div class="px-8 py-10">
+                            <h3 class="text-2xl font-serif font-medium text-luxury-charcoal mb-2 text-center"
+                                id="modal-title">Купить в 1 клик</h3>
+                            <p class="text-sm text-gray-500 mb-8 text-center">Оставьте свои данные, и наш менеджер
+                                свяжется с вами для уточнения деталей заказа.</p>
+                            <form class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-2"
+                                        for="name">Ваше имя</label>
+                                    <input
+                                        class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3"
+                                        id="name" placeholder="Иван Иванов" type="text" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-2"
+                                        for="phone">Телефон</label>
+                                    <input
+                                        class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3"
+                                        id="phone" placeholder="+7 (___) ___-__-__" type="tel" />
+                                </div>
+                                <button
+                                    class="w-full bg-[#263238] text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-[0.15em] hover:bg-[#37474F] transition-all shadow-lg mt-4"
+                                    onclick="toggleModal('modal-one-click')" type="button">
+                                    Оформить заказ
+                                </button>
+                                <p class="text-[10px] text-gray-400 text-center mt-4">Нажимая кнопку, вы соглашаетесь с
+                                    политикой обработки персональных данных</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+</main>
+<script>
+
+// Constants
+const SELECTORS = {
+	SIZE_BLOCK: '.option-size-block',
+	SIZE_SELECTOR: '.size-selector',
+	SHEET_OPTION_ITEM: '.sheet-option-item',
+	PILLOW_OPTION_ITEM: '.pillow-option-item',
+};
+const CSS_CLASSES = {
+	HIDDEN: 'hidden',
+	SELECTED: 'selected',
+	OPACITY_60: 'opacity-60',
+	ACCORDION_GROUP: 'ccordion-group',
+	ACCORDION_OPEN: 'accordion-open'
+};
+const ELEMENT_IDS = {
+	MAIN_IMAGE: 'main-product-image',
+	PRODUCT_PRICE: 'product-price',
+	PRODUCT_OLD_PRICE: 'product-old-price',
+	PRODUCT_PRICE_BADGE: 'product-price-badge',
+	SHEET_OPTIONS: 'sheet-options',
+	PILLOW_OPTIONS: 'pillow-options',
+	REVIEWS_LIST: 'reviews-list',
+	PRODUCT_DESCRIPTION: 'product-description',
+	TOGGLE_DESCRIPTION_BTN: 'toggle-description-btn',
+	LOAD_MORE_REVIEWS: 'load-more-reviews'
+};
+const DESCRIPTION_MAX_LENGTH = 250;
+const REVIEW_URL = 'index.php?route=product/product/review&product_id={{ product_id }}';
+
+function changeMainImage(src) {
+	const el = document.getElementById(ELEMENT_IDS.MAIN_IMAGE);
+	if (el && src) el.src = src;
+}
+
+function toggleDescription(event) {
+	event.preventDefault();
+	const descEl = document.getElementById(ELEMENT_IDS.PRODUCT_DESCRIPTION);
+	const btnEl = document.getElementById(ELEMENT_IDS.TOGGLE_DESCRIPTION_BTN);
+	
+	if (!descEl || !btnEl) return;
+	
+	const fullText = descEl.dataset.fullText || descEl.textContent;
+	const isExpanded = descEl.dataset.expanded === 'true';
+	
+	if (isExpanded) {
+		// Свернуть
+		const shortText = fullText.substring(0, DESCRIPTION_MAX_LENGTH) + '...';
+		descEl.textContent = shortText;
+		descEl.dataset.expanded = 'false';
+		btnEl.textContent = 'Развернуть';
+	} else {
+		// Развернуть
+		descEl.textContent = fullText;
+		descEl.dataset.expanded = 'true';
+		btnEl.textContent = 'Свернуть';
+	}
+}
+
+function initDescription() {
+	const descEl = document.getElementById(ELEMENT_IDS.PRODUCT_DESCRIPTION);
+	const btnEl = document.getElementById(ELEMENT_IDS.TOGGLE_DESCRIPTION_BTN);
+	
+	if (!descEl || !btnEl) return;
+	
+	const fullText = descEl.textContent.trim();
+	
+	if (fullText.length > DESCRIPTION_MAX_LENGTH) {
+		// Сохраняем полный текст
+		descEl.dataset.fullText = fullText;
+		descEl.dataset.expanded = 'false';
+		
+		// Показываем сокращенную версию
+		const shortText = fullText.substring(0, DESCRIPTION_MAX_LENGTH) + '...';
+		descEl.textContent = shortText;
+		
+		// Показываем кнопку
+		btnEl.classList.remove(CSS_CLASSES.HIDDEN);
+	}
+}
+
+function updateProductPrice(price, oldPrice) {
+	const priceEl = document.getElementById(ELEMENT_IDS.PRODUCT_PRICE);
+	const oldPriceEl = document.getElementById(ELEMENT_IDS.PRODUCT_OLD_PRICE);
+	const badge = document.getElementById(ELEMENT_IDS.PRODUCT_PRICE_BADGE);
+
+	if (priceEl && price) {
+		priceEl.textContent = price;
+	}
+
+	if (oldPriceEl) {
+		if (oldPrice) {
+			oldPriceEl.textContent = oldPrice;
+			oldPriceEl.classList.remove(CSS_CLASSES.HIDDEN);
+			if (badge)
+				badge.classList.remove(CSS_CLASSES.HIDDEN);
+
+
+		} else {
+			oldPriceEl.textContent = '';
+			oldPriceEl.classList.add(CSS_CLASSES.HIDDEN);
+			if (badge)
+				badge.classList.add(CSS_CLASSES.HIDDEN);
+
+
+		}
+	}
+}
+
+function createOptionElement(id, name, value, checked, type) {
+	const container = document.createElement('div');
+
+	const input = document.createElement('input');
+	input.type = 'radio';
+	input.id = id;
+	input.name = type === 'sheet' ? 'sheet-size' : 'pillow-size';
+	input.value = value;
+	input.className = 'hidden sub-selector';
+	if (checked)
+		input.checked = true;
+
+
+
+	const label = document.createElement('label');
+	label.htmlFor = id;
+	label.className = 'block px-6 py-3 border border-gray-200 rounded-sm cursor-pointer hover:border-luxury-charcoal transition-all text-sm font-medium text-luxury-charcoal min-w-[100px] text-center';
+	label.textContent = name;
+
+	container.appendChild(input);
+	container.appendChild(label);
+
+	return container;
+}
+
+function parseJsonSafely(jsonString) {
+	if (!jsonString)
+		return [];
+
+
+	try {
+		return JSON.parse(jsonString);
+	} catch (e) {
+		console.warn('Failed to parse JSON:', e);
+		return [];
+	}
+}
+
+function selectSizeOption(input) {
+	if (!input || input.type !== 'radio')
+		return;
+
+
+	const block = input.closest(SELECTORS.SIZE_BLOCK);
+	if (!block)
+		return;
+
+
+
+	const price = input.dataset.price;
+	const oldPrice = input.dataset.oldPrice;
+	const popup = input.dataset.popup;
+	const stock = input.dataset.stock;
+	const code = input.dataset.code;
+
+	updateProductPrice(price, oldPrice);
+
+	if (popup)
+		changeMainImage(popup);
+
+	// Обновление артикула
+	if (code !== undefined) {
+		const codeEl = document.getElementById('product-code');
+		if (codeEl) {
+			codeEl.textContent = code;
+		}
+	}
+
+	// Обновление остатков
+	if (stock !== undefined) {
+		const stockEl = document.getElementById('product-stock');
+		const stockTextEl = document.getElementById('product-stock-text');
+		if (stockEl && stockTextEl) {
+			stockTextEl.textContent = stock;
+			// Обновляем классы в зависимости от статуса
+			if (stock === 'В наличии') {
+				stockEl.classList.remove('text-red-600', 'bg-red-50');
+				stockEl.classList.add('text-green-600', 'bg-green-50');
+			} else {
+				stockEl.classList.remove('text-green-600', 'bg-green-50');
+				stockEl.classList.add('text-red-600', 'bg-red-50');
+			}
+		}
+	}
+
+	const sheetContainer = document.getElementById(ELEMENT_IDS.SHEET_OPTIONS);
+	const pillowContainer = document.getElementById(ELEMENT_IDS.PILLOW_OPTIONS);
+	const currentSizeId = parseInt(input.value, 10);
+
+	if (sheetContainer && sheetContainer.querySelectorAll(SELECTORS.SHEET_OPTION_ITEM).length) {
+		sheetContainer.querySelectorAll(SELECTORS.SHEET_OPTION_ITEM).forEach(function (el) {
+			const ids = parseJsonSafely(el.dataset.optionIds);
+			const active = ids.some(function (id) {
+				return parseInt(id, 10) === currentSizeId;
+			});
+			el.classList.toggle(CSS_CLASSES.SELECTED, active);
+			el.classList.toggle(CSS_CLASSES.OPACITY_60, !active);
+		});
+	} else if (sheetContainer) {
+		const sheetOpts = parseJsonSafely(input.dataset.sheetOptions);
+		sheetContainer.innerHTML = '';
+		sheetOpts.forEach(function (sheet, i) {
+			const id = 'sheet-' + input.value + '-' + i;
+			const optionEl = createOptionElement(id, sheet, sheet, i === 0, 'sheet');
+			sheetContainer.appendChild(optionEl);
+		});
+	}
+
+	if (pillowContainer && pillowContainer.querySelectorAll(SELECTORS.PILLOW_OPTION_ITEM).length) {
+		pillowContainer.querySelectorAll(SELECTORS.PILLOW_OPTION_ITEM).forEach(function (el) {
+			const ids = parseJsonSafely(el.dataset.optionIds);
+			const active = ids.some(function (id) {
+				return parseInt(id, 10) === currentSizeId;
+			});
+			el.classList.toggle(CSS_CLASSES.SELECTED, active);
+			el.classList.toggle(CSS_CLASSES.OPACITY_60, !active);
+		});
+	} else if (pillowContainer) {
+		const pillowOpts = parseJsonSafely(input.dataset.pillowOptions);
+		pillowContainer.innerHTML = '';
+		pillowOpts.forEach(function (pillow, i) {
+			const id = 'pillow-' + input.value + '-' + i;
+			const optionEl = createOptionElement(id, pillow, pillow, i === 0, 'pillow');
+			pillowContainer.appendChild(optionEl);
+		});
+	}
+}
+
+function selectSizeBySheetOrPillow(el, type) {
+	if (!el)
+		return;
+
+
+
+	const ids = parseJsonSafely(el.dataset.optionIds);
+	if (!ids.length)
+		return;
+
+
+
+	const selectedSheet = document.querySelector(SELECTORS.SHEET_OPTION_ITEM + '.' + CSS_CLASSES.SELECTED);
+	const selectedPillow = document.querySelector(SELECTORS.PILLOW_OPTION_ITEM + '.' + CSS_CLASSES.SELECTED);
+	let targetIds = ids.slice();
+
+	if (type === 'sheet' && selectedPillow) {
+		const pillowIds = parseJsonSafely(selectedPillow.dataset.optionIds);
+		targetIds = ids.filter(function (id) {
+			return pillowIds.indexOf(id) !== -1;
+		});
+	} else if (type === 'pillow' && selectedSheet) {
+		const sheetIds = parseJsonSafely(selectedSheet.dataset.optionIds);
+		targetIds = ids.filter(function (id) {
+			return sheetIds.indexOf(id) !== -1;
+		});
+	}
+
+	const sizeId = targetIds.length ? targetIds[0] : ids[0];
+	const sizeRadio = document.querySelector(SELECTORS.SIZE_BLOCK + ' input' + SELECTORS.SIZE_SELECTOR + '[value="' + sizeId + '"]');
+	if (sizeRadio) {
+		sizeRadio.checked = true;
+		selectSizeOption(sizeRadio);
+	}
+}
+function selectProductOption(el) {
+	if (!el || !el.classList.contains('option-swatch'))
+		return;
+
+
+	const block = el.closest('.option-color-block');
+	if (!block)
+		return;
+
+
+
+	block.querySelectorAll('.option-swatch').forEach(function (s) {
+		s.classList.remove(CSS_CLASSES.SELECTED);
+	});
+
+	el.classList.add(CSS_CLASSES.SELECTED);
+
+	const price = el.dataset.price;
+	const oldPrice = el.dataset.oldPrice;
+	const popup = el.dataset.popup;
+	const optId = el.dataset.productOptionId;
+	const valId = el.dataset.productOptionValueId;
+	const code = el.dataset.code;
+	const stock = el.dataset.stock;
+
+	updateProductPrice(price, oldPrice);
+
+	if (popup)
+		changeMainImage(popup);
+
+	// Обновление артикула
+	if (code !== undefined) {
+		const codeEl = document.getElementById('product-code');
+		if (codeEl) {
+			codeEl.textContent = code;
+		}
+	}
+
+	// Обновление остатков
+	if (stock !== undefined) {
+		const stockEl = document.getElementById('product-stock');
+		const stockTextEl = document.getElementById('product-stock-text');
+		if (stockEl && stockTextEl) {
+			stockTextEl.textContent = stock;
+			// Обновляем классы в зависимости от статуса
+			if (stock === 'В наличии') {
+				stockEl.classList.remove('text-red-600', 'bg-red-50');
+				stockEl.classList.add('text-green-600', 'bg-green-50');
+			} else {
+				stockEl.classList.remove('text-green-600', 'bg-green-50');
+				stockEl.classList.add('text-red-600', 'bg-red-50');
+			}
+		}
+	}
+
+	const input = document.getElementById('input-option-' + optId);
+	if (input && valId)
+		input.value = valId;
+
+
+}
+
+function toggleAccordion(element) {
+	if (element.classList.contains(CSS_CLASSES.ACCORDION_OPEN)) {
+		element.classList.remove(CSS_CLASSES.ACCORDION_OPEN);
+	} else {
+		document.querySelectorAll(CSS_CLASSES.ACCORDION_GROUP).forEach(el => el.classList.remove(CSS_CLASSES.ACCORDION_OPEN));
+		element.classList.add(CSS_CLASSES.ACCORDION_OPEN);
+	}
+}
+
+function addToCartWithOptions(event) {
+	event.preventDefault();
+	const formEl = document.getElementById('product-add-form');
+	if (!formEl)
+		return;
+
+	const productId = formEl.querySelector('input[name="product_id"]');
+	if (!productId || !productId.value) {
+		alert('Ошибка: товар не найден');
+		return;
+	}
+
+	const postData = new URLSearchParams();
+	postData.append('product_id', productId.value);
+	postData.append('quantity', 1);
+
+	const container = formEl.closest('section') || document.body;
+	const optionInputs = container.querySelectorAll('input.size-selector:checked');
+	optionInputs.forEach(function (input) {
+		if (input.name && input.value)
+			postData.append(input.name, input.value);
+	});
+
+	const btn = document.getElementById('button-add-to-cart');
+	if (btn) {
+		btn.disabled = true;
+		btn.style.opacity = '0.7';
+	}
+
+	fetch('index.php?route=checkout/cart/add', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: postData.toString()
+	}).then(function (response) {
+		return response.json();
+	}).then(function (json) {
+		if (btn) {
+			btn.disabled = false;
+			btn.style.opacity = '';
+		}
+		if (json.redirect) {
+			window.location = json.redirect;
+			return;
+		}
+		if (json.error) {
+			if (json.error.option) {
+				const msg = Object.values(json.error.option).join(' ');
+				alert(msg);
+			} else {
+				alert(json.error || 'Ошибка при добавлении в корзину');
+			}
+			return;
+		}
+		if (json.success) {
+			if (typeof cart !== 'undefined' && cart.updateCartDisplay) {
+				cart.updateCartDisplay(json.total);
+			} else {
+				const cartBtn = document.querySelector('#cart button');
+				if (cartBtn && json.total) {
+					const totalEl = cartBtn.querySelector('#cart-total');
+					if (totalEl)
+						totalEl.textContent = json.total;
+				}
+				alert(json.success.replace(/<[^>]*>/g, '').trim());
+			}
+		}
+	}).catch(function (err) {
+		if (btn) {
+			btn.disabled = false;
+			btn.style.opacity = '';
+		}
+		console.error(err);
+		alert('Ошибка сети при добавлении в корзину');
+	});
+}
+
+function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    
+    if (modal.classList.contains('hidden')) {
+        // Показываем модальное окно
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        // Небольшая задержка для запуска анимации после удаления hidden
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                modal.classList.add('modal-show');
+            });
+        });
+    } else {
+        // Скрываем модальное окно
+        modal.classList.remove('modal-show');
+        // Ждем завершения анимации перед скрытием
+        setTimeout(function() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+}
+
+let isLoaded = false;
+document.addEventListener('DOMContentLoaded', function () {
+	// Инициализация описания
+	initDescription();
+	
+	const sheetContainer = document.getElementById(ELEMENT_IDS.SHEET_OPTIONS);
+	const hasDynamicSheets = sheetContainer && sheetContainer.querySelectorAll(SELECTORS.SHEET_OPTION_ITEM).length > 0;
+	const sizeRadio = document.querySelector(SELECTORS.SIZE_BLOCK + ' ' + SELECTORS.SIZE_SELECTOR + ':checked');
+
+	if (sizeRadio) {
+		selectSizeOption(sizeRadio);
+	} else {
+		const firstSizeRadio = document.querySelector(SELECTORS.SIZE_BLOCK + ' ' + SELECTORS.SIZE_SELECTOR);
+		if (firstSizeRadio) {
+			firstSizeRadio.checked = true;
+			selectSizeOption(firstSizeRadio);
+		}
+	}
+
+	const reviewsList = document.getElementById(ELEMENT_IDS.REVIEWS_LIST);
+	if (reviewsList) {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting && !isLoaded) {
+					isLoaded = true;
+					fetch(REVIEW_URL).then(response => {
+						if (!response.ok)
+							throw new Error('Network response was not ok');
+
+
+						return response.text();
+					}).then(data => {
+						if (reviewsList) {
+							reviewsList.innerHTML = data;
+							if (data.includes('Нет отзывов об этом товаре')) {
+								document.getElementById(ELEMENT_IDS.LOAD_MORE_REVIEWS).classList.add(CSS_CLASSES.HIDDEN);
+							} else {
+								document.getElementById(ELEMENT_IDS.LOAD_MORE_REVIEWS).classList.remove(CSS_CLASSES.HIDDEN);
+							}
+						}
+
+
+					}).catch(error => {
+						console.error('Error loading reviews:', error);
+					});
+				}
+			});
+		});
+		observer.observe(reviewsList);
+	}
+});
+
+
+
+</script>
+{{ footer }}

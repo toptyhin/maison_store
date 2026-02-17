@@ -1,0 +1,45 @@
+{% if reviews %}
+	{% for review in reviews %}
+		{# <table class="table table-striped table-bordered">
+		  <tr>
+		    <td style="width: 50%;"><strong>{{ review.author }}</strong></td>
+		    <td class="text-right">{{ review.date_added }}</td>
+		  </tr>
+		  <tr>
+		    <td colspan="2"><p>{{ review.text }}</p>
+		      {% for i in 1..5 %}
+		      {% if review.rating < i %} <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> {% else %} <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> {% endif %}
+		      {% endfor %}</td>
+		  </tr>
+		</table> #}
+		<div class="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
+			<div class="flex justify-between items-start mb-4">
+				<div class="flex items-center gap-3">
+					<div class="size-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold font-serif text-lg">
+						{{ review.author|first|upper }}
+					</div>
+					<div>
+						<h4 class="font-bold text-sm text-luxury-charcoal">{{ review.author }}</h4>
+						<span class="text-xs text-gray-400">12 марта 2024</span>
+					</div>
+				</div>
+				<div class="flex text-primary text-xs">
+					{% for i in 1..5 %}
+						{% if review.rating < i %}
+							<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">star</span>
+						{% else %}
+							<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+			<p class="text-gray-600 text-sm leading-relaxed">{{ review.text }}</p>
+		</div>
+	{% endfor %}
+	<div class="row">
+		<div class="col-sm-6 text-left">{{ pagination }}</div>
+		<div class="col-sm-6 text-right">{{ results }}</div>
+	</div>
+{% else %}
+	<p>{{ text_no_reviews }}</p>
+{% endif %}

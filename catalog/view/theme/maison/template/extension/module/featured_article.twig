@@ -1,0 +1,63 @@
+{% if articles %}
+	{# <h3>{{ heading_title }}</h3>
+	<div class="row">
+		{% for article in articles %}
+			<div class="product-layout col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<div class="product-thumb transition">
+					<div class="image"><a href="{{ article.href }}"><img src="{{ article.thumb }}" alt="{{ article.name }}" title="{{ article.name }}" class="img-responsive" /></a></div>
+					<div class="caption">
+						<h4><a href="{{ article.href }}">{{ article.name }}</a></h4>
+						<p>{{ article.description }}</p>
+						{% if article.rating %}
+							<div class="rating">
+								{% for i in 5 %}
+									{% if article.rating < i %}
+										<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
+									{% else %}
+										<span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+									{% endif %}
+								{% endfor %}
+							</div>
+						{% endif %}
+					</div>
+					<div class="button-group">
+						<button type="button" onclick="location.href = ('{{ article.href }}');"><i class="fa fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_more }}</span></button>
+						<button type="button" data-toggle="tooltip" title="{{ article.date_added }}" "><i class="fa fa-clock-o"></i></button>
+						<button type="button" data-toggle="tooltip" title="{{ text_views }} {{ article.viewed }}" "><i class="fa fa-eye"></i></button>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div> #}
+
+            <section class="py-24 bg-background-dark border-t border-gray-200">
+                <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                    <div class="flex justify-between items-end mb-12">
+                        <h2 class="text-luxury-charcoal text-3xl font-serif">Журнал Maison</h2>
+                        <a class="text-primary hover:text-luxury-charcoal transition-colors text-xs font-bold uppercase tracking-widest"
+                            href="#">Все статьи</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					{% for article in articles | slice(0, 3) %}
+                        <article class="group cursor-pointer">
+                            <div class="overflow-hidden rounded-sm mb-4 border border-gray-200 shadow-sm">
+                                <div class="aspect-[16/10] bg-gray-100 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                    style='background-image: url("{{ article.thumb }}");'>
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <span
+                                    class="text-primary text-[10px] uppercase tracking-widest font-bold mb-2">{{ article.date_added | date("d.m.Y") }}</span>
+                                <h3
+                                    class="text-luxury-charcoal text-xl font-serif mb-2 group-hover:text-primary transition-colors">
+                                    {{ article.name }}</h3>
+                                <p class="text-gray-500 text-sm line-clamp-2">{{ article.description }}</p>
+                            </div>
+                        </article>
+					{% endfor %}
+                    </div>
+                </div>
+            </section>
+
+
+{% endif %}

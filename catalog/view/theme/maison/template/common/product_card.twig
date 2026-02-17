@@ -1,0 +1,54 @@
+                        <div class="flex flex-col gap-5 group">
+                            <div
+                                class="relative aspect-[3/4] overflow-hidden rounded-sm bg-white shadow-soft border border-gray-200 group-hover:border-primary/30 transition-colors duration-500">
+                                <img alt="{{ product.name }}"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95 group-hover:opacity-100"
+                                    src="{{ product.thumb }}" />
+                                <div
+                                    class="absolute top-4 left-4 bg-badge-gold text-white backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                    ЭКСКЛЮЗИВ</div>
+                                <div class="absolute top-4 right-4 z-20">
+                                    <button
+                                        class="bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart">
+                                        <span
+                                            class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1">favorite</span>
+                                    </button>
+                                </div>
+                                <div
+                                    class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                    <a 
+                                        href="{{ product.href }}"
+                                        class="w-full bg-[#263238] block text-center text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-widest hover:bg-[#455A64] hover:border-[#455A64] transition-all duration-300 shadow-lg">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2 p-2">
+                                <h4
+                                    class="font-serif text-xl text-luxury-charcoal hover:text-primary transition-colors cursor-pointer">
+                                    {{ product.name }}</h4>
+                                <p class="text-gray-500 text-xs uppercase tracking-widest">Сатин, 800 нитей</p>
+                                {% if product.rating %}
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="material-symbols-outlined text-[16px] text-primary"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="text-luxury-charcoal font-bold text-sm">{{ product.rating }}</span>
+                                    {% if product.reviews %}
+                                        <span class="text-gray-400 text-sm">({{ product.reviews }} отзывов)</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+								{% if product.price %}
+									{% if not product.special %}
+										<p class="font-bold text-luxury-charcoal mt-1 text-lg">{{ product.price }}</p>
+									{% else %}
+										<div class="flex items-center gap-3 mt-1">
+											<p class="font-bold text-luxury-charcoal text-lg">{{ product.special }}</p>
+											<p class="text-discount-red line-through text-sm">{{ product.price }}</p>
+											<span
+												class="bg-badge-pink-bg text-badge-pink-text px-2 py-0.5 rounded-lg text-sm font-bold">-20%</span>
+										</div>								
+									{% endif %}
+								{% endif %}
+                            </div>
+                        </div>

@@ -1,0 +1,72 @@
+{# {% if products %}
+	<h3>{{ heading_title }}</h3>
+	<div class="row">
+		{% for product in products %}
+			<div class="product-layout col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<div class="product-thumb transition">
+					<div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>
+					<div class="caption">
+						<h4><a href="{{ product.href }}">{{ product.name }}</a></h4>
+						<p>{{ product.description }}</p>
+						{% if product.rating %}
+							<div class="rating">
+								{% for i in 1..5 %}
+									{% if product.rating < i %}
+										<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
+									{% else %}
+										<span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+									{% endif %}
+								{% endfor %}
+							</div>
+						{% endif %}
+						{% if product.price %}
+							<p class="price">
+								{% if not product.special %}
+									{{ product.price }}
+								{% else %}
+									<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+								{% endif %}
+								{% if product.tax %}
+									<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+								{% endif %}
+							</p>
+						{% endif %}
+					</div>
+					<div class="button-group">
+						<button type="button" onclick="cart.add('{{ product.product_id }}');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span></button>
+						<button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
+						<button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endif %} #}
+
+{% if products %}
+            <section class="bg-background-section py-24 border-t border-gray-200 relative">
+                <div
+                    class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-40 pointer-events-none">
+                </div>
+                <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+                    <div class="flex flex-col items-center text-center mb-16">
+                        <h2 class="text-luxury-charcoal text-4xl font-serif font-medium tracking-tight">Бестселлеры
+                            Maison</h2>
+                        <div class="w-16 h-[3px] bg-primary mt-6 mb-6 rounded-full shadow-gold-glow"></div>
+                        <p class="text-gray-500 max-w-xl leading-relaxed">Предметы, выбранные нашими самыми
+                            взыскательными клиентами за исключительную мягкость, спокойные оттенки и чистый дизайн.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+					{% for product in products %}
+					  {{ include('maison/template/common/product_card.twig', { product: product }) }}
+					{% endfor %}
+                    </div>
+                    <div class="mt-16 flex justify-center w-full">
+                        <button
+                            class="group flex items-center gap-2 bg-[#263238] border border-[#263238] px-10 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-primary hover:border-primary rounded-sm shadow-lg">
+                            Смотреть весь каталог
+                        </button>
+                    </div>
+                </div>
+            </section>
+{% endif %}

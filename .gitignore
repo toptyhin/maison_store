@@ -1,0 +1,66 @@
+# OpenCart Storage Directories
+system/storage/cache/
+system/storage/logs/
+system/storage/download/
+system/storage/modification/
+system/storage/session/
+system/storage/upload/
+
+image/
+# Image Cache
+image/cache/
+image/catalog/
+
+# Configuration Files (may contain sensitive data)
+config.php
+admin/config.php
+
+# Vendor Dependencies (if using Composer)
+# system/storage/vendor/
+
+# IDE and Editor Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# PHP Files
+*.php~
+*.php.bak
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# Node modules (if using npm/node)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment Files
+.env
+.env.local
+.env.*.local
