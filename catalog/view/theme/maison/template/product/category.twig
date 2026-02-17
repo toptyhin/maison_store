@@ -1,8 +1,430 @@
 {{ header }}
-<div id="product-category" class="container">
+<main class="flex-1 mt-24">
+	<section class="bg-background-dark pt-12 pb-8 border-b border-gray-200">
+		<div class="max-w-7xl mx-auto px-6 lg:px-12">
+			<div class="flex flex-wrap justify-center gap-8 md:gap-12">
+				<a class="group flex flex-col items-center gap-3 cursor-pointer" href="#">
+					<div class="w-20 h-20 rounded-full bg-white border border-gray-200 shadow-soft flex items-center justify-center text-primary-light group-hover:border-primary group-hover:text-primary transition-all duration-300 transform group-hover:-translate-y-1">
+						<span class="material-symbols-outlined text-[32px]">bed</span>
+					</div>
+					<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/80 group-hover:text-luxury-charcoal transition-colors">Постельное</span>
+				</a>
+				<a class="group flex flex-col items-center gap-3 cursor-pointer" href="#">
+					<div class="w-20 h-20 rounded-full bg-white border border-gray-200 shadow-soft flex items-center justify-center text-primary-light group-hover:border-primary group-hover:text-primary transition-all duration-300 transform group-hover:-translate-y-1">
+						<span class="material-symbols-outlined text-[32px]">chair</span>
+					</div>
+					<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/80 group-hover:text-luxury-charcoal transition-colors">Подушки</span>
+				</a>
+				<a class="group flex flex-col items-center gap-3 cursor-pointer" href="#">
+					<div class="w-20 h-20 rounded-full bg-white border border-gray-200 shadow-soft flex items-center justify-center text-primary-light group-hover:border-primary group-hover:text-primary transition-all duration-300 transform group-hover:-translate-y-1">
+						<span class="material-symbols-outlined text-[32px]">grid_on</span>
+					</div>
+					<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/80 group-hover:text-luxury-charcoal transition-colors">Одеяла</span>
+				</a>
+				<a class="group flex flex-col items-center gap-3 cursor-pointer" href="#">
+					<div class="w-20 h-20 rounded-full bg-white border border-gray-200 shadow-soft flex items-center justify-center text-primary-light group-hover:border-primary group-hover:text-primary transition-all duration-300 transform group-hover:-translate-y-1">
+						<span class="material-symbols-outlined text-[32px]">texture</span>
+					</div>
+					<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/80 group-hover:text-luxury-charcoal transition-colors">Пледы</span>
+				</a>
+				<a class="group flex flex-col items-center gap-3 cursor-pointer" href="#">
+					<div class="w-20 h-20 rounded-full bg-white border border-gray-200 shadow-soft flex items-center justify-center text-primary-light group-hover:border-primary group-hover:text-primary transition-all duration-300 transform group-hover:-translate-y-1">
+						<span class="material-symbols-outlined text-[32px]">water_drop</span>
+					</div>
+					<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/80 group-hover:text-luxury-charcoal transition-colors">Полотенца</span>
+				</a>
+			</div>
+		</div>
+	</section>
+	<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex flex-col lg:flex-row gap-12">
+		<aside class="w-full lg:w-72 flex-shrink-0">
+			<div class="sticky top-28 space-y-4 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 pb-10">
+				<div class="flex items-center justify-between lg:hidden mb-4">
+					<h2 class="text-xl font-serif text-luxury-charcoal">Фильтры</h2>
+					<button class="text-primary font-bold uppercase text-xs tracking-widest">Скрыть</button>
+				</div>
+				<details class="group border-b border-gray-200 pb-4" open="">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Цена
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 px-1">
+						<div class="flex items-center gap-4 mb-4">
+							<div class="flex-1">
+								<label class="text-[10px] uppercase text-gray-400 mb-1 block">От</label>
+								<input class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="0" type="number"/>
+							</div>
+							<div class="flex-1">
+								<label class="text-[10px] uppercase text-gray-400 mb-1 block">До</label>
+								<input class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="50000" type="number"/>
+							</div>
+						</div>
+						<input class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="50000" min="0" type="range"/>
+					</div>
+				</details>
+				<div class="border-b border-gray-200 pb-4 pt-2 space-y-4">
+					<label class="flex items-center justify-between cursor-pointer group">
+						<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Top
+							                                    Brands</span>
+						<div class="relative inline-flex items-center cursor-pointer">
+							<input class="sr-only peer" type="checkbox" value=""/>
+							<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+						</div>
+					</label>
+					<label class="flex items-center justify-between cursor-pointer group">
+						<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Высокий
+							                                    рейтинг</span>
+						<div class="relative inline-flex items-center cursor-pointer">
+							<input class="sr-only peer" type="checkbox" value=""/>
+							<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+						</div>
+					</label>
+					<label class="flex items-center justify-between cursor-pointer group">
+						<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Сделано
+							                                    в России</span>
+						<div class="relative inline-flex items-center cursor-pointer">
+							<input checked="" class="sr-only peer" type="checkbox" value=""/>
+							<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+						</div>
+					</label>
+					<label class="flex items-center justify-between cursor-pointer group">
+						<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Баллы
+							                                    за отзывы</span>
+						<div class="relative inline-flex items-center cursor-pointer">
+							<input class="sr-only peer" type="checkbox" value=""/>
+							<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+						</div>
+					</label>
+				</div>
+				<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Бренд
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Boris</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Candie's</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Roberto
+								                                        Cavalli</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Mency</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">HOLMS</span>
+						</label>
+						<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Размерность
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Евро</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Полуторный</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Двуспальный
+								                                        с пр. Евро</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Двуспальный</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Семейный</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Ткань
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Сатин</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Хлопок</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Страйп-сатин</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Лен</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Тенсель</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Вискоза</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Наволочка
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">50x70</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">70x70</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Комплектация
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">1
+								                                        пододеяльник</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">2
+								                                        наволочки</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">4
+								                                        наволочки</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Простыня
+								                                        в компл.</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Размер простыни
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">160x225</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">220x240</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">230x250</span>
+						</label>
+						<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Пододеяльник
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">150x215</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">200x220</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">220x240</span>
+						</label>
+						<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Вид простыни
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Стандартная</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">На
+								                                        резинке</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Возраст
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Взрослая</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Детская</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Страна
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Турция</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Китай</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Россия</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Плотность плетения
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Высокая</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Выше
+								                                        среднего</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Средняя</span>
+						</label>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Принт
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 space-y-3">
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Однотонный</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Цветы</span>
+						</label>
+						<label class="flex items-center gap-3 cursor-pointer group/item">
+							<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+							<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Узоры</span>
+						</label>
+						<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+					</div>
+				</details>
+				<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+						Плотность, г/м²
+						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+					</summary>
+					<div class="pt-4 px-1">
+						<div class="flex items-center gap-4 mb-4">
+							<span class="text-xs text-luxury-charcoal font-bold">130</span>
+							<input class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="170" min="130" type="range" value="150"/>
+							<span class="text-xs text-luxury-charcoal font-bold">170</span>
+						</div>
+					</div>
+				</details>
+				<div class="py-4">
+					<label class="flex items-center gap-3 cursor-pointer group/item">
+						<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+						<span class="text-sm text-gray-600 font-bold group-hover/item:text-luxury-charcoal transition-colors uppercase tracking-wider text-[10px]">На
+							                                    молнии</span>
+					</label>
+				</div>
+			</div>
+		</aside>
+        <div class="flex-1">
+			{% if products %}
+				<div class="flex items-center justify-between mb-8">
+					<p class="text-gray-500 text-sm">Показано 18 из 42 товаров</p>
+					<div class="flex items-center gap-2">
+						<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal">Сортировка:</span>
+						<select class="bg-transparent border-none text-sm text-gray-600 focus:ring-0 cursor-pointer py-0 pr-8 pl-1" onchange="location = this.value;">
+									{% for sorts in sorts %}
+										{% if sorts.value == '%s-%s'|format(sort, order) %}
+											<option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+										{% else %}
+											<option value="{{ sorts.href }}">{{ sorts.text }}</option>
+										{% endif %}
+									{% endfor %}						
+
+						</select>
+					</div>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+					{% for product in products %}
+						{{ include('maison/template/common/product_card.twig', { product: product }) }}
+					{% endfor %}
+				</div>
+            </div>
+			{% endif %}
+            </div> {#  del me  #}
+	</div>
+</main>
+
+{# <div id="product-category" class="container">
 	<ul class="breadcrumb">
 		{% for breadcrumb in breadcrumbs %}
-			<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+			<li>
+				<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+			</li>
 		{% endfor %}
 	</ul>
 	<div class="row">
@@ -20,7 +442,7 @@
 			{% if thumb or description %}
 				<div class="row">
 					{% if thumb %}
-						<div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
+						<div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail"/></div>
 					{% endif %}
 					{% if description %}
 						<div class="col-sm-10">{{ description }}</div>
@@ -32,7 +454,9 @@
 				<h4>{{ text_refine }}</h4>
 				<ul class="category__category-list row-flex">
 					{% for category in categories %}
-						<li class="category__category-list-item"><a href="{{ category.href }}">{{ category.name }}</a></li>
+						<li class="category__category-list-item">
+							<a href="{{ category.href }}">{{ category.name }}</a>
+						</li>
 					{% endfor %}
 				</ul>
 			{% endif %}
@@ -40,12 +464,18 @@
 				<div class="row">
 					<div class="col-md-2 col-sm-6 hidden-xs">
 						<div class="btn-group btn-group-sm">
-							<button type="button" id="list-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_list }}"><i class="fa fa-th-list"></i></button>
-							<button type="button" id="grid-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_grid }}"><i class="fa fa-th"></i></button>
+							<button type="button" id="list-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_list }}">
+								<i class="fa fa-th-list"></i>
+							</button>
+							<button type="button" id="grid-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_grid }}">
+								<i class="fa fa-th"></i>
+							</button>
 						</div>
 					</div>
 					<div class="col-md-3 col-sm-6">
-						<div class="form-group"><a href="{{ compare }}" id="compare-total" class="btn btn-link">{{ text_compare }}</a></div>
+						<div class="form-group">
+							<a href="{{ compare }}" id="compare-total" class="btn btn-link">{{ text_compare }}</a>
+						</div>
 					</div>
 					<div class="col-md-4 col-xs-6">
 						<div class="form-group input-group input-group-sm">
@@ -80,32 +510,56 @@
 					{% for product in products %}
 						<div class="product-layout product-list col-xs-12">
 							<div class="product-thumb">
-								<div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>
+								<div class="image">
+									<a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive"/></a>
+								</div>
 								<div class="caption">
-									<h4><a href="{{ product.href }}">{{ product.name }}</a></h4>
+									<h4>
+										<a href="{{ product.href }}">{{ product.name }}</a>
+									</h4>
 									<p>{{ product.description }}</p>
 									{% if product.price %}
 										<p class="price">
 											{% if not product.special %}
 												{{ product.price }}
 											{% else %}
-												<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+												<span class="price-new">{{ product.special }}</span>
+												<span class="price-old">{{ product.price }}</span>
 											{% endif %}
-											{% if product.tax %}<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>{% endif %}
+											{% if product.tax %}
+												<span class="price-tax">{{ text_tax }}
+													{{ product.tax }}</span>
+											{% endif %}
 										</p>
 									{% endif %}
 									{% if product.rating %}
 										<div class="rating">
 											{% for i in 1..5 %}
-												{% if product.rating < i %}<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> {% else %} <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>{% endif %}
+												{% if product.rating < i %}
+													<span class="fa fa-stack">
+														<i class="fa fa-star-o fa-stack-2x"></i>
+													</span>
+												{% else %}
+													<span class="fa fa-stack">
+														<i class="fa fa-star fa-stack-2x"></i>
+														<i class="fa fa-star-o fa-stack-2x"></i>
+													</span>
+												{% endif %}
 											{% endfor %}
 										</div>
 									{% endif %}
 								</div>
 								<div class="button-group">
-									<button type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span></button>
-									<button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
-									<button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
+									<button type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">
+										<i class="fa fa-shopping-cart"></i>
+										<span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span>
+									</button>
+									<button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');">
+										<i class="fa fa-heart"></i>
+									</button>
+									<button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');">
+										<i class="fa fa-exchange"></i>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -119,12 +573,14 @@
 			{% if not categories and not products %}
 				<p>{{ text_empty }}</p>
 				<div class="buttons">
-					<div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+					<div class="pull-right">
+						<a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a>
+					</div>
 				</div>
 			{% endif %}
 			{{ content_bottom }}
 		</div>
 		{{ column_right }}
 	</div>
-</div>
+</div> #}
 {{ footer }}
