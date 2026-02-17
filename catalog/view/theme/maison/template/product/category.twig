@@ -37,6 +37,7 @@
 		</div>
 	</section>
 	<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex flex-col lg:flex-row gap-12">
+		{% if products %}
 		<aside class="w-full lg:w-72 flex-shrink-0">
 			<div class="sticky top-28 space-y-4 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 pb-10">
 				<div class="flex items-center justify-between lg:hidden mb-4">
@@ -390,6 +391,7 @@
 				</div>
 			</div>
 		</aside>
+		{% endif %}
         <div class="flex-1">
 			{% if products %}
 				<div class="flex items-center justify-between mb-8">
@@ -414,8 +416,12 @@
 					{% endfor %}
 				</div>
             </div>
+			{% else %}
+			<div class="flex items-center justify-center h-full">
+				<p class="text-gray-500 text-sm text-center">Товаров не найдено</p>
+			</div>
 			{% endif %}
-            </div> {#  del me  #}
+		</div>
 	</div>
 </main>
 
