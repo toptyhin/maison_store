@@ -137,6 +137,7 @@
         .mobile-menu-closed #mobile-menu-drawer {
             transform: translateX(-100%);
         }
+
     </style>
 
 </head>
@@ -163,18 +164,19 @@
                 </button>
             </div>
             <div class="p-6 flex-1 overflow-y-auto">
-                <div class="flex flex-col min-w-full !h-10 relative group mb-8">
+                <form id="header-search-form-mobile" class="flex flex-col min-w-full !h-10 relative group mb-8" action="{{ search_url }}" method="get" role="search">
                     <div
                         class="flex w-full items-stretch rounded-full h-full bg-white/10 border border-white/20 focus-within:border-primary/50 transition-all hover:border-white/30 shadow-sm">
                         <div
                             class="flex items-center justify-center pl-4 text-white/50 group-focus-within:text-primary-light">
                             <span class="material-symbols-outlined text-[20px]">search</span>
                         </div>
-                        <input
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-white/50 px-3 text-white"
-                            placeholder="Поиск..." value="" />
+                        <input type="text" name="search" id="header-search-input-mobile" value=""
+                            class="header-search-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-white/50 px-3 text-white"
+                            placeholder="{{ text_search }}" autocomplete="off" />
                     </div>
-                </div>
+                    <div id="header-search-dropdown-mobile" class="header-search-dropdown absolute top-full left-0 right-0 mt-1 bg-[#263238] border border-white/20 rounded-xl shadow-lg z-50 overflow-hidden hidden"></div>
+                </form>
                 <button
                     class="w-full mb-8 flex items-center justify-center gap-2 bg-white text-[#263238] py-3 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-primary-light transition-colors shadow-lg">
                     <span class="material-symbols-outlined text-[18px]">call</span> Заказать обратный звонок
@@ -255,13 +257,13 @@
         <header
             class="fixed top-0 left-0 right-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
             <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
-                <div class="flex items-center gap-4 lg:gap-12">
+                <div class="header-header-left flex min-w-0 items-center gap-4 lg:gap-12">
                     <button
-                        class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2"
+                        class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2 shrink-0"
                         onclick="toggleMobileMenu()">
                         <span class="material-symbols-outlined text-[28px]">menu</span>
                     </button>
-                    <a href="{{ home }}" class="flex items-center gap-2 text-luxury-charcoal cursor-pointer group">
+                    <a href="{{ home }}" class="flex shrink-0 items-center gap-2 text-luxury-charcoal cursor-pointer group">
                         <div class="size-12 flex items-center justify-center text-primary group-hover:text-primary-dark transition-all">
                             {# <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                                 <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
@@ -273,28 +275,29 @@
                         <h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison
                             Textile</h2>
                     </a>
-                    <nav class="hidden lg:flex items-center gap-8">
-                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                    <nav class="header-nav hidden min-w-0 lg:flex items-center gap-8">
+                        <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
                             href="#">Каталог</a>
-                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                        <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
                             href="#">Акции</a>
-                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                        <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
                             href="#">О компании</a>
                     </nav>
                 </div>
                 <div class="flex flex-1 justify-end items-center gap-6">
-                    <label class="hidden md:flex flex-col min-w-40 !h-10 max-w-xs relative group">
+                    <form id="header-search-form" class="header-search-wrap hidden md:flex flex-col min-w-40 !h-10 relative group" action="{{ search_url }}" method="get" role="search">
                         <div
                             class="flex w-full flex-1 items-stretch rounded-full h-full bg-white border border-gray-200 focus-within:border-primary/50 transition-all hover:border-gray-300 shadow-sm">
                             <div
                                 class="flex items-center justify-center pl-4 text-gray-400 group-focus-within:text-primary">
                                 <span class="material-symbols-outlined text-[20px]">search</span>
                             </div>
-                            <input
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal"
-                                placeholder="Поиск..." value="" />
+                            <input type="text" name="search" id="header-search-input" value=""
+                                class="header-search-input form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal"
+                                placeholder="{{ text_search }}" autocomplete="off" />
                         </div>
-                    </label>
+                        <div id="header-search-dropdown" class="header-search-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden hidden"></div>
+                    </form>
                     <div class="flex gap-2 lg:gap-4">
                         <button
                             class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100"
@@ -318,6 +321,7 @@
                 </div>
             </div>
         </header>
+
 {# <header>
   <div class="container">
     <div class="row">

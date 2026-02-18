@@ -359,6 +359,30 @@ html[dir=rtl] .input-group .form-control:first-child {border-top-right-radius:5p
 html[dir=rtl] .container .row:first-child  .col-sm-4, html[dir=rtl] .container .row:first-child  .col-sm-5 {float:right}
 html[dir=rtl] #cart .dropdown-menu {left:0;right:auto}
 
+.header-search-wrap {
+	width: 18rem;
+	max-width: 18rem;
+	transition: width 0.3s ease, max-width 0.3s ease;
+}
+.header-search-wrap:focus-within {
+	width: 28rem;
+	max-width: 28rem;
+}
+.header-nav-link {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+} 
+
+#header-search-dropdown-mobile a {
+	color: #fff;
+}
+#header-search-dropdown-mobile a:hover {
+	background: rgba(255,255,255,0.1);
+}
+
+
 .accordion-content {
 	transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
 	max-height: 0;

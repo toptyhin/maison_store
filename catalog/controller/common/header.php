@@ -97,7 +97,7 @@ class ControllerCommonHeader extends Controller {
 		} else {
 			$data['blog_menu'] = '';
 		}
-		$data['search'] = $this->load->controller('common/search');
+		// $data['search'] = $this->load->controller('common/search');
 		$data['cart'] = $this->load->controller('common/cart');
 		$data['menu'] = $this->load->controller('common/menu');
 

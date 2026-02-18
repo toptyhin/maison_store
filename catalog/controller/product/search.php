@@ -461,4 +461,41 @@ class ControllerProductSearch extends Controller {
 
 		$this->response->setOutput($this->load->view('product/search', $data));
 	}
+
+	public function autocomplete() {
+		$json = array();
+
+		$search = isset($this->request->get['search']) ? $this->request->get['search'] : (isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '');
+
+		if (strlen($search) >= 2) {
+			$this->load->model('catalog/product');
+			$this->load->model('tool/image');
+
+			$filter_data = array(
+				'filter_name' => $search,
+				'start'       => 0,
+				'limit'       => 10
+			);
+
+			$results = $this->model_catalog_product->getProducts($filter_data);
+
+			foreach ($results as $result) {
+				if ($result['image']) {
+					$image = $this->model_tool_image->resize($result['image'], 40, 40);
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', 40, 40);
+				}
+
+				$json[] = array(
+					'product_id' => $result['product_id'],
+					'name'       => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),
+					'href'       => str_replace('&amp;', '&', $this->url->link('product/product', 'product_id=' . $result['product_id'])),
+					'image'      => $image
+				);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($json));
+	}
 }
