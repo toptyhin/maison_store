@@ -196,6 +196,11 @@ class ControllerProductCategory extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
+			// Подсчет показанных товаров
+			$product_shown = count($results);
+			$data['product_total'] = $product_total;
+			$data['product_shown'] = $product_shown;
+
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -412,6 +417,8 @@ class ControllerProductCategory extends Controller {
 			$data['sort'] = $sort;
 			$data['order'] = $order;
 			$data['limit'] = $limit;
+
+			$data['product_filter'] = $this->load->view('product/filter', $data);
 
 			$data['continue'] = $this->url->link('common/home');
 

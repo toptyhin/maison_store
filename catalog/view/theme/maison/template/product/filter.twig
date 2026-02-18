@@ -1,0 +1,353 @@
+<aside class="w-full lg:w-72 flex-shrink-0">
+	<div class="sticky top-28 space-y-4 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 pb-10">
+		<div class="flex items-center justify-between lg:hidden mb-4">
+			<h2 class="text-xl font-serif text-luxury-charcoal">Фильтры</h2>
+			<button class="text-primary font-bold uppercase text-xs tracking-widest">Скрыть</button>
+		</div>
+		<details class="group border-b border-gray-200 pb-4" open="">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Цена
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 px-1">
+				<div class="flex items-center gap-4 mb-4">
+					<div class="flex-1">
+						<label class="text-[10px] uppercase text-gray-400 mb-1 block">От</label>
+						<input class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="0" type="number"/>
+					</div>
+					<div class="flex-1">
+						<label class="text-[10px] uppercase text-gray-400 mb-1 block">До</label>
+						<input class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="50000" type="number"/>
+					</div>
+				</div>
+				<input class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="50000" min="0" type="range"/>
+			</div>
+		</details>
+		<div class="border-b border-gray-200 pb-4 pt-2 space-y-4">
+			<label class="flex items-center justify-between cursor-pointer group">
+				<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Top
+												                                    Brands</span>
+				<div class="relative inline-flex items-center cursor-pointer">
+					<input class="sr-only peer" type="checkbox" value=""/>
+					<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+				</div>
+			</label>
+			<label class="flex items-center justify-between cursor-pointer group">
+				<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Высокий
+												                                    рейтинг</span>
+				<div class="relative inline-flex items-center cursor-pointer">
+					<input class="sr-only peer" type="checkbox" value=""/>
+					<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+				</div>
+			</label>
+			<label class="flex items-center justify-between cursor-pointer group">
+				<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Сделано
+												                                    в России</span>
+				<div class="relative inline-flex items-center cursor-pointer">
+					<input checked="" class="sr-only peer" type="checkbox" value=""/>
+					<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+				</div>
+			</label>
+			<label class="flex items-center justify-between cursor-pointer group">
+				<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Баллы
+												                                    за отзывы</span>
+				<div class="relative inline-flex items-center cursor-pointer">
+					<input class="sr-only peer" type="checkbox" value=""/>
+					<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+				</div>
+			</label>
+		</div>
+		<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Бренд
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Boris</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Candie's</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Roberto
+														                                        Cavalli</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Mency</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">HOLMS</span>
+				</label>
+				<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Размерность
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Евро</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Полуторный</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Двуспальный
+														                                        с пр. Евро</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Двуспальный</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Семейный</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Ткань
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Сатин</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Хлопок</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Страйп-сатин</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Лен</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Тенсель</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Вискоза</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Наволочка
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">50x70</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">70x70</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Комплектация
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">1
+														                                        пододеяльник</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">2
+														                                        наволочки</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">4
+														                                        наволочки</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Простыня
+														                                        в компл.</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Размер простыни
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">160x225</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">220x240</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">230x250</span>
+				</label>
+				<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Пододеяльник
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">150x215</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">200x220</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">220x240</span>
+				</label>
+				<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Вид простыни
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Стандартная</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">На
+														                                        резинке</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Возраст
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Взрослая</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Детская</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Страна
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Турция</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Китай</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Россия</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Плотность плетения
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Высокая</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Выше
+														                                        среднего</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Средняя</span>
+				</label>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Принт
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 space-y-3">
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Однотонный</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Цветы</span>
+				</label>
+				<label class="flex items-center gap-3 cursor-pointer group/item">
+					<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+					<span class="text-sm text-gray-600 group-hover/item:text-luxury-charcoal transition-colors">Узоры</span>
+				</label>
+				<a class="text-[10px] uppercase font-bold text-primary hover:text-primary-dark mt-2 block pl-7" href="#">Посмотреть все</a>
+			</div>
+		</details>
+		<details class="group border-b border-gray-200 pb-4 pt-2" open="">
+			<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+				Плотность, г/м²
+				<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+			</summary>
+			<div class="pt-4 px-1">
+				<div class="flex items-center gap-4 mb-4">
+					<span class="text-xs text-luxury-charcoal font-bold">130</span>
+					<input class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" max="170" min="130" type="range" value="150"/>
+					<span class="text-xs text-luxury-charcoal font-bold">170</span>
+				</div>
+			</div>
+		</details>
+		<div class="py-4">
+			<label class="flex items-center gap-3 cursor-pointer group/item">
+				<input class="form-checkbox text-primary border-gray-300 rounded-sm focus:ring-0 cursor-pointer" type="checkbox"/>
+				<span class="text-sm text-gray-600 font-bold group-hover/item:text-luxury-charcoal transition-colors uppercase tracking-wider text-[10px]">На
+												                                    молнии</span>
+			</label>
+		</div>
+	</div>
+</aside>

@@ -1,0 +1,194 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}
+              <div class="text-danger">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_category }}</label>
+            <div class="col-sm-10">
+              <div id="categories-list">
+                {% set category_index = 0 %}
+                {% for category in categories %}
+                <div class="panel panel-default category-item" data-index="{{ category_index }}">
+                  <div class="panel-heading">
+                    <button type="button" class="btn btn-danger btn-xs pull-right remove-category"><i class="fa fa-minus-circle"></i> Удалить</button>
+                    <h4 class="panel-title">Категория #{{ category_index + 1 }}</h4>
+                  </div>
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_category }}</label>
+                      <div class="col-sm-10">
+                        <select name="categories[{{ category_index }}][category_id]" class="form-control">
+                          <option value="0">--- Не выбрано ---</option>
+                          {% for cat in category_list %}
+                          <option value="{{ cat.category_id }}" {% if category.category_id is defined and category.category_id == cat.category_id %}selected="selected"{% endif %}>{{ cat.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_icon }}</label>
+                      <div class="col-sm-10">
+                        <input type="text" name="categories[{{ category_index }}][icon]" value="{% if category.icon is defined %}{{ category.icon }}{% endif %}" placeholder="bed, chair, grid_on, texture, water_drop" class="form-control" />
+                        <span class="help-block">Название иконки из Material Symbols (например: bed, chair, grid_on)</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_text }}</label>
+                      <div class="col-sm-10">
+                        <input type="text" name="categories[{{ category_index }}][text]" value="{% if category.text is defined %}{{ category.text }}{% endif %}" placeholder="Название категории" class="form-control" />
+                        <span class="help-block">Если не указано, будет использовано название категории</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_href }}</label>
+                      <div class="col-sm-10">
+                        <input type="text" name="categories[{{ category_index }}][href]" value="{% if category.href is defined %}{{ category.href }}{% endif %}" placeholder="Ссылка (необязательно, если указана категория)" class="form-control" />
+                        <span class="help-block">Если указана категория, ссылка будет сгенерирована автоматически</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_sort_order }}</label>
+                      <div class="col-sm-10">
+                        <input type="text" name="categories[{{ category_index }}][sort_order]" value="{% if category.sort_order is defined %}{{ category.sort_order }}{% else %}0{% endif %}" placeholder="0" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">{{ entry_status }}</label>
+                      <div class="col-sm-10">
+                        <select name="categories[{{ category_index }}][status]" class="form-control">
+                          <option value="1" {% if category.status is not defined or category.status == 1 %}selected="selected"{% endif %}>{{ text_enabled }}</option>
+                          <option value="0" {% if category.status is defined and category.status == 0 %}selected="selected"{% endif %}>{{ text_disabled }}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% set category_index = category_index + 1 %}
+                {% endfor %}
+              </div>
+              <button type="button" id="add-category" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ button_add_category }}</button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+  var categoryIndex = {{ categories|length }};
+  
+  $('#add-category').on('click', function() {
+    var html = '<div class="panel panel-default category-item" data-index="' + categoryIndex + '">';
+    html += '<div class="panel-heading">';
+    html += '<button type="button" class="btn btn-danger btn-xs pull-right remove-category"><i class="fa fa-minus-circle"></i> Удалить</button>';
+    html += '<h4 class="panel-title">Категория #' + (categoryIndex + 1) + '</h4>';
+    html += '</div>';
+    html += '<div class="panel-body">';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_category }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<select name="categories[' + categoryIndex + '][category_id]" class="form-control">';
+    html += '<option value="0">--- Не выбрано ---</option>';
+    {% for cat in category_list %}
+    html += '<option value="{{ cat.category_id }}">{{ cat.name }}</option>';
+    {% endfor %}
+    html += '</select>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_icon }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<input type="text" name="categories[' + categoryIndex + '][icon]" value="" placeholder="bed, chair, grid_on, texture, water_drop" class="form-control" />';
+    html += '<span class="help-block">Название иконки из Material Symbols (например: bed, chair, grid_on)</span>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_text }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<input type="text" name="categories[' + categoryIndex + '][text]" value="" placeholder="Название категории" class="form-control" />';
+    html += '<span class="help-block">Если не указано, будет использовано название категории</span>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_href }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<input type="text" name="categories[' + categoryIndex + '][href]" value="" placeholder="Ссылка (необязательно, если указана категория)" class="form-control" />';
+    html += '<span class="help-block">Если указана категория, ссылка будет сгенерирована автоматически</span>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_sort_order }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<input type="text" name="categories[' + categoryIndex + '][sort_order]" value="0" placeholder="0" class="form-control" />';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="form-group">';
+    html += '<label class="col-sm-2 control-label">{{ entry_status }}</label>';
+    html += '<div class="col-sm-10">';
+    html += '<select name="categories[' + categoryIndex + '][status]" class="form-control">';
+    html += '<option value="1" selected="selected">{{ text_enabled }}</option>';
+    html += '<option value="0">{{ text_disabled }}</option>';
+    html += '</select>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    $('#categories-list').append(html);
+    categoryIndex++;
+  });
+  
+  $(document).on('click', '.remove-category', function() {
+    $(this).closest('.category-item').remove();
+  });
+  </script>
+</div>
+{{ footer }}
