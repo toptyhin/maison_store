@@ -63,7 +63,7 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getProducts($data = array()) {
-		$sql = "SELECT p.product_id, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
+		$sql = "SELECT p.product_id, p.price, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
 
 		if (!empty($data['filter_category_id'])) {
 			if (!empty($data['filter_sub_category'])) {
@@ -159,7 +159,57 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
 
+		if (!empty($data['filter_manufacturer_ids']) && is_array($data['filter_manufacturer_ids'])) {
+			$ids = array_map('intval', $data['filter_manufacturer_ids']);
+			$ids = array_filter($ids);
+			if (!empty($ids)) {
+				$sql .= " AND p.manufacturer_id IN (" . implode(',', $ids) . ")";
+			}
+		}
+
+		if (isset($data['filter_has_discount']) && $data['filter_has_discount']) {
+			$cg = (int)$this->config->get('config_customer_group_id');
+			$sql .= " AND (EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_special ps2 WHERE ps2.product_id = p.product_id AND ps2.customer_group_id = '" . $cg . "' AND (ps2.date_start = '0000-00-00' OR ps2.date_start < NOW()) AND (ps2.date_end = '0000-00-00' OR ps2.date_end > NOW())) OR EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_discount pd3 WHERE pd3.product_id = p.product_id AND pd3.customer_group_id = '" . $cg . "' AND pd3.quantity = 1 AND (pd3.date_start = '0000-00-00' OR pd3.date_start < NOW()) AND (pd3.date_end = '0000-00-00' OR pd3.date_end > NOW())))";
+		}
+
+		if (!empty($data['filter_attribute']) && is_array($data['filter_attribute'])) {
+			foreach ($data['filter_attribute'] as $attr_id => $values) {
+				$attr_id = (int)$attr_id;
+				if ($attr_id <= 0 || empty($values)) continue;
+				$escaped = array();
+				foreach ($values as $v) {
+					$escaped[] = "'" . $this->db->escape(trim($v)) . "'";
+				}
+				$sql .= " AND EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_attribute pa_f WHERE pa_f.product_id = p.product_id AND pa_f.attribute_id = " . $attr_id . " AND pa_f.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa_f.text IN (" . implode(',', $escaped) . "))";
+			}
+		}
+
+		if (!empty($data['filter_option']) && is_array($data['filter_option'])) {
+			foreach ($data['filter_option'] as $opt_id => $value_ids) {
+				$opt_id = (int)$opt_id;
+				if ($opt_id <= 0 || empty($value_ids)) continue;
+				$ids = array_map('intval', $value_ids);
+				$ids = array_filter($ids);
+				if (empty($ids)) continue;
+				$sql .= " AND EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_option_value pov_f WHERE pov_f.product_id = p.product_id AND pov_f.option_id = " . $opt_id . " AND pov_f.option_value_id IN (" . implode(',', $ids) . "))";
+			}
+		}
+
 		$sql .= " GROUP BY p.product_id";
+
+		$having = array();
+		if (isset($data['filter_price_min']) && $data['filter_price_min'] !== '' && (float)$data['filter_price_min'] > 0) {
+			$having[] = "(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END) >= " . (float)$data['filter_price_min'];
+		}
+		if (isset($data['filter_price_max']) && $data['filter_price_max'] !== '' && (float)$data['filter_price_max'] > 0) {
+			$having[] = "(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END) <= " . (float)$data['filter_price_max'];
+		}
+		if (isset($data['filter_rating_min']) && $data['filter_rating_min'] >= 1 && $data['filter_rating_min'] <= 5) {
+			$having[] = "(rating IS NULL OR rating >= " . (float)$data['filter_rating_min'] . ")";
+		}
+		if (!empty($having)) {
+			$sql .= " HAVING " . implode(" AND ", $having);
+		}
 
 		$sort_data = array(
 			'pd.name',
@@ -525,6 +575,65 @@ class ModelCatalogProduct extends Model {
 
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
+		}
+
+		if (!empty($data['filter_manufacturer_ids']) && is_array($data['filter_manufacturer_ids'])) {
+			$ids = array_map('intval', $data['filter_manufacturer_ids']);
+			$ids = array_filter($ids);
+			if (!empty($ids)) {
+				$sql .= " AND p.manufacturer_id IN (" . implode(',', $ids) . ")";
+			}
+		}
+
+		if (isset($data['filter_has_discount']) && $data['filter_has_discount']) {
+			$cg = (int)$this->config->get('config_customer_group_id');
+			$sql .= " AND (EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_special ps2 WHERE ps2.product_id = p.product_id AND ps2.customer_group_id = '" . $cg . "' AND (ps2.date_start = '0000-00-00' OR ps2.date_start < NOW()) AND (ps2.date_end = '0000-00-00' OR ps2.date_end > NOW())) OR EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_discount pd3 WHERE pd3.product_id = p.product_id AND pd3.customer_group_id = '" . $cg . "' AND pd3.quantity = 1 AND (pd3.date_start = '0000-00-00' OR pd3.date_start < NOW()) AND (pd3.date_end = '0000-00-00' OR pd3.date_end > NOW())))";
+		}
+
+		if (!empty($data['filter_attribute']) && is_array($data['filter_attribute'])) {
+			foreach ($data['filter_attribute'] as $attr_id => $values) {
+				$attr_id = (int)$attr_id;
+				if ($attr_id <= 0 || empty($values)) continue;
+				$escaped = array();
+				foreach ($values as $v) {
+					$escaped[] = "'" . $this->db->escape(trim($v)) . "'";
+				}
+				$sql .= " AND EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_attribute pa_f WHERE pa_f.product_id = p.product_id AND pa_f.attribute_id = " . $attr_id . " AND pa_f.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa_f.text IN (" . implode(',', $escaped) . "))";
+			}
+		}
+
+		if (!empty($data['filter_option']) && is_array($data['filter_option'])) {
+			foreach ($data['filter_option'] as $opt_id => $value_ids) {
+				$opt_id = (int)$opt_id;
+				if ($opt_id <= 0 || empty($value_ids)) continue;
+				$ids = array_map('intval', $value_ids);
+				$ids = array_filter($ids);
+				if (empty($ids)) continue;
+				$sql .= " AND EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_option_value pov_f WHERE pov_f.product_id = p.product_id AND pov_f.option_id = " . $opt_id . " AND pov_f.option_value_id IN (" . implode(',', $ids) . "))";
+			}
+		}
+
+		$has_price_min = !empty($data['filter_price_min']) && (float)$data['filter_price_min'] > 0;
+		$has_price_max = !empty($data['filter_price_max']) && (float)$data['filter_price_max'] > 0;
+		$has_rating_min = isset($data['filter_rating_min']) && $data['filter_rating_min'] >= 1 && $data['filter_rating_min'] <= 5;
+		$need_having = $has_price_min || $has_price_max || $has_rating_min;
+
+		if ($need_having) {
+			
+			$from_pos = stripos($sql, ' FROM ');
+			$base_sql = "SELECT p.product_id, p.price, (SELECT AVG(rating) FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1') AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = 1 AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special" . substr($sql, $from_pos);
+			$having = array();
+			if (isset($data['filter_price_min']) && $data['filter_price_min'] !== '' && (float)$data['filter_price_min'] > 0) {
+				$having[] = "(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END) >= " . (float)$data['filter_price_min'];
+			}
+			if (isset($data['filter_price_max']) && $data['filter_price_max'] !== '' && (float)$data['filter_price_max'] > 0) {
+				$having[] = "(CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END) <= " . (float)$data['filter_price_max'];
+			}
+			if (isset($data['filter_rating_min']) && $data['filter_rating_min'] >= 1 && $data['filter_rating_min'] <= 5) {
+				$having[] = "(rating IS NULL OR rating >= " . (float)$data['filter_rating_min'] . ")";
+			}
+			$base_sql .= " GROUP BY p.product_id HAVING " . implode(" AND ", $having);
+			$sql = "SELECT COUNT(*) AS total FROM (" . $base_sql . ") AS pf_sub";
 		}
 
 		$query = $this->db->query($sql);

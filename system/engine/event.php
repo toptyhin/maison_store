@@ -17,6 +17,10 @@
 class Event {
 	protected $registry;
 	protected $data = array();
+
+	public function getData() {
+		return $this->data;
+	}
 	
 	/**
 	 * Constructor

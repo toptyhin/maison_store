@@ -5,12 +5,12 @@
 		{% if products %}
 			{{ product_filter }}
 		{% endif %}
-        <div class="flex-1">
+        <div class="flex-1" id="category-products">
 		    <div class="mb-10">
                 <h1 class="text-4xl md:text-5xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
             </div>
 			{% if products %}
-				<div class="flex items-center justify-between mb-8">
+				<div class="flex items-center justify-between mb-8" id="category-products-header">
 					<p class="text-gray-500 text-sm">Показано {{ product_shown }} из {{ product_total }} товаров</p>
 					<div class="flex items-center gap-2">
 						<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal">Сортировка:</span>
@@ -26,19 +26,32 @@
 						</select>
 					</div>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-					{% for product in products %}
-						{{ include('maison/template/common/product_card.twig', { product: product }) }}
-					{% endfor %}
+				<div id="category-products-grid" class="relative">
+					<div id="category-products-loading">
+						<div id="category-products-loading-spinner"></div>
+					</div>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+						{% for product in products %}
+							{{ include('maison/template/common/product_card.twig', { product: product }) }}
+						{% endfor %}
+					</div>
 				</div>
             </div>
 			{% else %}
-			<div class="flex items-center justify-center h-full">
-				<p class="text-gray-500 text-sm text-center">Товары не найдены</p>
+			<div id="category-products-grid" class="relative">
+				<div id="category-products-loading">
+					<div id="category-products-loading-spinner"></div>
+				</div>
+				<div class="flex items-center justify-center h-full">
+					<p class="text-gray-500 text-sm text-center">Товары не найдены</p>
+				</div>
 			</div>
 			{% endif %}
 		</div>
 	</div>
 </main>
 
+{% if product_filter_script %}
+<script src="{{ product_filter_script }}" type="text/javascript"></script>
+{% endif %}
 {{ footer }}

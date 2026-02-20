@@ -418,6 +418,10 @@ class ControllerProductCategory extends Controller {
 			$data['order'] = $order;
 			$data['limit'] = $limit;
 
+			if (isset($this->request->get['path'])) {
+				$data['path'] = $this->request->get['path'];
+			}
+			$data['category_id'] = $category_id;
 			$data['product_filter'] = $this->load->view('product/filter', $data);
 
 			$data['continue'] = $this->url->link('common/home');
