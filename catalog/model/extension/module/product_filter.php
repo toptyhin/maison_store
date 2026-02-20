@@ -35,11 +35,11 @@ class ModelExtensionModuleProductFilter extends Model {
 				case 'price':
 					$group['name'] = $this->language->get('text_price');
 					$range = $this->getPriceRange($category_id);
-					$group['min'] = $range['min'];
-					$group['max'] = $range['max'];
+					$group['min'] = round($range['min']);
+					$group['max'] = round($range['max']);
 					$group['current'] = array(
-						'min' => isset($this->request->get['filter_price_min']) ? (float)$this->request->get['filter_price_min'] : $range['min'],
-						'max' => isset($this->request->get['filter_price_max']) ? (float)$this->request->get['filter_price_max'] : $range['max']
+						'min' => isset($this->request->get['filter_price_min']) ? round((float)$this->request->get['filter_price_min']) : round($range['min']),
+						'max' => isset($this->request->get['filter_price_max']) ? round((float)$this->request->get['filter_price_max']) : round($range['max'])
 					);
 					break;
 				case 'manufacturer':
@@ -158,6 +158,19 @@ class ModelExtensionModuleProductFilter extends Model {
 		return $query->row;
 	}
 
+	/**
+	 * Get attribute ID by name
+	 * @param string $attribute_name
+	 * @return int|false Attribute ID or false if not found
+	 */
+	public function getAttributeIdByName($attribute_name) {
+		$query = $this->db->query("SELECT attribute_id FROM " . DB_PREFIX . "attribute_description WHERE name = '" . $this->db->escape($attribute_name) . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "' LIMIT 1");
+		if ($query->num_rows) {
+			return (int)$query->row['attribute_id'];
+		}
+		return false;
+	}
+
 	protected function getAttributeValues($category_id, $attribute_id) {
 		$query = $this->db->query("SELECT DISTINCT pa.text
 			FROM " . DB_PREFIX . "product_to_category p2c
@@ -182,7 +195,7 @@ class ModelExtensionModuleProductFilter extends Model {
 	/**
 	 * Get base URL params (path, sort, order, limit, filter, filter_*) from request
 	 */
-	protected function getBaseUrlParams() {
+	public function getBaseUrlParams() {
 		$params = array();
 		if (!empty($this->request->get['path'])) {
 			$params['path'] = $this->request->get['path'];
@@ -200,7 +213,7 @@ class ModelExtensionModuleProductFilter extends Model {
 			$params['filter'] = $this->request->get['filter'];
 		}
 		foreach ($this->request->get as $k => $v) {
-			if ($v !== '' && (strpos($k, 'filter_attr_') === 0 || strpos($k, 'filter_opt_') === 0 || in_array($k, array('filter_manufacturer', 'filter_rating', 'filter_discount', 'filter_price_min', 'filter_price_max')))) {
+			if ($v !== '' && (strpos($k, 'filter_attr_') === 0 || strpos($k, 'filter_opt_') === 0 || in_array($k, array('filter_manufacturer', 'filter_rating', 'filter_discount', 'filter_price_min', 'filter_price_max', 'filter_top_brands', 'filter_rating_high', 'filter_country_russia')))) {
 				$params[$k] = $v;
 			}
 		}
@@ -212,7 +225,7 @@ class ModelExtensionModuleProductFilter extends Model {
 	 * @param array $base
 	 * @param array $extra_keys Keys to include from request (e.g. filter_price_min, filter_price_max)
 	 */
-	protected function buildQueryString($base, $extra_keys = array()) {
+	public function buildQueryString($base, $extra_keys = array()) {
 		foreach ($extra_keys as $key) {
 			if (isset($this->request->get[$key]) && $this->request->get[$key] !== '') {
 				$base[$key] = $this->request->get[$key];

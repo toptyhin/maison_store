@@ -64,6 +64,11 @@ class ModelCatalogProduct extends Model {
 
 	public function getProducts($data = array()) {
 		$sql = "SELECT p.product_id, p.price, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
+		
+		// Add manufacturer purchase count for Top Bands sorting
+		if (!empty($data['filter_top_brands'])) {
+			$sql .= ", (SELECT COALESCE(SUM(op.quantity), 0) FROM " . DB_PREFIX . "order_product op LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id) WHERE op.product_id = p.product_id AND o.order_status_id > '0') AS product_purchases, (SELECT COALESCE(SUM(op2.quantity), 0) FROM " . DB_PREFIX . "order_product op2 LEFT JOIN `" . DB_PREFIX . "order` o2 ON (op2.order_id = o2.order_id) LEFT JOIN " . DB_PREFIX . "product p2 ON (op2.product_id = p2.product_id) WHERE p2.manufacturer_id = p.manufacturer_id AND o2.order_status_id > '0') AS manufacturer_purchases";
+		}
 
 		if (!empty($data['filter_category_id'])) {
 			if (!empty($data['filter_sub_category'])) {
@@ -221,7 +226,10 @@ class ModelCatalogProduct extends Model {
 			'p.date_added'
 		);
 
-		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+		// Top Bands sorting: sort by manufacturer purchase count descending
+		if (!empty($data['filter_top_brands'])) {
+			$sql .= " ORDER BY manufacturer_purchases DESC, product_purchases DESC, LCASE(pd.name) ASC";
+		} elseif (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
 				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
 			} elseif ($data['sort'] == 'p.price') {
@@ -229,14 +237,19 @@ class ModelCatalogProduct extends Model {
 			} else {
 				$sql .= " ORDER BY " . $data['sort'];
 			}
+			
+			if (isset($data['order']) && ($data['order'] == 'DESC')) {
+				$sql .= " DESC, LCASE(pd.name) DESC";
+			} else {
+				$sql .= " ASC, LCASE(pd.name) ASC";
+			}
 		} else {
 			$sql .= " ORDER BY p.sort_order";
-		}
-
-		if (isset($data['order']) && ($data['order'] == 'DESC')) {
-			$sql .= " DESC, LCASE(pd.name) DESC";
-		} else {
-			$sql .= " ASC, LCASE(pd.name) ASC";
+			if (isset($data['order']) && ($data['order'] == 'DESC')) {
+				$sql .= " DESC, LCASE(pd.name) DESC";
+			} else {
+				$sql .= " ASC, LCASE(pd.name) ASC";
+			}
 		}
 
 		if (isset($data['start']) || isset($data['limit'])) {

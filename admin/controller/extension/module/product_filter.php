@@ -59,6 +59,17 @@ class ControllerExtensionModuleProductFilter extends Controller {
 		$this->load->model('setting/module');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			// Process checkbox values (if not set, set to 0)
+			if (!isset($this->request->post['toggle_top_brands'])) {
+				$this->request->post['toggle_top_brands'] = 0;
+			}
+			if (!isset($this->request->post['toggle_rating_high'])) {
+				$this->request->post['toggle_rating_high'] = 0;
+			}
+			if (!isset($this->request->post['toggle_country_russia'])) {
+				$this->request->post['toggle_country_russia'] = 0;
+			}
+			
 			if (!isset($this->request->get['module_id'])) {
 				$this->model_setting_module->addModule('product_filter', $this->request->post);
 			} else {
@@ -101,6 +112,31 @@ class ControllerExtensionModuleProductFilter extends Controller {
 			$data['status'] = $module_info['status'];
 		} else {
 			$data['status'] = 1;
+		}
+
+		// Toggle filters settings
+		if (isset($this->request->post['toggle_top_brands'])) {
+			$data['toggle_top_brands'] = $this->request->post['toggle_top_brands'];
+		} elseif (!empty($module_info['toggle_top_brands'])) {
+			$data['toggle_top_brands'] = $module_info['toggle_top_brands'];
+		} else {
+			$data['toggle_top_brands'] = 1;
+		}
+
+		if (isset($this->request->post['toggle_rating_high'])) {
+			$data['toggle_rating_high'] = $this->request->post['toggle_rating_high'];
+		} elseif (!empty($module_info['toggle_rating_high'])) {
+			$data['toggle_rating_high'] = $module_info['toggle_rating_high'];
+		} else {
+			$data['toggle_rating_high'] = 1;
+		}
+
+		if (isset($this->request->post['toggle_country_russia'])) {
+			$data['toggle_country_russia'] = $this->request->post['toggle_country_russia'];
+		} elseif (!empty($module_info['toggle_country_russia'])) {
+			$data['toggle_country_russia'] = $module_info['toggle_country_russia'];
+		} else {
+			$data['toggle_country_russia'] = 1;
 		}
 
 		$data['category_filter_url'] = $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'], true);

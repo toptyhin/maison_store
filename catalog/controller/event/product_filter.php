@@ -17,18 +17,19 @@ class ControllerEventProductFilter extends Controller {
 		$data = &$args[0];
 
 		// filter_price: "min-max" or separate filter_price_min, filter_price_max
+		// Округляем до целых чисел для работы с инпутами
 		if (!empty($this->request->get['filter_price'])) {
 			$parts = explode('-', $this->request->get['filter_price']);
 			if (count($parts) >= 2) {
-				$data['filter_price_min'] = (float)trim($parts[0]);
-				$data['filter_price_max'] = (float)trim($parts[1]);
+				$data['filter_price_min'] = (float)round((float)trim($parts[0]));
+				$data['filter_price_max'] = (float)round((float)trim($parts[1]));
 			}
 		}
 		if (isset($this->request->get['filter_price_min']) && $this->request->get['filter_price_min'] !== '') {
-			$data['filter_price_min'] = (float)$this->request->get['filter_price_min'];
+			$data['filter_price_min'] = (float)round((float)$this->request->get['filter_price_min']);
 		}
 		if (isset($this->request->get['filter_price_max']) && $this->request->get['filter_price_max'] !== '') {
-			$data['filter_price_max'] = (float)$this->request->get['filter_price_max'];
+			$data['filter_price_max'] = (float)round((float)$this->request->get['filter_price_max']);
 		}
 
 		// filter_manufacturer: comma-separated IDs
@@ -45,9 +46,31 @@ class ControllerEventProductFilter extends Controller {
 			$data['filter_rating_min'] = max(1, min(5, (int)$this->request->get['filter_rating']));
 		}
 
+		// filter_rating_high: show products with rating > 4
+		if (!empty($this->request->get['filter_rating_high'])) {
+			$data['filter_rating_min'] = 4;
+		}
+
 		// filter_discount: 1 = only products with special/discount
 		if (!empty($this->request->get['filter_discount'])) {
 			$data['filter_has_discount'] = true;
+		}
+
+		// filter_top_brands: sort by brand purchase count
+		if (!empty($this->request->get['filter_top_brands'])) {
+			$data['filter_top_brands'] = true;
+		}
+
+		// filter_country_russia: filter by country attribute = "Россия"
+		if (!empty($this->request->get['filter_country_russia'])) {
+			$this->load->model('extension/module/product_filter');
+			$country_attr_id = $this->model_extension_module_product_filter->getAttributeIdByName('страна');
+			if ($country_attr_id) {
+				if (!isset($data['filter_attribute'])) {
+					$data['filter_attribute'] = array();
+				}
+				$data['filter_attribute'][$country_attr_id] = array('Россия');
+			}
 		}
 
 		// filter_attr_{attribute_id}: comma-separated values
@@ -115,6 +138,115 @@ class ControllerEventProductFilter extends Controller {
 		$data['text_apply'] = $this->language->get('text_apply');
 		$data['text_select'] = $this->language->get('text_select');
 		$data['text_no_filters'] = $this->language->get('text_no_filters');
+		
+		// Get module settings for toggle filters
+		$this->load->model('setting/module');
+		$modules = $this->model_setting_module->getModulesByCode('product_filter');
+		$toggle_settings = array(
+			'toggle_top_brands' => 1,
+			'toggle_rating_high' => 1,
+			'toggle_country_russia' => 1
+		);
+		if (!empty($modules)) {
+			foreach ($modules as $module) {
+				if (!empty($module['setting'])) {
+					$settings = json_decode($module['setting'], true);
+					if (!empty($settings)) {
+						if (isset($settings['toggle_top_brands'])) {
+							$toggle_settings['toggle_top_brands'] = (int)$settings['toggle_top_brands'];
+						}
+						if (isset($settings['toggle_rating_high'])) {
+							$toggle_settings['toggle_rating_high'] = (int)$settings['toggle_rating_high'];
+						}
+						if (isset($settings['toggle_country_russia'])) {
+							$toggle_settings['toggle_country_russia'] = (int)$settings['toggle_country_russia'];
+						}
+					}
+					break; // Use first module's settings
+				}
+			}
+		}
+		
+		// Prepare toggle filter data
+		$base_params = $this->model_extension_module_product_filter->getBaseUrlParams();
+		
+		// Top Bands toggle (only if enabled in settings)
+		if ($toggle_settings['toggle_top_brands']) {
+			$top_brands_params = $base_params;
+			if (!empty($this->request->get['filter_top_brands'])) {
+				unset($top_brands_params['filter_top_brands']);
+			} else {
+				$top_brands_params['filter_top_brands'] = '1';
+			}
+			$top_brands_query = $this->model_extension_module_product_filter->buildQueryString($top_brands_params);
+			$data['toggle_top_brands'] = array(
+				'enabled' => true,
+				'active' => !empty($this->request->get['filter_top_brands']),
+				'href' => $this->url->link('product/category', $top_brands_query)
+			);
+		} else {
+			$data['toggle_top_brands'] = array('enabled' => false);
+		}
+		
+		// High Rating toggle (only if enabled in settings)
+		if ($toggle_settings['toggle_rating_high']) {
+			$rating_high_params = $base_params;
+			if (!empty($this->request->get['filter_rating_high'])) {
+				unset($rating_high_params['filter_rating_high']);
+			} else {
+				$rating_high_params['filter_rating_high'] = '1';
+			}
+			$rating_high_query = $this->model_extension_module_product_filter->buildQueryString($rating_high_params);
+			$data['toggle_rating_high'] = array(
+				'enabled' => true,
+				'active' => !empty($this->request->get['filter_rating_high']),
+				'href' => $this->url->link('product/category', $rating_high_query)
+			);
+		} else {
+			$data['toggle_rating_high'] = array('enabled' => false);
+		}
+		
+		// Made in Russia toggle (only if enabled in settings)
+		if ($toggle_settings['toggle_country_russia']) {
+			$country_russia_params = $base_params;
+			$country_attr_id = $this->model_extension_module_product_filter->getAttributeIdByName('страна');
+			if ($country_attr_id) {
+				$attr_key = 'filter_attr_' . $country_attr_id;
+				if (!empty($this->request->get[$attr_key]) && strpos($this->request->get[$attr_key], 'Россия') !== false) {
+					// Remove Russia from filter
+					$current_values = array_map('trim', explode(',', $this->request->get[$attr_key]));
+					$new_values = array_diff($current_values, array('Россия'));
+					if (!empty($new_values)) {
+						$country_russia_params[$attr_key] = implode(',', $new_values);
+					} else {
+						unset($country_russia_params[$attr_key]);
+					}
+				} else {
+					// Add Russia to filter
+					if (!empty($this->request->get[$attr_key])) {
+						$current_values = array_map('trim', explode(',', $this->request->get[$attr_key]));
+						$current_values[] = 'Россия';
+						$country_russia_params[$attr_key] = implode(',', array_unique($current_values));
+					} else {
+						$country_russia_params[$attr_key] = 'Россия';
+					}
+				}
+				$country_russia_query = $this->model_extension_module_product_filter->buildQueryString($country_russia_params);
+				$data['toggle_country_russia'] = array(
+					'enabled' => true,
+					'active' => !empty($this->request->get[$attr_key]) && strpos($this->request->get[$attr_key], 'Россия') !== false,
+					'href' => $this->url->link('product/category', $country_russia_query)
+				);
+			} else {
+				$data['toggle_country_russia'] = array(
+					'enabled' => true,
+					'active' => false,
+					'href' => '#'
+				);
+			}
+		} else {
+			$data['toggle_country_russia'] = array('enabled' => false);
+		}
 	}
 
 	/**
@@ -246,7 +378,7 @@ class ControllerEventProductFilter extends Controller {
 	protected function getExtendedFilterParams() {
 		$out = array();
 		foreach ($this->request->get as $k => $v) {
-			if ($v !== '' && (strpos($k, 'filter_attr_') === 0 || strpos($k, 'filter_opt_') === 0 || in_array($k, array('filter_manufacturer', 'filter_rating', 'filter_discount', 'filter_price_min', 'filter_price_max')))) {
+			if ($v !== '' && (strpos($k, 'filter_attr_') === 0 || strpos($k, 'filter_opt_') === 0 || in_array($k, array('filter_manufacturer', 'filter_rating', 'filter_discount', 'filter_price_min', 'filter_price_max', 'filter_top_brands', 'filter_rating_high', 'filter_country_russia')))) {
 				$out[$k] = $v;
 			}
 		}

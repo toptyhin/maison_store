@@ -18,6 +18,18 @@
 		// Intercept clicks on filter links (discrete values)
 		// All links inside aside are filter links, even when removing filters (URL may not contain filter_)
 		aside.addEventListener('click', function (e) {
+			// Handle toggle filter links specifically
+			var toggleLink = e.target.closest('a.toggle-filter-link');
+			if (toggleLink && toggleLink.href) {
+				var href = toggleLink.getAttribute('href');
+				if (href && href !== '#') {
+					e.preventDefault();
+					e.stopPropagation();
+					loadUrl(href);
+					return false;
+				}
+			}
+			
 			var a = e.target.closest('a');
 			if (a && a.href && aside.contains(a)) {
 				var href = a.getAttribute('href');
@@ -82,9 +94,112 @@
 				loadUrl(window.location.href, true);
 			}
 		});
+
+		// Initialize price filter with debounce
+		initPriceFilter();
 	}
 
-	function loadUrl(url, noPush) {
+	/**
+	 * Initialize price filter with auto-apply on input change (debounced)
+	 */
+	function initPriceFilter() {
+		var forms = document.querySelectorAll('.product-filter-form');
+		if (!forms || forms.length === 0) return;
+
+		forms.forEach(function(form) {
+			var slider = form.querySelector('.filter-price-slider');
+			var minInput = form.querySelector('input[name="filter_price_min"]');
+			var maxInput = form.querySelector('input[name="filter_price_max"]');
+			var maxDisplay = form.querySelector('.filter-price-display-max');
+			
+			if (!minInput || !maxInput) return;
+			
+			// Debounce timer per form
+			var debounceTimer = null;
+			function debounceApplyFilter(callback, delay) {
+				clearTimeout(debounceTimer);
+				debounceTimer = setTimeout(callback, delay);
+			}
+			
+			// Function to apply price filter
+			function applyPriceFilter() {
+				if (typeof window.loadUrl === 'function') {
+					var formData = new FormData(form);
+					var qs = new URLSearchParams(formData).toString();
+					var action = form.getAttribute('action') || form.action || '';
+					var sep = action.indexOf('?') >= 0 ? '&' : '?';
+					var url = action + sep + qs;
+					window.loadUrl(url);
+				} else {
+					// Fallback: dispatch submit event
+					var submitEvent = new Event('submit', {
+						bubbles: true,
+						cancelable: true
+					});
+					form.dispatchEvent(submitEvent);
+				}
+			}
+			
+			// Update slider min attribute when minInput changes
+			if (minInput) {
+				minInput.addEventListener('input', function() {
+					var minVal = parseFloat(this.value) || parseFloat(this.placeholder) || 0;
+					if (slider) {
+						slider.min = minVal;
+						// If slider value is less than new minimum, set to minimum
+						if (parseFloat(slider.value) < minVal) {
+							slider.value = minVal;
+							maxInput.value = Math.round(minVal);
+							if (maxDisplay) {
+								maxDisplay.textContent = Math.round(minVal);
+							}
+						}
+					}
+					
+					// Apply filter with debounce
+					debounceApplyFilter(applyPriceFilter, 800);
+				});
+				
+				// Set initial min value for slider
+				if (slider) {
+					var initialMin = parseFloat(minInput.value) || parseFloat(minInput.placeholder) || 0;
+					slider.min = initialMin;
+				}
+			}
+			
+			// Handle maxInput changes
+			if (maxInput) {
+				maxInput.addEventListener('input', function() {
+					// Apply filter with debounce
+					debounceApplyFilter(applyPriceFilter, 800);
+				});
+			}
+			
+			// Sync slider with inputs
+			if (slider) {
+				slider.addEventListener('input', function() {
+					var val = Math.round(parseFloat(this.value));
+					var minVal = parseFloat(minInput.value) || parseFloat(minInput.placeholder) || 0;
+					
+					// If slider value is less than minimum, set to minimum
+					if (val < minVal) {
+						val = minVal;
+						this.value = val;
+					}
+					
+					maxInput.value = val;
+					if (maxDisplay) {
+						maxDisplay.textContent = val;
+					}
+					
+					// Apply filter with debounce
+					debounceApplyFilter(applyPriceFilter, 800);
+				});
+			}
+		});
+	}
+
+	window.loadUrl = function loadUrl(url, noPush) {
 		// Convert relative URLs to absolute
 		if (url.indexOf('http') !== 0) {
 			var a = document.createElement('a');
@@ -160,6 +275,8 @@
 						var currentFilter = document.querySelector('aside');
 						if (newFilter && currentFilter) {
 							currentFilter.innerHTML = newFilter.innerHTML;
+							// Reinitialize price filter after AJAX update
+							initPriceFilter();
 						}
 						
 						if (!noPush) {

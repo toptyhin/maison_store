@@ -7,8 +7,9 @@
 		</div>
 
 		{% if filter_groups is defined and filter_groups|length > 0 %}
+		{% set toggle_filters_shown = false %}
 			{% for group in filter_groups %}
-				<details class="group border-b border-gray-200 pb-4 pt-2" {{ loop.first ? 'open' : '' }}>
+				<details class="group border-b border-gray-200 pb-4 pt-2" open>
 					<summary class="flex items-center justify-between cursor-pointer py-2 list-none text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
 						{{ group.name }}
 						<span class="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
@@ -24,25 +25,58 @@
 									<div class="flex items-center gap-4 mb-4">
 										<div class="flex-1">
 											<label class="text-[10px] uppercase text-gray-400 mb-1 block">{{ text_from|default('От') }}</label>
-											<input name="filter_price_min" type="number" class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="{{ group.min }}" value="{{ group.current.min }}" min="{{ group.min }}" max="{{ group.max }}" step="1" />
+											<input name="filter_price_min" type="number" class="filter-price-input w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="{{ group.min|round }}" value="{{ group.current.min|round }}" step="1" />
 										</div>
 										<div class="flex-1">
 											<label class="text-[10px] uppercase text-gray-400 mb-1 block">{{ text_to|default('До') }}</label>
-											<input name="filter_price_max" type="number" class="w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="{{ group.max }}" value="{{ group.current.max }}" min="{{ group.min }}" max="{{ group.max }}" step="1" />
+											<input name="filter_price_max" type="number" class="filter-price-input w-full bg-white border border-gray-200 rounded-sm text-sm px-3 py-2 text-luxury-charcoal focus:border-primary focus:ring-0" placeholder="{{ group.max|round }}" value="{{ group.current.max|round }}" step="1" />
 										</div>
 									</div>
 								{% endif %}
 								{% if group.widget_type == 'slider' %}
 									<div class="flex items-center gap-2 mb-4">
-										<span class="text-xs text-luxury-charcoal font-bold filter-price-display-min">{{ group.current.min }}</span>
-										<input type="range" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary filter-price-slider" min="{{ group.min }}" max="{{ group.max }}" value="{{ group.current.max }}" data-min="{{ group.min }}" data-max="{{ group.max }}" />
-										<span class="text-xs text-luxury-charcoal font-bold filter-price-display-max">{{ group.current.max }}</span>
+										<span class="text-xs text-luxury-charcoal font-bold filter-price-display-min">{{ group.current.min|round }}</span>
+										<input type="range" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary filter-price-slider" min="{{ group.min|round }}" max="{{ group.max|round }}" value="{{ group.current.max|round }}"  />
+										<span class="text-xs text-luxury-charcoal font-bold filter-price-display-max">{{ group.current.max|round }}</span>
 									</div>
 								{% endif %}
-								{% if group.widget_type == 'inputs' or group.widget_type == 'slider' %}
-									<button type="submit" class="btn btn-primary btn-sm">{{ text_apply|default('Применить') }}</button>
-								{% endif %}
 							</form>
+							{# Toggle filters section - show after price filter #}
+							{% if not toggle_filters_shown and ((toggle_top_brands.enabled is defined and toggle_top_brands.enabled) or (toggle_rating_high.enabled is defined and toggle_rating_high.enabled) or (toggle_country_russia.enabled is defined and toggle_country_russia.enabled)) %}
+							{% set toggle_filters_shown = true %}
+							<div class="border-b border-gray-200 pb-4 pt-4 mt-4 space-y-4">
+								{# Top Bands toggle #}
+								{% if toggle_top_brands.enabled is defined and toggle_top_brands.enabled %}
+								<a href="{{ toggle_top_brands.href }}" class="flex items-center justify-between cursor-pointer group toggle-filter-link">
+									<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Top Brands</span>
+									<div class="relative inline-flex items-center cursor-pointer">
+										<input class="sr-only peer toggle-filter-checkbox" type="checkbox" {% if toggle_top_brands.active %}checked=""{% endif %} data-filter="top_brands"/>
+										<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+									</div>
+								</a>
+								{% endif %}
+								{# High Rating toggle #}
+								{% if toggle_rating_high.enabled is defined and toggle_rating_high.enabled %}
+								<a href="{{ toggle_rating_high.href }}" class="flex items-center justify-between cursor-pointer group toggle-filter-link">
+									<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Высокий рейтинг</span>
+									<div class="relative inline-flex items-center cursor-pointer">
+										<input class="sr-only peer toggle-filter-checkbox" type="checkbox" {% if toggle_rating_high.active %}checked=""{% endif %} data-filter="rating_high"/>
+										<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+									</div>
+								</a>
+								{% endif %}
+								{# Made in Russia toggle #}
+								{% if toggle_country_russia.enabled is defined and toggle_country_russia.enabled %}
+								<a href="{{ toggle_country_russia.href }}" class="flex items-center justify-between cursor-pointer group toggle-filter-link">
+									<span class="font-bold uppercase text-xs tracking-widest text-luxury-charcoal group-hover:text-primary transition-colors">Сделано в России</span>
+									<div class="relative inline-flex items-center cursor-pointer">
+										<input class="sr-only peer toggle-filter-checkbox" type="checkbox" {% if toggle_country_russia.active %}checked=""{% endif %} data-filter="country_russia"/>
+										<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-charcoal"></div>
+									</div>
+								</a>
+								{% endif %}
+							</div>
+							{% endif %}
 						{% elseif group.values|length > 0 %}
 							{# Discrete values: checkboxes, select #}
 							{% if group.widget_type == 'checkboxes' %}
