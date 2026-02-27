@@ -1,21 +1,31 @@
 {{ header }}
-<div id="information-information" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      {{ description }}{{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+<main class="flex-1 mt-24">
+  {{ content_top }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <nav class="mb-8">
+      <ol class="flex flex-wrap items-center gap-2 text-sm">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="flex items-center gap-2">
+            {% if not loop.first %}
+              <span class="text-gray-300">/</span>
+            {% endif %}
+            {% if loop.last %}
+              <span class="text-gray-500 font-medium">{{ breadcrumb.text }}</span>
+            {% else %}
+              <a href="{{ breadcrumb.href }}" class="text-gray-500 hover:text-luxury-charcoal transition-colors">{{ breadcrumb.text }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </nav>
+
+    <article class="max-w-4xl">
+      <h1 class="text-4xl md:text-5xl font-serif text-luxury-charcoal font-medium mb-10">{{ heading_title }}</h1>
+      <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed [&_p]:mb-4 [&_a]:text-luxury-charcoal [&_a]:font-medium [&_a]:underline [&_a]:decoration-gray-300 [&_a]:underline-offset-4 [&_a]:hover:text-primary [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-2">
+        {{ description|raw }}
+      </div>
+    </article>
+  </div>
+  {{ content_bottom }}
+</main>
 {{ footer }}

@@ -93,6 +93,9 @@ class ControllerProductSpecial extends Controller {
 
 		$results = $this->model_catalog_product->getProductSpecials($filter_data);
 
+		$data['product_total'] = $product_total;
+		$data['product_shown'] = count($results);
+
 		foreach ($results as $result) {
 			if ($result['image']) {
 				$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));

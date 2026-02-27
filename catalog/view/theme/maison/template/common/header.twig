@@ -181,7 +181,7 @@
                     </div>
                     <div id="header-search-dropdown-mobile" class="header-search-dropdown absolute top-full left-0 right-0 mt-1 bg-[#263238] border border-white/20 rounded-xl shadow-lg z-50 overflow-hidden hidden"></div>
                 </form>
-                <button
+                <button type="button" data-callback-open
                     class="w-full mb-8 flex items-center justify-center gap-2 bg-white text-[#263238] py-3 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-primary-light transition-colors shadow-lg">
                     <span class="material-symbols-outlined text-[18px]">call</span> Заказать обратный звонок
                 </button>
@@ -281,11 +281,11 @@
                     </a>
                     <nav class="header-nav hidden min-w-0 lg:flex items-center gap-8">
                         <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
-                            href="#">Каталог</a>
+                            href="/postelnoe_beljo">Каталог</a>
                         <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
-                            href="#">Акции</a>
+                            href="/specials">Акции</a>
                         <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
-                            href="#">О компании</a>
+                            href="/about_us">О компании</a>
                     </nav>
                 </div>
                 <div class="flex flex-1 justify-end items-center gap-6">
@@ -303,9 +303,9 @@
                         <div id="header-search-dropdown" class="header-search-dropdown absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden hidden"></div>
                     </form>
                     <div class="flex gap-2 lg:gap-4">
-                        <button
+                        <button type="button" data-callback-open
                             class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100"
-                            title="Request a Callback">
+                            title="Заказать обратный звонок">
                             <span class="material-symbols-outlined text-[24px]">call</span>
                         </button>
                         <a
@@ -350,4 +350,90 @@
     </div>
   </div>
 </header> #}
+<script>
+(function() {
+    var callbackUrl = {{ callback_url|json_encode|raw }};
+
+    function openCallbackModal() {
+        var appRoot = document.getElementById('app-root');
+        if (appRoot && appRoot.classList.contains('mobile-menu-open') && typeof toggleMobileMenu === 'function') {
+            toggleMobileMenu();
+        }
+        if (document.getElementById('callback-modal')) {
+            document.getElementById('callback-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            return;
+        }
+        fetch(callbackUrl).then(function(r) { return r.text(); }).then(function(html) {
+            var wrap = document.createElement('div');
+            wrap.innerHTML = html;
+            var modal = wrap.querySelector('#callback-modal');
+            if (modal) {
+                document.body.appendChild(modal);
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                bindCallbackEvents();
+            }
+        }).catch(function() {});
+    }
+
+    function closeCallbackModal() {
+        var modal = document.getElementById('callback-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function bindCallbackEvents() {
+        var modal = document.getElementById('callback-modal');
+        if (!modal) return;
+        modal.querySelectorAll('[data-callback-close]').forEach(function(el) {
+            el.onclick = closeCallbackModal;
+        });
+        var form = document.getElementById('callback-form');
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                var btn = form.querySelector('button[type="submit"]');
+                var origText = btn ? btn.textContent : '';
+                if (btn) btn.disabled = true;
+                ['name','phone','agree'].forEach(function(f) {
+                    var err = document.getElementById('callback-error-' + f);
+                    if (err) { err.classList.add('hidden'); err.textContent = ''; }
+                });
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: new URLSearchParams(new FormData(form))
+                }).then(function(r) { return r.json(); }).then(function(json) {
+                    if (json.success) {
+                        closeCallbackModal();
+                        if (typeof alert === 'function') alert(json.success);
+                    } else if (json.error) {
+                        Object.keys(json.error).forEach(function(k) {
+                            var err = document.getElementById('callback-error-' + k);
+                            if (err) { err.textContent = json.error[k]; err.classList.remove('hidden'); }
+                        });
+                    }
+                }).catch(function() {}).finally(function() {
+                    if (btn) { btn.disabled = false; btn.textContent = origText; }
+                });
+            };
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-callback-open]').forEach(function(btn) {
+            btn.addEventListener('click', function() { openCallbackModal(); });
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var m = document.getElementById('callback-modal');
+                if (m && !m.classList.contains('hidden')) closeCallbackModal();
+            }
+        });
+    });
+})();
+</script>
 {# {{ menu }} #}

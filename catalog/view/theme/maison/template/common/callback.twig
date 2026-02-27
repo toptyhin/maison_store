@@ -1,0 +1,45 @@
+<div id="callback-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="callback-modal-title">
+    <div class="callback-modal-backdrop absolute inset-0 bg-luxury-charcoal/60 backdrop-blur-sm transition-opacity cursor-pointer" data-callback-close aria-hidden="true"></div>
+    <div class="relative bg-white rounded-sm shadow-2xl w-full max-w-[500px] overflow-hidden transform transition-all">
+        <button type="button" class="callback-modal-close absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors group" data-callback-close aria-label="Закрыть">
+            <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform duration-300">close</span>
+        </button>
+        <div class="bg-luxury-charcoal p-8 md:p-10 pb-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-bl-full pointer-events-none"></div>
+            <h2 id="callback-modal-title" class="text-2xl md:text-3xl font-serif text-white mb-3 tracking-wide relative z-10">{{ heading_title }}</h2>
+            <p class="text-luxury-silver font-light text-sm md:text-base leading-relaxed relative z-10">
+                {{ text_description }}
+            </p>
+        </div>
+        <div class="p-8 md:p-10 pt-8">
+            <form id="callback-form" class="flex flex-col gap-5" action="{{ action }}" method="post">
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-name">{{ entry_name }}</label>
+                    <input name="name" class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors" id="modal-name" placeholder="Иван Петров" type="text" />
+                    <div id="callback-error-name" class="text-xs text-red-500 hidden"></div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-phone">{{ entry_phone }}</label>
+                    <input name="phone" class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors" id="modal-phone" placeholder="+7 (___) ___-__-__" type="tel" />
+                    <div id="callback-error-phone" class="text-xs text-red-500 hidden"></div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-comment">{{ entry_comment }}</label>
+                    <textarea name="comment" class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors resize-none" id="modal-comment" placeholder="Удобное время для звонка" rows="3"></textarea>
+                </div>
+                {% if show_agree %}
+                <div class="flex items-start gap-3 mt-1 mb-2">
+                    <input name="agree" class="mt-0.5 rounded-sm border-gray-300 text-luxury-charcoal focus:ring-luxury-charcoal/30 cursor-pointer" id="modal-agree" type="checkbox" />
+                    <label class="text-xs text-gray-500 leading-snug cursor-pointer select-none" for="modal-agree">
+                        Я согласен с <a class="underline hover:text-luxury-charcoal decoration-gray-300 underline-offset-2" href="{{ privacy_href }}" target="_blank">{{ privacy_title }}</a>
+                    </label>
+                </div>
+                <div id="callback-error-agree" class="text-xs text-red-500 hidden"></div>
+                {% endif %}
+                <button type="submit" class="w-full bg-luxury-charcoal text-white font-bold uppercase tracking-[0.15em] text-xs py-4 px-6 hover:bg-primary transition-colors duration-300 shadow-lg rounded-sm mt-1">
+                    {{ button_submit }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
