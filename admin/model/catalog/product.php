@@ -56,6 +56,7 @@ class ModelCatalogProduct extends Model {
 									}
 								}
 							}
+							$this->saveOptionValueGroupPrices($product_option_value_id, $product_id, $product_option_value);
 						}
 					}
 				} else {
@@ -208,6 +209,7 @@ class ModelCatalogProduct extends Model {
 		$product_option_value_ids_query = $this->db->query("SELECT product_option_value_id FROM " . DB_PREFIX . "product_option_value WHERE product_id = '" . (int)$product_id . "'");
 		foreach ($product_option_value_ids_query->rows as $row) {
 			$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value_field WHERE product_option_value_id = '" . (int)$row['product_option_value_id'] . "'");
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value_prices WHERE product_option_value_id = '" . (int)$row['product_option_value_id'] . "'");
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option WHERE product_id = '" . (int)$product_id . "'");
@@ -237,6 +239,7 @@ class ModelCatalogProduct extends Model {
 									}
 								}
 							}
+							$this->saveOptionValueGroupPrices($product_option_value_id, $product_id, $product_option_value);
 						}
 					}
 				} else {
@@ -426,6 +429,7 @@ class ModelCatalogProduct extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value_prices WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related WHERE related_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related_article WHERE product_id = '" . (int)$product_id . "'");
@@ -668,6 +672,15 @@ class ModelCatalogProduct extends Model {
 					$custom_fields[] = array('key' => $field['field_key'], 'value' => $field['field_value']);
 				}
 
+				$customer_group_prices = array();
+				$group_price_query = $this->db->query("SELECT customer_group_id, price, special_price FROM " . DB_PREFIX . "product_option_value_prices WHERE product_option_value_id = '" . (int)$product_option_value['product_option_value_id'] . "'");
+				foreach ($group_price_query->rows as $gp) {
+					$customer_group_prices[$gp['customer_group_id']] = array(
+						'price'         => $gp['price'],
+						'special_price' => $gp['special_price']
+					);
+				}
+
 				$product_option_value_data[] = array(
 					'product_option_value_id' => $product_option_value['product_option_value_id'],
 					'option_value_id'         => $product_option_value['option_value_id'],
@@ -679,7 +692,8 @@ class ModelCatalogProduct extends Model {
 					'points_prefix'           => $product_option_value['points_prefix'],
 					'weight'                  => $product_option_value['weight'],
 					'weight_prefix'           => $product_option_value['weight_prefix'],
-					'custom_fields'           => $custom_fields
+					'custom_fields'           => $custom_fields,
+					'customer_group_prices'   => $customer_group_prices
 				);
 			}
 
@@ -695,6 +709,19 @@ class ModelCatalogProduct extends Model {
 		}
 
 		return $product_option_data;
+	}
+
+	private function saveOptionValueGroupPrices($product_option_value_id, $product_id, $product_option_value) {
+		if (empty($product_option_value['customer_group_prices']) || !is_array($product_option_value['customer_group_prices'])) {
+			return;
+		}
+		foreach ($product_option_value['customer_group_prices'] as $customer_group_id => $gp) {
+			$price         = isset($gp['price'])         ? (float)$gp['price']         : 0;
+			$special_price = isset($gp['special_price']) ? (float)$gp['special_price'] : 0;
+			if ($price > 0 || $special_price > 0) {
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value_prices SET product_option_value_id = '" . (int)$product_option_value_id . "', product_id = '" . (int)$product_id . "', customer_group_id = '" . (int)$customer_group_id . "', price = '" . $price . "', special_price = '" . $special_price . "'");
+			}
+		}
 	}
 
 	public function getProductOptionValue($product_id, $product_option_value_id) {

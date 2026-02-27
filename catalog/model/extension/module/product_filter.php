@@ -116,19 +116,25 @@ class ModelExtensionModuleProductFilter extends Model {
 
 	protected function getPriceRange($category_id) {
 		$customer_group_id = (int)$this->config->get('config_customer_group_id');
-		$sql = "SELECT MIN(
-			CASE
-				WHEN ps.product_id IS NOT NULL AND (ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()) THEN ps.price
-				WHEN pd2.product_id IS NOT NULL AND (pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW()) THEN pd2.price
-				ELSE p.price
-			END
-		) AS min_price, MAX(p.price) AS max_price
+		$eff_price = "CASE
+			WHEN povp_agg.min_opt_price IS NOT NULL THEN povp_agg.min_opt_price
+			WHEN ps.product_id IS NOT NULL AND (ps.date_start <= '1000-01-01' OR ps.date_start < NOW()) AND (ps.date_end <= '1000-01-01' OR ps.date_end > NOW()) THEN ps.price
+			WHEN pd2.product_id IS NOT NULL AND (pd2.date_start <= '1000-01-01' OR pd2.date_start < NOW()) AND (pd2.date_end <= '1000-01-01' OR pd2.date_end > NOW()) THEN pd2.price
+			ELSE p.price
+		END";
+		$sql = "SELECT MIN(" . $eff_price . ") AS min_price, MAX(" . $eff_price . ") AS max_price
 		FROM " . DB_PREFIX . "product_to_category p2c
 		LEFT JOIN " . DB_PREFIX . "category_path cp ON (p2c.category_id = cp.category_id)
 		LEFT JOIN " . DB_PREFIX . "product p ON (p2c.product_id = p.product_id)
 		LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id)
-		LEFT JOIN " . DB_PREFIX . "product_special ps ON (p.product_id = ps.product_id AND ps.customer_group_id = '" . $customer_group_id . "' AND (ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))
-		LEFT JOIN " . DB_PREFIX . "product_discount pd2 ON (p.product_id = pd2.product_id AND pd2.customer_group_id = '" . $customer_group_id . "' AND pd2.quantity = 1 AND (pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW()))
+		LEFT JOIN (
+			SELECT pov.product_id, MIN(IF(povp.special_price > 0, povp.special_price, povp.price)) AS min_opt_price
+			FROM " . DB_PREFIX . "product_option_value pov
+			INNER JOIN " . DB_PREFIX . "product_option_value_prices povp ON pov.product_option_value_id = povp.product_option_value_id AND povp.customer_group_id = '" . $customer_group_id . "'
+			GROUP BY pov.product_id
+		) povp_agg ON p.product_id = povp_agg.product_id
+		LEFT JOIN " . DB_PREFIX . "product_special ps ON (p.product_id = ps.product_id AND ps.customer_group_id = '" . $customer_group_id . "' AND (ps.date_start <= '1000-01-01' OR ps.date_start < NOW()) AND (ps.date_end <= '1000-01-01' OR ps.date_end > NOW()))
+		LEFT JOIN " . DB_PREFIX . "product_discount pd2 ON (p.product_id = pd2.product_id AND pd2.customer_group_id = '" . $customer_group_id . "' AND pd2.quantity = 1 AND (pd2.date_start <= '1000-01-01' OR pd2.date_start < NOW()) AND (pd2.date_end <= '1000-01-01' OR pd2.date_end > NOW()))
 		WHERE cp.path_id = '" . (int)$category_id . "' AND p.status = 1 AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 		$query = $this->db->query($sql);
 		return array(

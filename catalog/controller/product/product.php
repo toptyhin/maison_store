@@ -387,12 +387,12 @@ class ControllerProductProduct extends Controller {
 						}
 
 
-						$discounted_price = false;
-						$discounted_price_raw = null;
-						if (!empty($option_value['custom_fields']['discounted_price']) && (float)$option_value['custom_fields']['discounted_price'] > 0 && (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))) {
-							$discounted_price_raw = (float)$option_value['custom_fields']['discounted_price'];
-							$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
-						}
+				$discounted_price = false;
+				$discounted_price_raw = null;
+				if (!empty($option_value['special_price']) && (float)$option_value['special_price'] > 0 && (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))) {
+					$discounted_price_raw = (float)$option_value['special_price'];
+					$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
+				}
 
 						$option_image_thumb = '';
 						$option_image_popup = '';

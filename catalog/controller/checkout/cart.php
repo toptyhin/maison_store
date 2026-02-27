@@ -116,14 +116,14 @@ class ControllerCheckoutCart extends Controller {
 						'name'  => $option['name'],
 						'value' => (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value)
 					);
-					if (!empty($option['custom_fields']['discounted_price'])) {
-						$discount = $option['price'] - $option['custom_fields']['discounted_price'];
-						$total_discount += $discount * $product['quantity'];
-						$total_original_value += $option['price'] * $product['quantity'];
-						$discount_percentage = $discount / $option['price'] * 100;
-						$discount_percentage = number_format(round($discount_percentage, 0), 0);
-						$old_price = $this->currency->format($option['price'], $this->session->data['currency']);
-					}
+				if (!empty($option['special_price']) && (float)$option['special_price'] > 0) {
+					$discount = $option['price'] - $option['special_price'];
+					$total_discount += $discount * $product['quantity'];
+					$total_original_value += $option['price'] * $product['quantity'];
+					$discount_percentage = $discount / $option['price'] * 100;
+					$discount_percentage = number_format(round($discount_percentage, 0), 0);
+					$old_price = $this->currency->format($option['price'], $this->session->data['currency']);
+				}
 				}
 
 				// Display prices

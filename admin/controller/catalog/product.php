@@ -1387,19 +1387,20 @@ class ControllerCatalogProduct extends Controller {
 							$field['thumb'] = '';
 						}
 					}
-					$product_option_value_data[] = array(
-						'product_option_value_id' => $product_option_value['product_option_value_id'],
-						'option_value_id'         => $product_option_value['option_value_id'],
-						'quantity'                => $product_option_value['quantity'],
-						'subtract'                => $product_option_value['subtract'],
-						'price'                   => $product_option_value['price'],
-						'price_prefix'            => $product_option_value['price_prefix'],
-						'points'                  => $product_option_value['points'],
-						'points_prefix'           => $product_option_value['points_prefix'],
-						'weight'                  => $product_option_value['weight'],
-						'weight_prefix'           => $product_option_value['weight_prefix'],
-						'custom_fields'           => $custom_fields
-					);
+				$product_option_value_data[] = array(
+					'product_option_value_id' => $product_option_value['product_option_value_id'],
+					'option_value_id'         => $product_option_value['option_value_id'],
+					'quantity'                => $product_option_value['quantity'],
+					'subtract'                => $product_option_value['subtract'],
+					'price'                   => $product_option_value['price'],
+					'price_prefix'            => $product_option_value['price_prefix'],
+					'points'                  => $product_option_value['points'],
+					'points_prefix'           => $product_option_value['points_prefix'],
+					'weight'                  => $product_option_value['weight'],
+					'weight_prefix'           => $product_option_value['weight_prefix'],
+					'custom_fields'           => $custom_fields,
+					'customer_group_prices'   => isset($product_option_value['customer_group_prices']) ? $product_option_value['customer_group_prices'] : array()
+				);
 				}
 			}
 
@@ -1424,7 +1425,7 @@ class ControllerCatalogProduct extends Controller {
 			}
 		}
 
-		$data['option_custom_field_keys'] = array('pillow_size', 'sheet_size', 'code', 'images', 'discounted_price');
+		$data['option_custom_field_keys'] = array('pillow_size', 'sheet_size', 'code', 'images');
 
 		$this->load->model('customer/customer_group');
 
