@@ -7,8 +7,8 @@ class ControllerExtensionModuleProductFilter extends Controller {
 
 	public function install() {
 		$this->load->model('setting/event');
-		$this->model_setting_event->addEvent('product_filter', 'model/catalog/product/getProducts/before', 'event/product_filter/injectFilterParams', 1, 0);
-		$this->model_setting_event->addEvent('product_filter', 'model/catalog/product/getTotalProducts/before', 'event/product_filter/injectFilterParams', 1, 0);
+		$this->model_setting_event->addEvent('product_filter', 'catalog/model/catalog/product/getProducts/before', 'event/product_filter/injectFilterParams', 1, 0);
+		$this->model_setting_event->addEvent('product_filter', 'catalog/model/catalog/product/getTotalProducts/before', 'event/product_filter/injectFilterParams', 1, 0);
 		$this->model_setting_event->addEvent('product_filter', 'catalog/view/product/filter/before', 'event/product_filter/addFilterData', 1, 0);
 		$this->model_setting_event->addEvent('product_filter', 'catalog/view/product/category/before', 'event/product_filter/categoryViewBefore', 1, 0);
 		$this->model_setting_event->addEvent('product_filter', 'admin/view/catalog/category_form/after', 'event/product_filter/categoryFormAfter', 1, 0);
