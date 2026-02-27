@@ -44,6 +44,9 @@ class ControllerAccountMenu extends Controller {
 				$menu_active = 'cart';
 				break;
 			case 'account/company':
+			case 'account/company/add':
+			case 'account/company/edit':
+			case 'account/company/delete':
 				$menu_active = 'company';
 				break;				
 			case 'account/edit':
