@@ -1,0 +1,68 @@
+{{ header }}
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    {% if error %}
+    <div class="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[20px]">error</span>
+      {{ error }}
+    </div>
+    {% endif %}
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0">
+        {{ content_top }}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+          </div>
+        </div>
+        <form method="post" action="{{ download_action }}" id="form-pricelist" class="mb-8">
+          <div class="bg-white rounded-lg shadow-soft border border-gray-100 p-6 mb-8">
+            <p class="text-gray-600 text-sm mb-4">{{ text_select_categories }}</p>
+            <div class="max-h-64 overflow-y-auto border border-gray-200 rounded-md p-4 bg-gray-50/50 mb-6">
+              <div class="space-y-2">
+                {% for category in categories %}
+                <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100/50 rounded px-2 py-1 -mx-2 -my-1">
+                  <input type="checkbox" name="category[]" value="{{ category.category_id }}" class="rounded border-gray-300 text-primary focus:ring-primary/20" />
+                  <span class="text-sm text-luxury-charcoal">{{ category.name|raw }}</span>
+                </label>
+                {% for child in category.children %}
+                <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100/50 rounded px-2 py-1 -mx-2 -my-1 pl-6">
+                  <input type="checkbox" name="category[]" value="{{ child.category_id }}" class="rounded border-gray-300 text-primary focus:ring-primary/20" />
+                  <span class="text-sm text-luxury-charcoal">{{ child.name|raw }}</span>
+                </label>
+                {% for subchild in child.children %}
+                <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100/50 rounded px-2 py-1 -mx-2 -my-1 pl-10">
+                  <input type="checkbox" name="category[]" value="{{ subchild.category_id }}" class="rounded border-gray-300 text-primary focus:ring-primary/20" />
+                  <span class="text-sm text-luxury-charcoal">{{ subchild.name|raw }}</span>
+                </label>
+                {% endfor %}
+                {% endfor %}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button type="submit" name="format" value="csv" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+                {{ button_download_csv }}
+              </button>
+              <button type="submit" name="format" value="xls" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-gray-800 transition-colors">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+                {{ button_download_xls }}
+              </button>
+            </div>
+          </div>
+        </form>
+        <div class="mt-6">
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+        {{ content_bottom }}
+      </div>
+    </div>
+  </div>
+</main>
+{{ footer }}

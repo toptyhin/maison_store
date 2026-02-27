@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maison Textile: Профили доставки</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#546E7A",
+                        "primary-dark": "#37474F",
+                        "primary-light": "#B0BEC5",
+                        "background-dark": "#F5F7FA",
+                        "background-card": "#FFFFFF",
+                        "background-section": "#ECEFF1",
+                        "luxury-charcoal": "#263238",
+                        "luxury-silver": "#CFD8DC",
+                        "luxury-cream": "#FFFFFF",
+                        "midnight-blue": "#F5F7FA",
+                        "soft-gold-bg": "#FFFFFF",
+                        "dark-beige": "#90A4AE",
+                        "badge-gold": "#C1A687",
+                        "badge-teal": "#80CBC4",
+                        "discount-red": "#E53935",
+                        "positive-green": "#4CAF50"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
+                        "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
+                        "soft": "0 4px 20px -5px rgba(0,0,0,0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CFD8DC;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #546E7A;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal flex flex-col min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden mobile-menu-closed" id="app-root">
+<div class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm pointer-events-none opacity-0 transition-opacity duration-300" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+<div class="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm z-[70] bg-[#263238] shadow-2xl flex flex-col h-full transform -translate-x-full transition-transform duration-300" id="mobile-menu-drawer">
+<div class="flex items-center justify-between p-6 border-b border-white/10">
+<div class="flex items-center gap-2">
+<div class="size-6 text-primary-light">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-xl font-serif font-bold tracking-wide text-white">Maison</span>
+</div>
+<button class="text-white/80 p-2 hover:bg-white/10 rounded-full transition-colors" onclick="toggleMobileMenu()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto">
+<nav class="flex flex-col gap-5 text-white">
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Главная</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Каталог</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Документы</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Контакты</a>
+</nav>
+</div>
+</div>
+<header class="fixed top-0 left-0 right-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
+<div class="flex items-center gap-4 lg:gap-12">
+<button class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2" onclick="toggleMobileMenu()">
+<span class="material-symbols-outlined text-[28px]">menu</span>
+</button>
+<div class="flex items-center gap-3 text-luxury-charcoal cursor-pointer group">
+<div class="size-8 text-primary group-hover:text-primary-dark transition-all">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison Textile <span class="text-sm font-sans font-normal text-primary align-middle ml-2 uppercase tracking-widest hidden sm:inline-block">B2B Partner</span></h2>
+</div>
+</div>
+<div class="flex flex-1 justify-end items-center gap-6">
+<div class="hidden md:flex items-center gap-2 mr-4">
+<span class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">MT</span>
+<div class="flex flex-col text-right">
+<span class="text-xs font-bold text-luxury-charcoal">ООО "Гранд Отель"</span>
+<span class="text-xs text-gray-500 uppercase tracking-wider">Оптовый партнер</span>
+</div>
+</div>
+<div class="flex gap-2 lg:gap-4">
+<button class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100 relative">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-discount-red rounded-full"></span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 mt-24 bg-background-dark">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+<div class="flex flex-col lg:flex-row gap-8">
+<aside class="w-full lg:w-64 flex-shrink-0">
+<nav class="bg-white rounded-lg shadow-soft p-6 sticky top-28">
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+                                История заказов
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+                                Документы и акты
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                                Скачать прайс-лист
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+                                Избранное
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                                Корзина
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#263238] text-white rounded-md transition-colors font-medium text-sm shadow-md" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+                                Профили доставки
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+                                Мой менеджер
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">business</span>
+                                Данные о компании
+                            </a>
+<div class="h-px bg-gray-100 my-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                                Выход
+                            </a>
+</div>
+<div class="mt-8 pt-6 border-t border-gray-100">
+<p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">Ваш менеджер</p>
+<div class="flex items-center gap-3 mb-4">
+<img alt="Manager" class="size-10 rounded-full object-cover ring-2 ring-primary/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgFhkjGKf5kBBBvjSvc-9NvBNnQlvQizLdd02_L1KmG55MgvJn0GP5i7_fdwFWwI3QK5zO6h3HAkq7p8wjA7boLHBGkiopbAcGM_Y2Ic2Pb6LLsfgrPI49NSLL6siT9YFLD3rsm5Dzda0rSHMWFLh94TKD_VLdiupet8QF1sag2Cp5AlpLrcDrxLf1f7n6WPQ26blv7OSx_HMEa-9MJhMTN_GxGi8UllY1cLg1N4ZywRhqnRtJ3HbM7R-WUXALto83aoNU9CLVs3Q"/>
+<div>
+<p class="text-sm font-bold text-luxury-charcoal">Анна Петрова</p>
+<p class="text-xs text-primary">Senior Partner Manager</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-[#229ED9] text-white text-xs font-bold py-2 rounded-md hover:bg-[#1A86B9] transition-colors">
+<svg class="size-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"></path></svg>
+                                Связаться в Telegram
+                            </button>
+</div>
+</nav>
+</aside>
+<div class="flex-1 min-w-0">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="text-3xl font-serif text-luxury-charcoal font-medium">Профили доставки</h1>
+<p class="text-gray-500 mt-1 text-sm">Управление адресами для оптовых отгрузок</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-[#263238] text-white px-6 py-3 rounded-md hover:bg-primary transition-colors text-xs font-bold uppercase tracking-widest shadow-md">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                                Добавить новый адрес
+                            </button>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:border-primary/30 transition-all duration-300">
+<div class="flex items-start gap-5">
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">warehouse</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<h3 class="text-lg font-bold text-luxury-charcoal">Центральный склад</h3>
+<span class="bg-gray-100 text-gray-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded tracking-wider border border-gray-200">Основной</span>
+</div>
+<p class="text-sm text-gray-500 max-w-lg leading-relaxed">
+                                    143441, Московская область, г. Красногорск, ул. Международная, д. 20, Складской комплекс "Север", ворота 12-14
+                                </p>
+<div class="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                                        Контактное лицо: Иванов Сергей
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">phone</span>
+                                        +7 (999) 123-45-67
+                                    </div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                                    Редактировать
+                                </button>
+<div class="w-px h-6 bg-gray-200 hidden md:block"></div>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                    Удалить
+                                </button>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:border-primary/30 transition-all duration-300">
+<div class="flex items-start gap-5">
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-lg font-bold text-luxury-charcoal">Бутик "Арбат"</h3>
+<p class="text-sm text-gray-500 max-w-lg leading-relaxed">
+                                    119002, г. Москва, ул. Арбат, д. 35, пом. 2, вход со двора
+                                </p>
+<div class="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                                        Контактное лицо: Смирнова Елена
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">phone</span>
+                                        +7 (925) 555-01-23
+                                    </div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                                    Редактировать
+                                </button>
+<div class="w-px h-6 bg-gray-200 hidden md:block"></div>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                    Удалить
+                                </button>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:border-primary/30 transition-all duration-300">
+<div class="flex items-start gap-5">
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">store</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="text-lg font-bold text-luxury-charcoal">Аутлет Village Белая Дача</h3>
+<p class="text-sm text-gray-500 max-w-lg leading-relaxed">
+                                    140053, Московская обл., г. Котельники, Новорязанское ш., д. 8, стр. 11
+                                </p>
+<div class="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                                        Контактное лицо: Петров Александр
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-gray-500">
+<span class="material-symbols-outlined text-[16px]">phone</span>
+                                        +7 (916) 777-88-99
+                                    </div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                                    Редактировать
+                                </button>
+<div class="w-px h-6 bg-gray-200 hidden md:block"></div>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                                    Удалить
+                                </button>
+</div>
+</div>
+</div>
+<div class="bg-gray-50 border border-gray-200 border-dashed rounded-lg p-12 mt-8 flex flex-col items-center justify-center text-center hover:bg-gray-100/50 transition-colors cursor-pointer">
+<div class="size-16 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-[32px] text-gray-400">add_location_alt</span>
+</div>
+<h3 class="text-lg font-bold text-luxury-charcoal mb-2">Добавить новый адрес</h3>
+<p class="text-sm text-gray-500 max-w-md">Вы можете добавить неограниченное количество адресов доставки для разных магазинов вашей сети</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10 mt-auto">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 text-white">
+<div class="size-6 text-primary-light">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+</div>
+<p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани, чистые линии и спокойствие в каждой детали вашего дома.</p>
+<div class="flex flex-col gap-3">
+<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="tel:88005553535">
+<span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                    </a>
+<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="mailto:b2b@maisontextile.ru">
+<span class="material-symbols-outlined text-[20px]">mail</span> b2b@maisontextile.ru
+                    </a>
+</div>
+</div>
+<div class="md:pl-8">
+<h3 class="font-serif text-white text-lg mb-6">Кабинет</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Заказы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Документы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Прайс-лист</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Поддержка</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-serif text-white text-lg mb-6">Документация</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Договор оферты</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Сертификаты качества</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Условия возврата</a></li>
+<li><a class="hover:text-white transition-colors" href="#">API документация</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-serif text-white text-lg mb-6">Помощь</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Частые вопросы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Связаться с менеджером</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+<p>© 2024 Maison Textile B2B. Все права защищены.</p>
+<div class="flex gap-8">
+<a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+<a class="hover:text-white transition-colors" href="#">Условия использования</a>
+</div>
+</div>
+</footer>
+</div>
+<script>
+    // Mobile Menu Toggle Logic
+    const appRoot = document.getElementById('app-root');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const drawer = document.getElementById('mobile-menu-drawer');
+    function toggleMobileMenu() {
+        const isOpen = !drawer.classList.contains('-translate-x-full');
+        if (isOpen) {
+            // Close
+            drawer.classList.add('-translate-x-full');
+            overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+        } else {
+            // Open
+            drawer.classList.remove('-translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100', 'pointer-events-auto');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+</script>
+
+</body></html>

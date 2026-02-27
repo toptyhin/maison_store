@@ -1,0 +1,191 @@
+{{ header }}
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    {% if success %}
+    <div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[20px]">check_circle</span>
+      {{ success }}
+    </div>
+    {% endif %}
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0">
+        {{ content_top }}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+          </div>
+        </div>
+        {% if documents or filter_applied %}
+                        <form method="get" action="{{ form_action }}" id="form-document-filter" class="mb-8">
+                            <input type="hidden" name="route" value="account/documents" />
+                        <div class="bg-white rounded-lg shadow-soft border border-gray-100 p-6 mb-8">
+                            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                                <div class="relative flex-1 w-full md:max-w-md">
+                                    <span
+                                        class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 material-symbols-outlined">search</span>
+                                    <input name="filter_search" value="{{ filter_search }}"
+                                        class="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm placeholder-gray-400 text-luxury-charcoal"
+                                        placeholder="{{ filter_search_placeholder }}" type="text" />
+                                </div>
+                                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                                    <div class="relative w-full sm:w-48">
+                                        <select name="filter_type"
+                                            class="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-luxury-charcoal appearance-none cursor-pointer">
+                                            <option value="">{{ filter_all_types }}</option>
+                                            {% for key, label in document_types %}
+                                            <option value="{{ key }}" {{ filter_type == key ? 'selected' : '' }}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                            <span
+                                                class="material-symbols-outlined text-gray-400 text-[20px]">expand_more</span>
+                                        </div>
+                                    </div>
+                                    <div class="relative w-full sm:w-48">
+                                        <input name="filter_date" value="{{ filter_date }}"
+                                            class="w-full pl-4 pr-4 py-2.5 bg-white border border-gray-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-luxury-charcoal cursor-pointer"
+                                            placeholder="{{ filter_period_placeholder }}" type="date" />
+                                    </div>
+                                    <button type="submit" class="px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors">
+                                        {{ button_apply }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+
+                        {% if documents %}
+                        <div class="flex flex-col gap-8">
+                            <div class="w-full bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm text-gray-500">
+                                        <thead
+                                            class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+                                            <tr>
+                                                <th class="px-6 py-4 font-semibold w-1/3">{{ column_filename }}</th>
+                                                <th class="px-6 py-4 font-semibold">{{ column_document_type }}</th>
+                                                <th class="px-6 py-4 font-semibold">{{ column_date_added }}</th>
+                                                <th class="px-6 py-4 font-semibold">{{ column_order_id }}</th>
+                                                <th class="px-6 py-4 font-semibold text-right">Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            {% for document in documents %}
+                                            {% set type_key = document.document_type_key %}
+                                            {% set icon_bg = type_key == 'invoice' or type_key == 'invoice_factura' ? 'bg-primary/10 text-primary' : (type_key == 'act' ? 'bg-green-50 text-green-600' : (type_key == 'delivery_note' ? 'bg-gray-100 text-gray-500' : (type_key == 'contract' ? 'bg-purple-50 text-purple-600' : 'bg-gray-100 text-gray-500'))) %}
+                                            {% set icon_name = type_key == 'invoice' or type_key == 'invoice_factura' ? 'description' : (type_key == 'act' ? 'receipt_long' : (type_key == 'delivery_note' ? 'local_shipping' : (type_key == 'contract' ? 'gavel' : 'description'))) %}
+                                            {% set badge_style = type_key == 'invoice' or type_key == 'invoice_factura' ? 'bg-blue-50 text-blue-700' : (type_key == 'act' ? 'bg-green-50 text-green-700' : (type_key == 'delivery_note' ? 'bg-gray-100 text-gray-700' : (type_key == 'contract' ? 'bg-purple-50 text-purple-700' : 'bg-gray-100 text-gray-700'))) %}
+                                            <tr class="hover:bg-gray-50/50 transition-colors group">
+                                                <td class="px-6 py-4">
+                                                    <div class="flex items-center gap-3">
+                                                        <div
+                                                            class="size-10 {{ icon_bg }} rounded-md flex items-center justify-center">
+                                                            <span class="material-symbols-outlined">{{ icon_name }}</span>
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-sm font-bold text-luxury-charcoal">{{ document.filename }}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span
+                                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ badge_style }}">
+                                                        {{ document.document_type }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 text-luxury-charcoal">
+                                                    {{ document.date_added }}
+                                                </td>
+                                                <td class="px-6 py-4 text-luxury-charcoal font-medium">
+                                                    {{ text_no_order }}
+                                                </td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <div class="flex items-center justify-end gap-2">
+                                                        <a href="{{ document.download }}" target="_blank"
+                                                            class="p-2 text-gray-400 hover:text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors"
+                                                            title="{{ button_download }} PDF">
+                                                            <span
+                                                                class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% if pagination %}
+                                <div class="p-4 border-t border-gray-100 flex justify-center bg-gray-50">
+                                    {{ pagination }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="bg-white rounded-lg shadow-soft border border-gray-100 p-12 text-center">
+                          <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">search_off</span>
+                          <p class="text-gray-500 mb-6">{{ text_no_results }}</p>
+                          <a href="{{ action_documents }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+                            {{ button_reset_filters }}
+                          </a>
+                        </div>
+                        {% endif %}
+        {# <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+          <div class="overflow-x-auto">
+            <div class="min-w-[640px]">
+              {% for document in documents %}
+              {% if not loop.first %}
+              <div class="border-t border-gray-100"></div>
+              {% endif %}
+              <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 p-6 items-start sm:items-center">
+                <div class="flex-1 w-full min-w-0 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_document_type }}</span>
+                    <span class="text-luxury-charcoal">{{ document.document_type }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_filename }}</span>
+                    <span class="text-luxury-charcoal">{{ document.filename }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_date_added }}</span>
+                    <span class="text-luxury-charcoal">{{ document.date_added }}</span>
+                  </div>
+                </div>
+                <div class="shrink-0">
+                  <a href="{{ document.download }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    {{ button_download }}
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div> #}
+        {% else %}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 p-12 text-center">
+          <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">description</span>
+          <p class="text-gray-500 mb-6">{{ text_empty }}</p>
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+            {{ button_continue }}
+          </a>
+        </div>
+        {% endif %}
+        {% if documents or filter_applied %}
+        <div class="mt-6">
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+        {% endif %}
+        {{ content_bottom }}
+      </div>
+    </div>
+  </div>
+</main>
+{{ footer }}

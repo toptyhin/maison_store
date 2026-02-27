@@ -221,7 +221,7 @@ class ControllerProductCategory extends Controller {
 					$special = false;
 					$tax_price = (float)$result['price'];
 				}
-				// $this->log->write($result);
+				
 				if (!is_null($result['min_option_price']) && (float)$result['min_option_price'] >= 0) {
 					$min_option_price = $this->currency->format($this->tax->calculate($result['min_option_price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$tax_price = (float)$result['min_option_price'];

@@ -13,6 +13,7 @@ $_['text_customer'] = 'Customers';
 $_['text_customer_group'] = 'Customer Groups';
 $_['text_customer_online'] = 'Customer Online';
 $_['text_customer_approval'] = 'Customer Approvals';
+$_['text_customer_document'] = 'Customer Documents';
 $_['text_custom_field'] = 'Custom Fields';
 $_['text_dashboard'] = 'Dashboard';
 $_['text_design'] = 'Design';

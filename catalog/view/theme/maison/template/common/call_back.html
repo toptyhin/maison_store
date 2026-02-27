@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Maison Textile: Главная</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Maison Textile: Главная</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
             theme: {
                 extend: {
@@ -21,7 +28,7 @@
                         "luxury-charcoal": "#263238",
                         "luxury-silver": "#CFD8DC",
                         "luxury-cream": "#FFFFFF",
-                        "midnight-blue": "#F5F7FA", 
+                        "midnight-blue": "#F5F7FA",
                         "soft-gold-bg": "#FFFFFF",
                         "dark-beige": "#90A4AE",
                         "badge-gold": "#C1A687",
@@ -31,7 +38,7 @@
                         "display": ["Manrope", "sans-serif"],
                         "serif": ["Playfair Display", "serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
                     boxShadow: {
                         "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
                         "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
@@ -41,482 +48,655 @@
             },
         }
     </script>
-<style>
+    <style>
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #F5F7FA;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #CFD8DC;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #546E7A;
         }
+
         .text-shadow {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .text-shadow-hero {
-            text-shadow: 0 4px 12px rgba(255,255,255,0.8);
+            text-shadow: 0 4px 12px rgba(255, 255, 255, 0.8);
         }
+
         .slide-active {
             opacity: 1;
             z-index: 20;
             pointer-events: auto;
         }
+
         .slide-hidden {
             opacity: 0;
             z-index: 10;
             pointer-events: none;
         }
+
         #mobile-menu-overlay {
             transition: opacity 0.3s ease-in-out;
         }
+
         #mobile-menu-drawer {
             transition: transform 0.3s ease-in-out;
         }
+
         .mobile-menu-open #mobile-menu-overlay {
             opacity: 1;
             pointer-events: auto;
         }
+
         .mobile-menu-open #mobile-menu-drawer {
             transform: translateX(0);
         }
+
         .mobile-menu-closed #mobile-menu-overlay {
             opacity: 0;
             pointer-events: none;
         }
+
         .mobile-menu-closed #mobile-menu-drawer {
             transform: translateX(-100%);
         }
     </style>
 </head>
-<body class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal">
-<div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-<div aria-hidden="true" class="absolute inset-0 bg-luxury-charcoal/60 backdrop-blur-sm transition-opacity"></div>
-<div class="relative bg-white rounded-sm shadow-2xl w-full max-w-[500px] overflow-hidden transform transition-all">
-<button class="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors group">
-<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform duration-300">close</span>
-</button>
-<div class="bg-luxury-charcoal p-8 md:p-10 pb-8 text-center relative overflow-hidden">
-<div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-bl-full pointer-events-none"></div>
-<h2 class="text-2xl md:text-3xl font-serif text-white mb-3 tracking-wide relative z-10">Заказать обратный звонок</h2>
-<p class="text-luxury-silver font-light text-sm md:text-base leading-relaxed relative z-10">
+
+<body
+    class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div aria-hidden="true" class="absolute inset-0 bg-luxury-charcoal/60 backdrop-blur-sm transition-opacity">
+        </div>
+        <div
+            class="relative bg-white rounded-sm shadow-2xl w-full max-w-[500px] overflow-hidden transform transition-all">
+            <button class="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors group">
+                <span
+                    class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform duration-300">close</span>
+            </button>
+            <div class="bg-luxury-charcoal p-8 md:p-10 pb-8 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-bl-full pointer-events-none"></div>
+                <h2 class="text-2xl md:text-3xl font-serif text-white mb-3 tracking-wide relative z-10">Заказать
+                    обратный звонок</h2>
+                <p class="text-luxury-silver font-light text-sm md:text-base leading-relaxed relative z-10">
                     Оставьте ваши контакты, и наш специалист свяжется с вами в ближайшее время
                 </p>
-</div>
-<div class="p-8 md:p-10 pt-8">
-<form class="flex flex-col gap-5">
-<div class="space-y-1.5">
-<label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-name">Ваше имя</label>
-<input class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors" id="modal-name" placeholder="Иван Петров" type="text"/>
-</div>
-<div class="space-y-1.5">
-<label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-phone">Номер телефона</label>
-<input class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors" id="modal-phone" placeholder="+7 (___) ___-__-__" type="tel"/>
-</div>
-<div class="space-y-1.5">
-<label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500" for="modal-comment">Комментарий</label>
-<textarea class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors resize-none" id="modal-comment" placeholder="Удобное время для звонка" rows="3"></textarea>
-</div>
-<div class="flex items-start gap-3 mt-1 mb-2">
-<input class="mt-0.5 rounded-sm border-gray-300 text-luxury-charcoal focus:ring-luxury-charcoal/30 cursor-pointer" id="modal-agree" type="checkbox"/>
-<label class="text-xs text-gray-500 leading-snug cursor-pointer select-none" for="modal-agree">
-                            Я согласен с <a class="underline hover:text-luxury-charcoal decoration-gray-300 underline-offset-2" href="#">условиями обработки персональных данных</a>
-</label>
-</div>
-<button class="w-full bg-luxury-charcoal text-white font-bold uppercase tracking-[0.15em] text-xs py-4 px-6 hover:bg-primary transition-colors duration-300 shadow-lg rounded-sm mt-1" type="button">
+            </div>
+            <div class="p-8 md:p-10 pt-8">
+                <form class="flex flex-col gap-5">
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500"
+                            for="modal-name">Ваше имя</label>
+                        <input
+                            class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors"
+                            id="modal-name" placeholder="Иван Петров" type="text" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500"
+                            for="modal-phone">Номер телефона</label>
+                        <input
+                            class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors"
+                            id="modal-phone" placeholder="+7 (___) ___-__-__" type="tel" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-500"
+                            for="modal-comment">Комментарий</label>
+                        <textarea
+                            class="w-full border-gray-200 border rounded-sm px-4 py-3 text-sm text-luxury-charcoal placeholder-gray-300 focus:border-luxury-charcoal focus:ring-0 transition-colors resize-none"
+                            id="modal-comment" placeholder="Удобное время для звонка" rows="3"></textarea>
+                    </div>
+                    <div class="flex items-start gap-3 mt-1 mb-2">
+                        <input
+                            class="mt-0.5 rounded-sm border-gray-300 text-luxury-charcoal focus:ring-luxury-charcoal/30 cursor-pointer"
+                            id="modal-agree" type="checkbox" />
+                        <label class="text-xs text-gray-500 leading-snug cursor-pointer select-none" for="modal-agree">
+                            Я согласен с <a
+                                class="underline hover:text-luxury-charcoal decoration-gray-300 underline-offset-2"
+                                href="#">условиями обработки персональных данных</a>
+                        </label>
+                    </div>
+                    <button
+                        class="w-full bg-luxury-charcoal text-white font-bold uppercase tracking-[0.15em] text-xs py-4 px-6 hover:bg-primary transition-colors duration-300 shadow-lg rounded-sm mt-1"
+                        type="button">
                         Перезвоните мне
                     </button>
-</form>
-</div>
-</div>
-</div>
-<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden mobile-menu-closed" id="app-root">
-<div class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-<div class="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm z-[70] bg-white shadow-2xl flex flex-col h-full transform" id="mobile-menu-drawer">
-<div class="flex items-center justify-between p-6 border-b border-gray-100">
-<div class="flex items-center gap-2">
-<div class="size-6 text-primary">
-<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
-</svg>
-</div>
-<span class="text-xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison</span>
-</div>
-<button class="text-luxury-charcoal p-2 hover:bg-gray-100 rounded-full transition-colors" onclick="toggleMobileMenu()">
-<span class="material-symbols-outlined">close</span>
-</button>
-</div>
-<div class="p-6">
-<div class="flex flex-col min-w-full !h-10 relative group mb-8">
-<div class="flex w-full items-stretch rounded-full h-full bg-gray-50 border border-gray-200 focus-within:border-primary/50 transition-all hover:border-gray-300 shadow-sm">
-<div class="flex items-center justify-center pl-4 text-gray-400 group-focus-within:text-primary">
-<span class="material-symbols-outlined text-[20px]">search</span>
-</div>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal" placeholder="Поиск..." value=""/>
-</div>
-</div>
-<nav class="flex flex-col gap-6">
-<a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal" href="#">Каталог</a>
-<a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal" href="#">Акции</a>
-<a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal" href="#">О компании</a>
-<div class="h-px bg-gray-100 my-2"></div>
-<a class="text-base font-medium flex items-center gap-3 hover:text-primary transition-colors text-luxury-charcoal" href="#">
-<span class="material-symbols-outlined text-[20px]">person</span> Личный кабинет
-                </a>
-<a class="text-base font-medium flex items-center gap-3 hover:text-primary transition-colors text-luxury-charcoal" href="#">
-<span class="material-symbols-outlined text-[20px]">favorite</span> Избранное
-                </a>
-</nav>
-</div>
-<div class="mt-auto p-6 bg-gray-50 border-t border-gray-100">
-<p class="text-xs text-gray-400 text-center">© 2024 Maison Textile</p>
-</div>
-</div>
-<header class="sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm">
-<div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
-<div class="flex items-center gap-4 lg:gap-12">
-<button class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2" onclick="toggleMobileMenu()">
-<span class="material-symbols-outlined text-[28px]">menu</span>
-</button>
-<div class="flex items-center gap-3 text-luxury-charcoal cursor-pointer group">
-<div class="size-8 text-primary group-hover:text-primary-dark transition-all">
-<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
-</svg>
-</div>
-<h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison Textile</h2>
-</div>
-<nav class="hidden lg:flex items-center gap-8">
-<a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80" href="#">Каталог</a>
-<a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80" href="#">Акции</a>
-<a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80" href="#">О компании</a>
-</nav>
-</div>
-<div class="flex flex-1 justify-end items-center gap-6">
-<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-xs relative group">
-<div class="flex w-full flex-1 items-stretch rounded-full h-full bg-white border border-gray-200 focus-within:border-primary/50 transition-all hover:border-gray-300 shadow-sm">
-<div class="flex items-center justify-center pl-4 text-gray-400 group-focus-within:text-primary">
-<span class="material-symbols-outlined text-[20px]">search</span>
-</div>
-<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal" placeholder="Поиск..." value=""/>
-</div>
-</label>
-<div class="flex gap-2 lg:gap-4">
-<button class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100" title="Request a Callback">
-<span class="material-symbols-outlined text-[24px]">call</span>
-</button>
-<button class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
-<span class="material-symbols-outlined text-[24px]">person</span>
-</button>
-<button class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
-<span class="material-symbols-outlined text-[24px]">favorite</span>
-</button>
-<button class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors relative hover:bg-gray-100">
-<span class="material-symbols-outlined text-[24px]">shopping_bag</span>
-<span class="absolute top-1 right-1 size-2 bg-primary rounded-full shadow-sm"></span>
-</button>
-</div>
-</div>
-</div>
-</header>
-<main class="flex-1">
-<div class="w-full relative group/carousel">
-<div class="absolute inset-0 bg-gradient-to-b from-background-dark/30 to-background-dark z-10 pointer-events-none"></div>
-<div class="relative overflow-hidden w-full h-[85vh] lg:h-[90vh]" id="hero-carousel">
-<div class="absolute inset-0 transition-opacity duration-1000 ease-in-out slide-active" data-slide="0">
-<div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105" style='background-image: linear-gradient(rgba(245, 247, 250, 0.4) 0%, rgba(245, 247, 250, 0.85) 90%, #F5F7FA 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzf9s072KUrZa4XvNSBZG59PL0IeQS6wBNt29OBPCFPfnxCj0d8Latcc-5k18LxbwcyEJtvHDxjI1jc-AuaXM5MOe3zhvSQgZuJZyY5NZ50Z2rTXiPq4waj6wZcakjMQGlvkhyYzdp7mecQrJNAt3YjGw6BD1ohLq9I4k9DK2mWq4U9rc99uvG_e8G3RF3DHa1vnvKpUqSjJy9yUsh4baY0HOMF9x2_RbXWnMbm-Gf68IWaJKfZDadfJz39S8w27o3Zd_JBY1asUA");'></div>
-<div class="relative z-20 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center items-start">
-<div class="flex flex-col gap-6 max-w-3xl">
-<span class="text-primary text-sm font-bold uppercase tracking-[0.3em] pl-1 border-l-2 border-primary drop-shadow-sm">
-                                Скандинавское утро
-                            </span>
-<h1 class="text-luxury-charcoal text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] text-shadow-hero">
-                                Тихая <br/><i class="font-light text-primary/80">Гармония</i>
-</h1>
-<p class="text-gray-600 text-lg md:text-xl font-light leading-relaxed max-w-xl border-l border-primary/20 pl-6 my-4 bg-white/50 backdrop-blur-sm py-2 pr-2 rounded-r-md">
-                                Погрузитесь в прохладную свежесть утренних оттенков и натуральных текстур. Интерьер, созданный для спокойствия и уюта.
-                            </p>
-<div class="flex flex-wrap gap-6 mt-6">
-<button class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 bg-white text-luxury-charcoal hover:bg-primary hover:text-white shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 border border-transparent hover:border-primary">
-                                    Исследовать коллекцию
-                                </button>
-<button class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 border border-luxury-charcoal/30 text-luxury-charcoal hover:bg-white hover:border-transparent hover:shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-sm">
-                                    Смотреть лукбук
-                                </button>
-</div>
-</div>
-</div>
-</div>
-<div class="absolute inset-0 transition-opacity duration-1000 ease-in-out slide-hidden" data-slide="1">
-<div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105" style='background-image: linear-gradient(rgba(245, 247, 250, 0.4) 0%, rgba(245, 247, 250, 0.85) 90%, #F5F7FA 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBoYHladevdXAw2WRsRCB8NsDH3tZ_Trr9BD6oiEvqA4JDD7HINGHPaH_zPDoBKaMXrnvN_ytTapxpA3uIBw6GG4nQsAIoCvZuTQz4LKcaAtmSOTf7isQCYBNBlID_AfQAPo2_bs4Zprfwxb4HHUhXrttMuD9_MfXvpsCORy51Zo4Qy-pCn7hJFkAi6PC82usXtVcP_zwQgQCoTFDlEwm5wj6C6T5NgJ2cs8YAdDUJsRvU_bwrOPhyW0dx2_kuNQwBVZjrZ66pCTHc");'></div>
-<div class="relative z-20 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center items-start">
-<div class="flex flex-col gap-6 max-w-3xl">
-<span class="text-primary text-sm font-bold uppercase tracking-[0.3em] pl-1 border-l-2 border-primary drop-shadow-sm">
-                                Премиальный Комфорт
-                            </span>
-<h1 class="text-luxury-charcoal text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] text-shadow-hero">
-                                Искусство <br/><i class="font-light text-primary/80">Сна</i>
-</h1>
-<p class="text-gray-600 text-lg md:text-xl font-light leading-relaxed max-w-xl border-l border-primary/20 pl-6 my-4 bg-white/50 backdrop-blur-sm py-2 pr-2 rounded-r-md">
-                                Откройте для себя коллекцию из 100% египетского хлопка для непревзойденного комфорта.
-                            </p>
-<div class="flex flex-wrap gap-6 mt-6">
-<button class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 bg-[#263238] text-white hover:bg-primary hover:text-white shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 border border-transparent hover:border-primary">
-                                    Перейти в каталог
-                                </button>
-<button class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 border border-luxury-charcoal/30 text-luxury-charcoal hover:bg-white hover:border-transparent hover:shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-sm">
-                                    О материале
-                                </button>
-</div>
-</div>
-</div>
-</div>
-<button class="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 size-14 rounded-full border border-luxury-charcoal/10 bg-white/30 backdrop-blur-md flex items-center justify-center text-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all duration-300 group opacity-0 group-hover/carousel:opacity-100" onclick="changeSlide(-1)">
-<span class="material-symbols-outlined text-3xl font-light">arrow_back</span>
-</button>
-<button class="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 size-14 rounded-full border border-luxury-charcoal/10 bg-white/30 backdrop-blur-md flex items-center justify-center text-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all duration-300 group opacity-0 group-hover/carousel:opacity-100" onclick="changeSlide(1)">
-<span class="material-symbols-outlined text-3xl font-light">arrow_forward</span>
-</button>
-<div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-<button class="w-3 h-3 rounded-full bg-primary transition-all duration-300 ring-2 ring-transparent ring-offset-2 ring-offset-transparent hover:ring-primary/50" data-dot="0" onclick="goToSlide(0)"></button>
-<button class="w-3 h-3 rounded-full bg-luxury-charcoal/20 hover:bg-primary/50 transition-all duration-300" data-dot="1" onclick="goToSlide(1)"></button>
-</div>
-</div>
-</div>
-<section class="py-24 bg-background-dark relative overflow-hidden">
-<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/30 rounded-full blur-[120px] pointer-events-none"></div>
-<div class="max-w-7xl mx-auto px-6 lg:px-12 mb-12 flex justify-between items-end relative z-10">
-<div>
-<h2 class="text-luxury-charcoal text-4xl font-serif font-medium tracking-tight">Поиск по категориям</h2>
-<p class="text-gray-500 mt-3 font-light">Минималистичный текстиль для каждого уголка дома</p>
-</div>
-<a class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:text-luxury-charcoal transition-colors mb-2" href="#">
-                    Смотреть все <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-<div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-<div class="group cursor-pointer">
-<div class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCvjXnW_JN15E7WXnQAAHJoiZBDmbXPbmFlBuDmeY-XwgDXNDD1A_dIJdsgAZNPv6okd1IxKFp7VDWm_GB0y-6x333ZwmHJjf6pdBpqIImyLVFF93sewe8-3DOndgn90BkBwk6TUsswUmTe0Tc3zOGDp8JZUoWF6tkCjvIe3GXowEAgE-GDV6eI3SCXZ1yFX62bpcLPaKinKtwBRmL3qiRtDHa2uQMmrtCcnaEeko6yY5IlpUs4uJetBdkssNABW1Wvr7wZfrTV0zU");'></div>
-<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80"></div>
-<div class="absolute bottom-0 p-6 w-full">
-<h3 class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">Бельё с одеялом</h3>
-<p class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">Готовые решения</p>
-<div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500"></div>
-</div>
-</div>
-</div>
-<div class="group cursor-pointer">
-<div class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA0CqVewsfaKDaFZAt-LKhXcIH9MfsIuVZLbrQpsqQmz-TpGQSSRPvBGAAtWB9_wAjHwqcXGRyRuL6uIrel38VmELt0GgYt1ZFhURXo-4Ll-5l2d2Sla_U0lenTkyh4_sguJ0ObhdkA8Xdmo_ZDLaPqhxbXDeaVikXWfoYv8SSKvoUASzdXS8HFUjUjmj2kt5iPm-aUz5_whpd3YWoCkrHrxaJ9sc-d7r_PzQa197Dsq-GCL8Gq2ELQODtVDERyHE-2kxbLzAridMU");'></div>
-<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80"></div>
-<div class="absolute bottom-0 p-6 w-full">
-<h3 class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">Подушки</h3>
-<p class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">Анатомический комфорт</p>
-<div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500"></div>
-</div>
-</div>
-</div>
-<div class="group cursor-pointer">
-<div class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAttYyEHKfV4awmXktXKZFRucmZYbYmm0sf-IJ_pKzxnx0XH4UzlQ2OvyfuQXoUI9OnF64SWrZsw6tUHR_hBHtIK8gm_pKUAcKqSCDKbk6fjvEe_KHgB1bTDkY5M4Gcl8ohwBJzsGfYfEEALpJa3-6iDRYRm2_Z_PPUuOTFvP5_Qv3V7muVQgErQovx8XqOWS6229DXGRmCvSf6Nle_YEbydkQtW0ZXC5Y0NGsfQMSHkPz8NM0Mq8TY1fjsXo0jlBXHbj4-zcLDcxY");'></div>
-<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80"></div>
-<div class="absolute bottom-0 p-6 w-full">
-<h3 class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">Пледы и покрывала</h3>
-<p class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">Текстурный уют</p>
-<div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500"></div>
-</div>
-</div>
-</div>
-<div class="group cursor-pointer">
-<div class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAfkKDLwxux6J1InzxDbHS777zGSEVBTWM9nRNyvLVGa1j6r9_lhZ7XiflWK2D1LQ4-epVntBRpVZDZIZZfNV2-f8IjGPwj1y1qE_ZBYLbXJ92EKmEIj7ITpTM3ZPNg-QCQmRHPHN9kG04xqNcK_XOeG3YVH8gXYsB7cxA-464t7GleXDeUs27O-hG895UKlrQawZ7KuTpRMaFuBcEZFNgJgSy76gXHoX2TmELie0j-mcS5kAi3LTtPwudffa65IKaXdEfBdTpUUgc");'></div>
-<div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80"></div>
-<div class="absolute bottom-0 p-6 w-full">
-<h3 class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">Постельное бельё</h3>
-<p class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">Премиальный хлопок</p>
-<div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500"></div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="bg-background-section py-24 border-t border-gray-200 relative">
-<div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-<div class="flex flex-col items-center text-center mb-16">
-<h2 class="text-luxury-charcoal text-4xl font-serif font-medium tracking-tight">Бестселлеры Maison</h2>
-<div class="w-16 h-[3px] bg-primary mt-6 mb-6 rounded-full shadow-gold-glow"></div>
-<p class="text-gray-500 max-w-xl leading-relaxed">Предметы, выбранные нашими самыми взыскательными клиентами за исключительную мягкость, спокойные оттенки и чистый дизайн.</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-<div class="flex flex-col gap-5 group">
-<div class="relative aspect-[3/4] overflow-hidden rounded-sm bg-white shadow-soft border border-gray-200 group-hover:border-primary/30 transition-colors duration-500">
-<img alt="Комплект 'Северное Небо'" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-mJJZfctlygaZDxDydtUi_apeejPtoiZh3Iag5np28sox8hZ5-vULBhoj6E19lHbvGtj9-YkTrBfamu7h29de4yHoe7uRQ4GQmrdDatTsXXZfmRkvFYGXZ4lb1AxeJCgYP4Me_FD38qMDfjRqtdK39Tg1ElcxjbOSxfubD-YtHiML8ggoia0bt_bvt-YgZLlxG1uOLh6b1ilcgESvii7JJEgEHxM6CiTveYSWXHeBw9abH536lw44ft2psJaNhXeBJy-GqJlITY"/>
-<div class="absolute top-4 left-4 bg-badge-gold text-white backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm">ЭКСКЛЮЗИВ</div>
-<div class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-<button class="w-full bg-[#263238] text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-widest hover:bg-[#455A64] hover:border-[#455A64] transition-all duration-300 shadow-lg">В корзину</button>
-</div>
-</div>
-<div class="flex flex-col gap-2 p-2">
-<h4 class="font-serif text-xl text-luxury-charcoal hover:text-primary transition-colors cursor-pointer">Комплект 'Северное Небо'</h4>
-<p class="text-gray-500 text-xs uppercase tracking-widest">Сатин, 800 нитей</p>
-<div class="flex items-center gap-2 mt-1">
-<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="text-luxury-charcoal font-bold text-sm">4.9</span>
-<span class="text-gray-400 text-sm">(124 отзывов)</span>
-</div>
-<p class="font-medium text-primary mt-1 text-lg">45,000 ₽</p>
-</div>
-</div>
-</div>
-<div class="mt-16 flex justify-center w-full">
-<button class="group flex items-center gap-2 bg-[#263238] border border-[#263238] px-10 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-primary hover:border-primary rounded-sm shadow-lg">
-                        Смотреть весь каталог
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden mobile-menu-closed"
+        id="app-root">
+        <div class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" id="mobile-menu-overlay"
+            onclick="toggleMobileMenu()"></div>
+        <div class="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm z-[70] bg-white shadow-2xl flex flex-col h-full transform"
+            id="mobile-menu-drawer">
+            <div class="flex items-center justify-between p-6 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="size-6 text-primary">
+                        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                stroke="currentColor" stroke-width="2"></path>
+                            <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison</span>
+                </div>
+                <button class="text-luxury-charcoal p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    onclick="toggleMobileMenu()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col min-w-full !h-10 relative group mb-8">
+                    <div
+                        class="flex w-full items-stretch rounded-full h-full bg-gray-50 border border-gray-200 focus-within:border-primary/50 transition-all hover:border-gray-300 shadow-sm">
+                        <div
+                            class="flex items-center justify-center pl-4 text-gray-400 group-focus-within:text-primary">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal"
+                            placeholder="Поиск..." value="" />
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-6">
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal"
+                        href="#">Каталог</a>
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal"
+                        href="#">Акции</a>
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary transition-colors text-luxury-charcoal"
+                        href="#">О компании</a>
+                    <div class="h-px bg-gray-100 my-2"></div>
+                    <a class="text-base font-medium flex items-center gap-3 hover:text-primary transition-colors text-luxury-charcoal"
+                        href="#">
+                        <span class="material-symbols-outlined text-[20px]">person</span> Личный кабинет
+                    </a>
+                    <a class="text-base font-medium flex items-center gap-3 hover:text-primary transition-colors text-luxury-charcoal"
+                        href="#">
+                        <span class="material-symbols-outlined text-[20px]">favorite</span> Избранное
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto p-6 bg-gray-50 border-t border-gray-100">
+                <p class="text-xs text-gray-400 text-center">© 2024 Maison Textile</p>
+            </div>
+        </div>
+        <header
+            class="sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
+                <div class="flex items-center gap-4 lg:gap-12">
+                    <button
+                        class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2"
+                        onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-[28px]">menu</span>
                     </button>
-</div>
-</div>
-</section>
-<section class="max-w-7xl mx-auto px-6 lg:px-12 py-24 border-t border-gray-200">
-<div class="bg-[#263238] border border-white/10 rounded-sm p-16 text-center text-white relative overflow-hidden shadow-card-depth">
-<div class="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full -mr-32 -mt-32 blur-[100px]"></div>
-<div class="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full -ml-32 -mb-32 blur-[100px]"></div>
-<div class="relative z-10 max-w-2xl mx-auto">
-<span class="text-white/60 text-xs font-bold uppercase tracking-[0.2em] mb-4 block">Клуб Maison</span>
-<h2 class="text-3xl md:text-5xl font-serif mb-6 text-white">Вдохновение в каждом письме</h2>
-<p class="text-luxury-silver mb-10 font-light">Подпишитесь, чтобы получать советы по интерьеру, ранний доступ к новинкам и закрытые распродажи.</p>
-<form class="flex flex-col md:flex-row gap-0 max-w-md mx-auto border-b border-gray-500 focus-within:border-white transition-colors">
-<input class="flex-1 px-4 py-4 bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:ring-0 focus:border-white/30 text-center md:text-left" placeholder="Введите ваш email" type="email"/>
-<button class="bg-white text-luxury-charcoal border-l border-transparent hover:bg-gray-100 font-bold py-4 px-8 uppercase text-sm tracking-widest transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
-                            Подписаться
+                    <div class="flex items-center gap-3 text-luxury-charcoal cursor-pointer group">
+                        <div class="size-8 text-primary group-hover:text-primary-dark transition-all">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison
+                            Textile</h2>
+                    </div>
+                    <nav class="hidden lg:flex items-center gap-8">
+                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                            href="#">Каталог</a>
+                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                            href="#">Акции</a>
+                        <a class="text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
+                            href="#">О компании</a>
+                    </nav>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-6">
+                    <label class="hidden md:flex flex-col min-w-40 !h-10 max-w-xs relative group">
+                        <div
+                            class="flex w-full flex-1 items-stretch rounded-full h-full bg-white border border-gray-200 focus-within:border-primary/50 transition-all hover:border-gray-300 shadow-sm">
+                            <div
+                                class="flex items-center justify-center pl-4 text-gray-400 group-focus-within:text-primary">
+                                <span class="material-symbols-outlined text-[20px]">search</span>
+                            </div>
+                            <input
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-sm focus:outline-0 focus:ring-0 border-none bg-transparent placeholder:text-gray-400 px-3 text-luxury-charcoal"
+                                placeholder="Поиск..." value="" />
+                        </div>
+                    </label>
+                    <div class="flex gap-2 lg:gap-4">
+                        <button
+                            class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100"
+                            title="Request a Callback">
+                            <span class="material-symbols-outlined text-[24px]">call</span>
                         </button>
-</form>
-</div>
-</div>
-</section>
-</main>
-<footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
-<div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-<div class="flex flex-col gap-6">
-<div class="flex items-center gap-3 text-white">
-<div class="size-6 text-primary-light">
-<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
-</svg>
-</div>
-<h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
-</div>
-<p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани, чистые линии и спокойствие в каждой детали вашего дома.</p>
-<div class="mt-4 flex flex-col gap-6">
-<div class="flex flex-col gap-3">
-<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="tel:88005553535">
-<span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
-                        </a>
-<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="mailto:info@maisontextile.ru">
-<span class="material-symbols-outlined text-[20px]">mail</span> info@maisontextile.ru
-                        </a>
-</div>
-<div class="flex gap-4">
-<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
-<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">camera_alt</span></a>
-<a class="text-gray-400 hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
-</div>
-</div>
-</div>
-<div class="md:pl-8">
-<h3 class="font-serif text-white text-lg mb-6">Коллекции</h3>
-<ul class="flex flex-col gap-3 text-sm text-gray-400">
-<li><a class="hover:text-white transition-colors" href="#">Комплекты белья</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Лен и Хлопок</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Для ванной</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Домашняя одежда</a></li>
-</ul>
-</div>
-<div>
-<h3 class="font-serif text-white text-lg mb-6">Клиентский сервис</h3>
-<ul class="flex flex-col gap-3 text-sm text-gray-400">
-<li><a class="hover:text-white transition-colors" href="#">Доставка и возврат</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Уход за тканями</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Подарочные карты</a></li>
-<li><a class="hover:text-white transition-colors" href="#">Связаться с нами</a></li>
-</ul>
-</div>
-</div>
-<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-<p>© 2024 Maison Textile. Все права защищены.</p>
-<div class="flex gap-8">
-<a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
-<a class="hover:text-white transition-colors" href="#">Условия использования</a>
-<a class="hover:text-white transition-colors" href="#">Cookies</a>
-</div>
-</div>
-</footer>
-</div>
-<script>
-    const slides = document.querySelectorAll('[data-slide]');
-    const dots = document.querySelectorAll('[data-dot]');
-    let currentSlide = 0;
-    const totalSlides = slides.length;
-    let slideInterval;
-    function updateSlide() {
-        slides.forEach((slide, index) => {
-            if (index === currentSlide) {
-                slide.classList.remove('slide-hidden');
-                slide.classList.add('slide-active');
-            } else {
-                slide.classList.remove('slide-active');
-                slide.classList.add('slide-hidden');
-            }
-        });
-        dots.forEach((dot, index) => {
-            if (index === currentSlide) {
-                dot.classList.remove('bg-luxury-charcoal/20', 'hover:bg-primary/50');
-                dot.classList.add('bg-primary');
-            } else {
-                dot.classList.add('bg-luxury-charcoal/20', 'hover:bg-primary/50');
-                dot.classList.remove('bg-primary');
-            }
-        });
-    }
-    function changeSlide(direction) {
-        currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
-        updateSlide();
-        resetInterval();
-    }
-    function goToSlide(index) {
-        currentSlide = index;
-        updateSlide();
-        resetInterval();
-    }
-    function resetInterval() {
-        clearInterval(slideInterval);
+                        <button
+                            class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
+                            <span class="material-symbols-outlined text-[24px]">person</span>
+                        </button>
+                        <button
+                            class="hidden lg:flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
+                            <span class="material-symbols-outlined text-[24px]">favorite</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors relative hover:bg-gray-100">
+                            <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                            <span class="absolute top-1 right-1 size-2 bg-primary rounded-full shadow-sm"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1">
+            <div class="w-full relative group/carousel">
+                <div
+                    class="absolute inset-0 bg-gradient-to-b from-background-dark/30 to-background-dark z-10 pointer-events-none">
+                </div>
+                <div class="relative overflow-hidden w-full h-[85vh] lg:h-[90vh]" id="hero-carousel">
+                    <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out slide-active"
+                        data-slide="0">
+                        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
+                            style='background-image: linear-gradient(rgba(245, 247, 250, 0.4) 0%, rgba(245, 247, 250, 0.85) 90%, #F5F7FA 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzf9s072KUrZa4XvNSBZG59PL0IeQS6wBNt29OBPCFPfnxCj0d8Latcc-5k18LxbwcyEJtvHDxjI1jc-AuaXM5MOe3zhvSQgZuJZyY5NZ50Z2rTXiPq4waj6wZcakjMQGlvkhyYzdp7mecQrJNAt3YjGw6BD1ohLq9I4k9DK2mWq4U9rc99uvG_e8G3RF3DHa1vnvKpUqSjJy9yUsh4baY0HOMF9x2_RbXWnMbm-Gf68IWaJKfZDadfJz39S8w27o3Zd_JBY1asUA");'>
+                        </div>
+                        <div
+                            class="relative z-20 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center items-start">
+                            <div class="flex flex-col gap-6 max-w-3xl">
+                                <span
+                                    class="text-primary text-sm font-bold uppercase tracking-[0.3em] pl-1 border-l-2 border-primary drop-shadow-sm">
+                                    Скандинавское утро
+                                </span>
+                                <h1
+                                    class="text-luxury-charcoal text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] text-shadow-hero">
+                                    Тихая <br /><i class="font-light text-primary/80">Гармония</i>
+                                </h1>
+                                <p
+                                    class="text-gray-600 text-lg md:text-xl font-light leading-relaxed max-w-xl border-l border-primary/20 pl-6 my-4 bg-white/50 backdrop-blur-sm py-2 pr-2 rounded-r-md">
+                                    Погрузитесь в прохладную свежесть утренних оттенков и натуральных текстур. Интерьер,
+                                    созданный для спокойствия и уюта.
+                                </p>
+                                <div class="flex flex-wrap gap-6 mt-6">
+                                    <button
+                                        class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 bg-white text-luxury-charcoal hover:bg-primary hover:text-white shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 border border-transparent hover:border-primary">
+                                        Исследовать коллекцию
+                                    </button>
+                                    <button
+                                        class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 border border-luxury-charcoal/30 text-luxury-charcoal hover:bg-white hover:border-transparent hover:shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-sm">
+                                        Смотреть лукбук
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out slide-hidden"
+                        data-slide="1">
+                        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
+                            style='background-image: linear-gradient(rgba(245, 247, 250, 0.4) 0%, rgba(245, 247, 250, 0.85) 90%, #F5F7FA 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBoYHladevdXAw2WRsRCB8NsDH3tZ_Trr9BD6oiEvqA4JDD7HINGHPaH_zPDoBKaMXrnvN_ytTapxpA3uIBw6GG4nQsAIoCvZuTQz4LKcaAtmSOTf7isQCYBNBlID_AfQAPo2_bs4Zprfwxb4HHUhXrttMuD9_MfXvpsCORy51Zo4Qy-pCn7hJFkAi6PC82usXtVcP_zwQgQCoTFDlEwm5wj6C6T5NgJ2cs8YAdDUJsRvU_bwrOPhyW0dx2_kuNQwBVZjrZ66pCTHc");'>
+                        </div>
+                        <div
+                            class="relative z-20 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center items-start">
+                            <div class="flex flex-col gap-6 max-w-3xl">
+                                <span
+                                    class="text-primary text-sm font-bold uppercase tracking-[0.3em] pl-1 border-l-2 border-primary drop-shadow-sm">
+                                    Премиальный Комфорт
+                                </span>
+                                <h1
+                                    class="text-luxury-charcoal text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] text-shadow-hero">
+                                    Искусство <br /><i class="font-light text-primary/80">Сна</i>
+                                </h1>
+                                <p
+                                    class="text-gray-600 text-lg md:text-xl font-light leading-relaxed max-w-xl border-l border-primary/20 pl-6 my-4 bg-white/50 backdrop-blur-sm py-2 pr-2 rounded-r-md">
+                                    Откройте для себя коллекцию из 100% египетского хлопка для непревзойденного
+                                    комфорта.
+                                </p>
+                                <div class="flex flex-wrap gap-6 mt-6">
+                                    <button
+                                        class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 bg-[#263238] text-white hover:bg-primary hover:text-white shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 border border-transparent hover:border-primary">
+                                        Перейти в каталог
+                                    </button>
+                                    <button
+                                        class="flex cursor-pointer items-center justify-center rounded-sm h-14 px-10 border border-luxury-charcoal/30 text-luxury-charcoal hover:bg-white hover:border-transparent hover:shadow-lg text-base font-bold tracking-widest uppercase transition-all duration-300 backdrop-blur-sm">
+                                        О материале
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 size-14 rounded-full border border-luxury-charcoal/10 bg-white/30 backdrop-blur-md flex items-center justify-center text-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all duration-300 group opacity-0 group-hover/carousel:opacity-100"
+                        onclick="changeSlide(-1)">
+                        <span class="material-symbols-outlined text-3xl font-light">arrow_back</span>
+                    </button>
+                    <button
+                        class="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 size-14 rounded-full border border-luxury-charcoal/10 bg-white/30 backdrop-blur-md flex items-center justify-center text-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all duration-300 group opacity-0 group-hover/carousel:opacity-100"
+                        onclick="changeSlide(1)">
+                        <span class="material-symbols-outlined text-3xl font-light">arrow_forward</span>
+                    </button>
+                    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
+                        <button
+                            class="w-3 h-3 rounded-full bg-primary transition-all duration-300 ring-2 ring-transparent ring-offset-2 ring-offset-transparent hover:ring-primary/50"
+                            data-dot="0" onclick="goToSlide(0)"></button>
+                        <button
+                            class="w-3 h-3 rounded-full bg-luxury-charcoal/20 hover:bg-primary/50 transition-all duration-300"
+                            data-dot="1" onclick="goToSlide(1)"></button>
+                    </div>
+                </div>
+            </div>
+            <section class="py-24 bg-background-dark relative overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/30 rounded-full blur-[120px] pointer-events-none">
+                </div>
+                <div class="max-w-7xl mx-auto px-6 lg:px-12 mb-12 flex justify-between items-end relative z-10">
+                    <div>
+                        <h2 class="text-luxury-charcoal text-4xl font-serif font-medium tracking-tight">Поиск по
+                            категориям</h2>
+                        <p class="text-gray-500 mt-3 font-light">Минималистичный текстиль для каждого уголка дома</p>
+                    </div>
+                    <a class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:text-luxury-charcoal transition-colors mb-2"
+                        href="#">
+                        Смотреть все <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                </div>
+                <div
+                    class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCvjXnW_JN15E7WXnQAAHJoiZBDmbXPbmFlBuDmeY-XwgDXNDD1A_dIJdsgAZNPv6okd1IxKFp7VDWm_GB0y-6x333ZwmHJjf6pdBpqIImyLVFF93sewe8-3DOndgn90BkBwk6TUsswUmTe0Tc3zOGDp8JZUoWF6tkCjvIe3GXowEAgE-GDV6eI3SCXZ1yFX62bpcLPaKinKtwBRmL3qiRtDHa2uQMmrtCcnaEeko6yY5IlpUs4uJetBdkssNABW1Wvr7wZfrTV0zU");'>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80">
+                            </div>
+                            <div class="absolute bottom-0 p-6 w-full">
+                                <h3
+                                    class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">
+                                    Бельё с одеялом</h3>
+                                <p
+                                    class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">
+                                    Готовые решения</p>
+                                <div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA0CqVewsfaKDaFZAt-LKhXcIH9MfsIuVZLbrQpsqQmz-TpGQSSRPvBGAAtWB9_wAjHwqcXGRyRuL6uIrel38VmELt0GgYt1ZFhURXo-4Ll-5l2d2Sla_U0lenTkyh4_sguJ0ObhdkA8Xdmo_ZDLaPqhxbXDeaVikXWfoYv8SSKvoUASzdXS8HFUjUjmj2kt5iPm-aUz5_whpd3YWoCkrHrxaJ9sc-d7r_PzQa197Dsq-GCL8Gq2ELQODtVDERyHE-2kxbLzAridMU");'>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80">
+                            </div>
+                            <div class="absolute bottom-0 p-6 w-full">
+                                <h3
+                                    class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">
+                                    Подушки</h3>
+                                <p
+                                    class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">
+                                    Анатомический комфорт</p>
+                                <div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAttYyEHKfV4awmXktXKZFRucmZYbYmm0sf-IJ_pKzxnx0XH4UzlQ2OvyfuQXoUI9OnF64SWrZsw6tUHR_hBHtIK8gm_pKUAcKqSCDKbk6fjvEe_KHgB1bTDkY5M4Gcl8ohwBJzsGfYfEEALpJa3-6iDRYRm2_Z_PPUuOTFvP5_Qv3V7muVQgErQovx8XqOWS6229DXGRmCvSf6Nle_YEbydkQtW0ZXC5Y0NGsfQMSHkPz8NM0Mq8TY1fjsXo0jlBXHbj4-zcLDcxY");'>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80">
+                            </div>
+                            <div class="absolute bottom-0 p-6 w-full">
+                                <h3
+                                    class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">
+                                    Пледы и покрывала</h3>
+                                <p
+                                    class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">
+                                    Текстурный уют</p>
+                                <div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative bg-white overflow-hidden rounded-sm aspect-[3/4] shadow-soft border border-gray-200 hover:border-primary/30 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAfkKDLwxux6J1InzxDbHS777zGSEVBTWM9nRNyvLVGa1j6r9_lhZ7XiflWK2D1LQ4-epVntBRpVZDZIZZfNV2-f8IjGPwj1y1qE_ZBYLbXJ92EKmEIj7ITpTM3ZPNg-QCQmRHPHN9kG04xqNcK_XOeG3YVH8gXYsB7cxA-464t7GleXDeUs27O-hG895UKlrQawZ7KuTpRMaFuBcEZFNgJgSy76gXHoX2TmELie0j-mcS5kAi3LTtPwudffa65IKaXdEfBdTpUUgc");'>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-80">
+                            </div>
+                            <div class="absolute bottom-0 p-6 w-full">
+                                <h3
+                                    class="text-white text-2xl font-serif mb-1 group-hover:text-primary-light transition-colors">
+                                    Постельное бельё</h3>
+                                <p
+                                    class="text-gray-200 group-hover:text-white text-xs uppercase tracking-widest transition-colors">
+                                    Премиальный хлопок</p>
+                                <div class="h-[1px] w-0 group-hover:w-full bg-white mt-4 transition-all duration-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="bg-background-section py-24 border-t border-gray-200 relative">
+                <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+                    <div class="flex flex-col items-center text-center mb-16">
+                        <h2 class="text-luxury-charcoal text-4xl font-serif font-medium tracking-tight">Бестселлеры
+                            Maison</h2>
+                        <div class="w-16 h-[3px] bg-primary mt-6 mb-6 rounded-full shadow-gold-glow"></div>
+                        <p class="text-gray-500 max-w-xl leading-relaxed">Предметы, выбранные нашими самыми
+                            взыскательными клиентами за исключительную мягкость, спокойные оттенки и чистый дизайн.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+                        <div class="flex flex-col gap-5 group">
+                            <div
+                                class="relative aspect-[3/4] overflow-hidden rounded-sm bg-white shadow-soft border border-gray-200 group-hover:border-primary/30 transition-colors duration-500">
+                                <img alt="Комплект 'Северное Небо'"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95 group-hover:opacity-100"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-mJJZfctlygaZDxDydtUi_apeejPtoiZh3Iag5np28sox8hZ5-vULBhoj6E19lHbvGtj9-YkTrBfamu7h29de4yHoe7uRQ4GQmrdDatTsXXZfmRkvFYGXZ4lb1AxeJCgYP4Me_FD38qMDfjRqtdK39Tg1ElcxjbOSxfubD-YtHiML8ggoia0bt_bvt-YgZLlxG1uOLh6b1ilcgESvii7JJEgEHxM6CiTveYSWXHeBw9abH536lw44ft2psJaNhXeBJy-GqJlITY" />
+                                <div
+                                    class="absolute top-4 left-4 bg-badge-gold text-white backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                    ЭКСКЛЮЗИВ</div>
+                                <div
+                                    class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                    <button
+                                        class="w-full bg-[#263238] text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-widest hover:bg-[#455A64] hover:border-[#455A64] transition-all duration-300 shadow-lg">В
+                                        корзину</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2 p-2">
+                                <h4
+                                    class="font-serif text-xl text-luxury-charcoal hover:text-primary transition-colors cursor-pointer">
+                                    Комплект 'Северное Небо'</h4>
+                                <p class="text-gray-500 text-xs uppercase tracking-widest">Сатин, 800 нитей</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="material-symbols-outlined text-[16px] text-primary"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="text-luxury-charcoal font-bold text-sm">4.9</span>
+                                    <span class="text-gray-400 text-sm">(124 отзывов)</span>
+                                </div>
+                                <p class="font-medium text-primary mt-1 text-lg">45,000 ₽</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-16 flex justify-center w-full">
+                        <button
+                            class="group flex items-center gap-2 bg-[#263238] border border-[#263238] px-10 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-primary hover:border-primary rounded-sm shadow-lg">
+                            Смотреть весь каталог
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <section class="max-w-7xl mx-auto px-6 lg:px-12 py-24 border-t border-gray-200">
+                <div
+                    class="bg-[#263238] border border-white/10 rounded-sm p-16 text-center text-white relative overflow-hidden shadow-card-depth">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full -mr-32 -mt-32 blur-[100px]">
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full -ml-32 -mb-32 blur-[100px]">
+                    </div>
+                    <div class="relative z-10 max-w-2xl mx-auto">
+                        <span class="text-white/60 text-xs font-bold uppercase tracking-[0.2em] mb-4 block">Клуб
+                            Maison</span>
+                        <h2 class="text-3xl md:text-5xl font-serif mb-6 text-white">Вдохновение в каждом письме</h2>
+                        <p class="text-luxury-silver mb-10 font-light">Подпишитесь, чтобы получать советы по интерьеру,
+                            ранний доступ к новинкам и закрытые распродажи.</p>
+                        <form
+                            class="flex flex-col md:flex-row gap-0 max-w-md mx-auto border-b border-gray-500 focus-within:border-white transition-colors">
+                            <input
+                                class="flex-1 px-4 py-4 bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:ring-0 focus:border-white/30 text-center md:text-left"
+                                placeholder="Введите ваш email" type="email" />
+                            <button
+                                class="bg-white text-luxury-charcoal border-l border-transparent hover:bg-gray-100 font-bold py-4 px-8 uppercase text-sm tracking-widest transition-colors whitespace-nowrap shadow-sm hover:shadow-md">
+                                Подписаться
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-white">
+                        <div class="size-6 text-primary-light">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
+                        чистые линии и спокойствие в каждой детали вашего дома.</p>
+                    <div class="mt-4 flex flex-col gap-6">
+                        <div class="flex flex-col gap-3">
+                            <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                                href="tel:88005553535">
+                                <span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                            </a>
+                            <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                                href="mailto:info@maisontextile.ru">
+                                <span class="material-symbols-outlined text-[20px]">mail</span> info@maisontextile.ru
+                            </a>
+                        </div>
+                        <div class="flex gap-4">
+                            <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                    class="material-symbols-outlined">public</span></a>
+                            <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                    class="material-symbols-outlined">camera_alt</span></a>
+                            <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                                    class="material-symbols-outlined">share</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:pl-8">
+                    <h3 class="font-serif text-white text-lg mb-6">Коллекции</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Комплекты белья</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Лен и Хлопок</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Для ванной</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Домашняя одежда</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Клиентский сервис</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Доставка и возврат</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Уход за тканями</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Подарочные карты</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Связаться с нами</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>© 2024 Maison Textile. Все права защищены.</p>
+                <div class="flex gap-8">
+                    <a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+                    <a class="hover:text-white transition-colors" href="#">Условия использования</a>
+                    <a class="hover:text-white transition-colors" href="#">Cookies</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        const slides = document.querySelectorAll('[data-slide]');
+        const dots = document.querySelectorAll('[data-dot]');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        let slideInterval;
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.remove('slide-hidden');
+                    slide.classList.add('slide-active');
+                } else {
+                    slide.classList.remove('slide-active');
+                    slide.classList.add('slide-hidden');
+                }
+            });
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.remove('bg-luxury-charcoal/20', 'hover:bg-primary/50');
+                    dot.classList.add('bg-primary');
+                } else {
+                    dot.classList.add('bg-luxury-charcoal/20', 'hover:bg-primary/50');
+                    dot.classList.remove('bg-primary');
+                }
+            });
+        }
+        function changeSlide(direction) {
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            updateSlide();
+            resetInterval();
+        }
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide();
+            resetInterval();
+        }
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 5000);
+        }
+        // Initialize
         slideInterval = setInterval(() => {
             changeSlide(1);
         }, 5000);
-    }
-    // Initialize
-    slideInterval = setInterval(() => {
-        changeSlide(1);
-    }, 5000);
-    // Mobile Menu Toggle Logic
-    const appRoot = document.getElementById('app-root');
-    function toggleMobileMenu() {
-        if (appRoot.classList.contains('mobile-menu-closed')) {
-            appRoot.classList.remove('mobile-menu-closed');
-            appRoot.classList.add('mobile-menu-open');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        } else {
-            appRoot.classList.remove('mobile-menu-open');
-            appRoot.classList.add('mobile-menu-closed');
-            document.body.style.overflow = ''; // Restore scrolling
+        // Mobile Menu Toggle Logic
+        const appRoot = document.getElementById('app-root');
+        function toggleMobileMenu() {
+            if (appRoot.classList.contains('mobile-menu-closed')) {
+                appRoot.classList.remove('mobile-menu-closed');
+                appRoot.classList.add('mobile-menu-open');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                appRoot.classList.remove('mobile-menu-open');
+                appRoot.classList.add('mobile-menu-closed');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
         }
-    }
-</script>
+    </script>
 
-</body></html>
+</body>
+
+</html>

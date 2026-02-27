@@ -1,0 +1,170 @@
+{{ header }}
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0" id="cart-content">
+        {{ include('maison/template/account/cart_content.twig') }}
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+(function() {
+  var actionEdit = "{{ action|e('js') }}";
+  var actionClear = "{{ action_clear|e('js') }}";
+  var actionSuggestions = "{{ action_suggestions|e('js') }}";
+  var addFormAction = "{{ action_add_sku|e('js') }}";
+  var skuTimer;
+
+  function cartAjax(url, method, body, callback) {
+    var opts = { method: method || 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } };
+    if (body && method === 'POST') {
+      opts.body = body instanceof FormData ? body : new URLSearchParams(body).toString();
+      if (!(body instanceof FormData)) opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+    fetch(url, opts).then(function(r) { return r.json(); }).then(callback).catch(function() { callback({ error: true }); });
+  }
+
+  function refreshCart(html) {
+    var el = document.getElementById('cart-content');
+    if (el && html) { el.innerHTML = html; initCart(); }
+  }
+
+  function initCart() {
+    var wrapper = document.getElementById('cart-sku-wrapper');
+    var skuInput = document.getElementById('cart-sku-input');
+    var skuDropdown = document.getElementById('cart-sku-dropdown');
+    var addForm = document.getElementById('form-add-sku');
+    var addProductId = document.getElementById('add-product-id');
+    var addProductOptionId = document.getElementById('add-product-option-id');
+    var addProductOptionValueId = document.getElementById('add-product-option-value-id');
+
+    if (skuInput && skuDropdown && addForm) {
+      function hideDropdown() { if (skuDropdown) { skuDropdown.classList.add('hidden'); skuDropdown.innerHTML = ''; } }
+      function showDropdown(items) {
+        if (!skuDropdown) return;
+        skuDropdown.innerHTML = '';
+        if (!items || !items.length) { hideDropdown(); return; }
+        items.forEach(function(item) {
+          var a = document.createElement('a');
+          a.href = '#';
+          a.className = 'flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-100 text-left no-underline text-luxury-charcoal border-b border-gray-50 last:border-b-0';
+          a.innerHTML = '<img src="' + (item.image || '') + '" alt="" class="w-10 h-10 object-cover rounded flex-shrink-0" /><span class="truncate flex-1">' + (item.label || item.code || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+          a.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (addProductId) addProductId.value = item.product_id || '';
+            if (addProductOptionId) addProductOptionId.value = item.product_option_id || '';
+            if (addProductOptionValueId) addProductOptionValueId.value = item.product_option_value_id || '';
+            if (skuInput) skuInput.value = item.code || item.label || '';
+            hideDropdown();
+            doAddToCart(item.product_id, item.product_option_id, item.product_option_value_id, item.code || '');
+          });
+          skuDropdown.appendChild(a);
+        });
+        skuDropdown.classList.remove('hidden');
+      }
+      skuInput.oninput = function() {
+        var val = (skuInput.value || '').trim();
+        if (addProductId) addProductId.value = '';
+        if (addProductOptionId) addProductOptionId.value = '';
+        if (addProductOptionValueId) addProductOptionValueId.value = '';
+        clearTimeout(skuTimer);
+        if (val.length < 2) { hideDropdown(); return; }
+        skuTimer = setTimeout(function() {
+          var url = actionSuggestions + (actionSuggestions.indexOf('?') !== -1 ? '&' : '?') + 'search=' + encodeURIComponent(val);
+          fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { showDropdown(data || []); })
+            .catch(function() { hideDropdown(); });
+        }, 250);
+      };
+      skuInput.onblur = function() { setTimeout(hideDropdown, 200); };
+      addForm.onsubmit = function(e) {
+        e.preventDefault();
+        var pid = addProductId ? addProductId.value : '';
+        var poid = addProductOptionId ? addProductOptionId.value : '';
+        var povid = addProductOptionValueId ? addProductOptionValueId.value : '';
+        var sku = skuInput ? skuInput.value.trim() : '';
+        doAddToCart(pid || null, poid || null, povid || null, sku);
+      };
+    }
+    if (wrapper) {
+      document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) {
+          var d = document.getElementById('cart-sku-dropdown');
+          if (d) { d.classList.add('hidden'); d.innerHTML = ''; }
+        }
+      });
+    }
+  }
+
+  function doAddToCart(productId, productOptionId, productOptionValueId, sku) {
+    var fd = new FormData();
+    if (productId) fd.append('product_id', productId);
+    if (productOptionId) fd.append('product_option_id', productOptionId);
+    if (productOptionValueId) fd.append('product_option_value_id', productOptionValueId);
+    if (sku) fd.append('sku', sku);
+    fd.append('quantity', '1');
+    cartAjax(addFormAction, 'POST', fd, function(res) {
+      if (res && res.html) refreshCart(res.html);
+      else if (res && res.error) window.location.href = addFormAction;
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    var plus = e.target.closest('.cart-qty-plus');
+    var minus = e.target.closest('.cart-qty-minus');
+    var remove = e.target.closest('.cart-remove-btn');
+    var clear = e.target.closest('.cart-clear-btn');
+
+    if (plus) {
+      e.preventDefault();
+      var cid = plus.dataset.cartId;
+      var input = document.querySelector('.cart-qty-input[data-cart-id="' + cid + '"]');
+      if (input) {
+        var v = parseInt(input.value || 0) + 1;
+        input.value = v;
+        var fd = new FormData();
+        fd.append('quantity[' + cid + ']', v);
+        cartAjax(actionEdit, 'POST', fd, function(res) { if (res && res.html) refreshCart(res.html); });
+      }
+    } else if (minus) {
+      e.preventDefault();
+      var cid = minus.dataset.cartId;
+      var input = document.querySelector('.cart-qty-input[data-cart-id="' + cid + '"]');
+      if (input) {
+        var v = Math.max(1, parseInt(input.value || 0) - 1);
+        input.value = v;
+        var fd = new FormData();
+        fd.append('quantity[' + cid + ']', v);
+        cartAjax(actionEdit, 'POST', fd, function(res) { if (res && res.html) refreshCart(res.html); });
+      }
+    } else if (remove) {
+      e.preventDefault();
+      var url = remove.dataset.removeUrl;
+      if (url) cartAjax(url, 'GET', null, function(res) { if (res && res.html) refreshCart(res.html); });
+    } else if (clear) {
+      e.preventDefault();
+      if (!confirm('Очистить корзину?')) return;
+      cartAjax(actionClear, 'GET', null, function(res) { if (res && res.html) refreshCart(res.html); });
+    }
+  });
+
+  document.addEventListener('change', function(e) {
+    var input = e.target.closest('.cart-qty-input');
+    if (input) {
+      var cid = input.dataset.cartId;
+      var v = Math.max(1, parseInt(input.value || 0));
+      input.value = v;
+      var fd = new FormData();
+      fd.append('quantity[' + cid + ']', v);
+      cartAjax(actionEdit, 'POST', fd, function(res) { if (res && res.html) refreshCart(res.html); });
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', initCart);
+})();
+</script>
+{{ footer }}

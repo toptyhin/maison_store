@@ -1,0 +1,23 @@
+<?php
+$_['heading_title']           = 'My Documents';
+$_['text_account']            = 'Account';
+$_['text_empty']              = 'You have no documents yet.';
+$_['text_document_invoice']         = 'Invoice';
+$_['text_document_invoice_factura'] = 'Invoice (VAT)';
+$_['text_document_delivery_note']   = 'Delivery Note';
+$_['text_document_act']             = 'Act';
+$_['text_document_contract']        = 'Contract';
+$_['column_document_type']    = 'Document Type';
+$_['column_filename']         = 'File';
+$_['column_date_added']       = 'Date Added';
+$_['column_order_id']         = 'Order No.';
+$_['button_download']         = 'Download';
+$_['button_continue']         = 'Back to Account';
+$_['filter_search_placeholder']    = 'Search by document number...';
+$_['filter_all_types']             = 'All types';
+$_['filter_period_placeholder']    = 'Period';
+$_['button_show_older']             = 'Show older documents';
+$_['text_no_order']                 = '—';
+$_['text_no_results']               = 'No documents found for your search. Try changing the filter parameters.';
+$_['button_apply']                  = 'Apply';
+$_['button_reset_filters']           = 'Reset filters';

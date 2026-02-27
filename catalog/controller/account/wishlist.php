@@ -87,7 +87,13 @@ class ControllerAccountWishList extends Controller {
 					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;
-				}
+				} 
+
+				if (!is_null($product_info['min_option_price']) && (float)$product_info['min_option_price'] >= 0) {
+					$min_option_price = $this->currency->format($this->tax->calculate($product_info['min_option_price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$min_option_price = false;
+				}				
 
 				$data['products'][] = array(
 					'product_id' => $product_info['product_id'],
@@ -95,8 +101,8 @@ class ControllerAccountWishList extends Controller {
 					'name'       => $product_info['name'],
 					'model'      => $product_info['model'],
 					'stock'      => $stock,
-					'price'      => $price,
-					'special'    => $special,
+					'price'       => $min_option_price ? $min_option_price : $price,
+					'special'     => $min_option_price ? false : $special,
 					'href'       => $this->url->link('product/product', 'product_id=' . $product_info['product_id']),
 					'remove'     => $this->url->link('account/wishlist', 'remove=' . $product_info['product_id'])
 				);

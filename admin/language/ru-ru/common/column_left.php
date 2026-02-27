@@ -13,6 +13,7 @@ $_['text_customer'] = 'Покупатели';
 $_['text_customer_group'] = 'Группы покупателей';
 $_['text_customer_online'] = 'Покупатели онлайн';
 $_['text_customer_approval'] = 'Утверждение покупателей';
+$_['text_customer_document'] = 'Документы покупателя';
 $_['text_custom_field'] = 'Настраиваемые поля';
 $_['text_dashboard'] = 'Панель состояния';
 $_['text_design'] = 'Дизайн';

@@ -1,0 +1,116 @@
+{{ header }}
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0">
+        {{ content_top }}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+            <p class="text-gray-500 mt-1 text-sm">{{ text_subtitle }}</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-8">
+          <div class="h-32 bg-gradient-to-r from-luxury-charcoal to-primary-dark"></div>
+          <div class="px-8 pb-8">
+            <div class="relative flex flex-col md:flex-row items-start md:items-end -mt-16 mb-6 gap-6">
+              <div class="relative">
+                <img alt="{{ manager_name }}" class="size-32 rounded-full object-cover border-4 border-white shadow-lg" src="{{ manager_avatar }}"/>
+                <div class="absolute bottom-2 right-2 size-4 bg-green-500 border-2 border-white rounded-full"></div>
+              </div>
+              <div class="flex-1 pb-2 mt-20">
+                <h2 class="text-2xl font-serif font-bold text-luxury-charcoal">{{ manager_name }}</h2>
+                <p class="text-primary font-medium">{{ manager_position }}</p>
+                <p class="text-sm text-gray-500 mt-1">{{ manager_experience }}</p>
+              </div>
+              <div class="flex items-center gap-2 pb-2">
+                <span class="bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full border border-green-100 font-bold uppercase tracking-wider">{{ text_online }}</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+              <a class="flex flex-col items-center justify-center gap-3 p-6 bg-[#229ED9]/5 border border-[#229ED9]/10 rounded-xl hover:bg-[#229ED9]/10 transition-colors group" href="{{ manager_telegram }}">
+                <div class="size-12 rounded-full bg-[#229ED9] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"></path></svg>
+                </div>
+                <span class="font-bold text-luxury-charcoal">Telegram</span>
+                <span class="text-xs text-gray-500">{{ text_telegram_hint }}</span>
+              </a>
+              <a class="flex flex-col items-center justify-center gap-3 p-6 bg-[#25D366]/5 border border-[#25D366]/10 rounded-xl hover:bg-[#25D366]/10 transition-colors group" href="{{ manager_whatsapp }}">
+                <div class="size-12 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+                </div>
+                <span class="font-bold text-luxury-charcoal">WhatsApp</span>
+                <span class="text-xs text-gray-500">{{ text_whatsapp_hint }}</span>
+              </a>
+              <a class="flex flex-col items-center justify-center gap-3 p-6 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors group" href="tel:{{ manager_phone }}">
+                <div class="size-12 rounded-full bg-luxury-charcoal text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined">call</span>
+                </div>
+                <span class="font-bold text-luxury-charcoal">{{ text_phone }}</span>
+                <span class="text-xs text-gray-500">{{ manager_phone }}</span>
+              </a>
+              <a class="flex flex-col items-center justify-center gap-3 p-6 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors group" href="mailto:{{ manager_email }}">
+                <div class="size-12 rounded-full bg-luxury-charcoal text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined">mail</span>
+                </div>
+                <span class="font-bold text-luxury-charcoal">Email</span>
+                <span class="text-xs text-gray-500">{{ manager_email }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+          <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-serif font-bold text-luxury-charcoal">{{ text_requests_history }}</h3>
+            <button class="text-xs font-bold uppercase tracking-widest text-primary hover:text-luxury-charcoal transition-colors">{{ text_all_requests }}</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-500">
+              <thead class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+                <tr>
+                  <th class="px-6 py-4 font-semibold">№ запроса</th>
+                  <th class="px-6 py-4 font-semibold">Тема</th>
+                  <th class="px-6 py-4 font-semibold">Дата</th>
+                  <th class="px-6 py-4 font-semibold text-center">Статус</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                {% if requests %}
+                {% for req in requests %}
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                  <td class="px-6 py-4 font-medium text-luxury-charcoal">{{ req.id }}</td>
+                  <td class="px-6 py-4">
+                    <p class="font-medium text-luxury-charcoal">{{ req.subject }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ req.detail }}</p>
+                  </td>
+                  <td class="px-6 py-4">{{ req.date }}</td>
+                  <td class="px-6 py-4 text-center">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ req.status_class }}">
+                      {{ req.status }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                  <td colspan="4" class="px-6 py-12 text-center text-gray-500">{{ text_no_requests }}</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-6">
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+        {{ content_bottom }}
+      </div>
+    </div>
+  </div>
+</main>
+{{ footer }}

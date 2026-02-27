@@ -5,10 +5,31 @@
               <span class="material-symbols-outlined text-[20px]">local_mall</span>
               {{ text_order }}
             </a>
+            {% if enhanced_account %}
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'documents' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'documents' ? 'shadow-md' : '' }}" href="{{ documents }}">
+              <span class="material-symbols-outlined text-[20px]">description</span>
+              Документы и акты
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'pricelist' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'pricelist' ? 'shadow-md' : '' }}" href="{{ pricelist }}">
+            <span class="material-symbols-outlined text-[20px]">download</span>
+             Скачать прайс-лист
+            </a>
+            {% endif %}
+
             <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'wishlist' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'wishlist' ? 'shadow-md' : '' }}" href="{{ wishlist }}">
               <span class="material-symbols-outlined text-[20px]">favorite</span>
               {{ text_wishlist }}
             </a>
+            {% if enhanced_account %}
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'cart' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'cart' ? 'shadow-md' : '' }}" href="{{ cart }}">
+            <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+             Корзина
+             </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'manager' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'manager' ? 'shadow-md' : '' }}" href="{{ manager }}">
+            <span class="material-symbols-outlined text-[20px]">support_agent</span>
+            Мой менеджер
+            </a>             
+            {% endif %}
             {% if reward %}
             <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'reward' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'reward' ? 'shadow-md' : '' }}" href="{{ reward }}">
               <span class="material-symbols-outlined text-[20px]">loyalty</span>
@@ -17,12 +38,18 @@
             {% endif %}
             <a class="flex items-center gap-3 px-4 py-3 {{ (menu_active is not defined or menu_active == 'account') ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ (menu_active is not defined or menu_active == 'account') ? 'shadow-md' : '' }}" href="{{ account }}">
               <span class="material-symbols-outlined text-[20px]">person</span>
-              {{ text_edit }}
+              Моя учетная запись
             </a>
             <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'address' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'address' ? 'shadow-md' : '' }}" href="{{ address }}">
               <span class="material-symbols-outlined text-[20px]">location_on</span>
-              {{ text_address }}
+              {% if enhanced_account %}Профили доставки{% else %}Мои адреса{% endif %}
             </a>
+            {% if enhanced_account %}
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'company' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'company' ? 'shadow-md' : '' }}" href="{{ company }}">
+            <span class="material-symbols-outlined text-[20px]">corporate_fare</span>
+            Данные о компании
+            </a>
+            {% endif %}
             {% for credit_card in credit_cards %}
             <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="{{ credit_card.href }}">
               <span class="material-symbols-outlined text-[20px]">credit_card</span>

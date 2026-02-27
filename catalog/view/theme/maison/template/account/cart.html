@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Maison Textile: Оптовая корзина</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#546E7A",
+                        "primary-dark": "#37474F",
+                        "primary-light": "#B0BEC5",
+                        "background-dark": "#F5F7FA",
+                        "background-card": "#FFFFFF",
+                        "background-section": "#ECEFF1",
+                        "luxury-charcoal": "#263238",
+                        "luxury-silver": "#CFD8DC",
+                        "luxury-cream": "#FFFFFF",
+                        "midnight-blue": "#F5F7FA",
+                        "soft-gold-bg": "#FFFFFF",
+                        "dark-beige": "#90A4AE",
+                        "badge-gold": "#C1A687",
+                        "badge-teal": "#80CBC4",
+                        "discount-red": "#E53935",
+                        "positive-green": "#4CAF50"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
+                        "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
+                        "soft": "0 4px 20px -5px rgba(0,0,0,0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CFD8DC;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #546E7A;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal flex flex-col min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden mobile-menu-closed" id="app-root">
+<div class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm pointer-events-none opacity-0 transition-opacity duration-300" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+<div class="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm z-[70] bg-[#263238] shadow-2xl flex flex-col h-full transform -translate-x-full transition-transform duration-300" id="mobile-menu-drawer">
+<div class="flex items-center justify-between p-6 border-b border-white/10">
+<div class="flex items-center gap-2">
+<div class="size-6 text-primary-light">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-xl font-serif font-bold tracking-wide text-white">Maison</span>
+</div>
+<button class="text-white/80 p-2 hover:bg-white/10 rounded-full transition-colors" onclick="toggleMobileMenu()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto">
+<nav class="flex flex-col gap-5 text-white">
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Главная</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Каталог</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Документы</a>
+<a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors" href="#">Контакты</a>
+</nav>
+</div>
+</div>
+<header class="fixed top-0 left-0 right-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
+<div class="flex items-center gap-4 lg:gap-12">
+<button class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2" onclick="toggleMobileMenu()">
+<span class="material-symbols-outlined text-[28px]">menu</span>
+</button>
+<div class="flex items-center gap-3 text-luxury-charcoal cursor-pointer group">
+<div class="size-8 text-primary group-hover:text-primary-dark transition-all">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison Textile <span class="text-sm font-sans font-normal text-primary align-middle ml-2 uppercase tracking-widest hidden sm:inline-block">B2B Partner</span></h2>
+</div>
+</div>
+<div class="flex flex-1 justify-end items-center gap-6">
+<div class="hidden md:flex items-center gap-2 mr-4">
+<span class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">MT</span>
+<div class="flex flex-col text-right">
+<span class="text-xs font-bold text-luxury-charcoal">ООО "Гранд Отель"</span>
+<span class="text-xs text-gray-500 uppercase tracking-wider">Оптовый партнер</span>
+</div>
+</div>
+<div class="flex gap-2 lg:gap-4">
+<button class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100 relative">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-discount-red rounded-full"></span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 mt-24 bg-background-dark">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+<div class="flex flex-col lg:flex-row gap-8">
+<aside class="w-full lg:w-64 flex-shrink-0">
+<nav class="bg-white rounded-lg shadow-soft p-6 sticky top-28">
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+                                История заказов
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+                                Документы и акты
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                                Скачать прайс-лист
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+                                Избранное
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#263238] text-white rounded-md transition-colors font-medium text-sm shadow-md" href="#">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                                Корзина
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+                                Профили доставки
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+                                Мой менеджер
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">business</span>
+                                Данные о компании
+                            </a>
+<div class="h-px bg-gray-100 my-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-md transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                                Выход
+                            </a>
+</div>
+<div class="mt-8 pt-6 border-t border-gray-100">
+<p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">Ваш менеджер</p>
+<div class="flex items-center gap-3 mb-4">
+<img alt="Manager" class="size-10 rounded-full object-cover ring-2 ring-primary/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgFhkjGKf5kBBBvjSvc-9NvBNnQlvQizLdd02_L1KmG55MgvJn0GP5i7_fdwFWwI3QK5zO6h3HAkq7p8wjA7boLHBGkiopbAcGM_Y2Ic2Pb6LLsfgrPI49NSLL6siT9YFLD3rsm5Dzda0rSHMWFLh94TKD_VLdiupet8QF1sag2Cp5AlpLrcDrxLf1f7n6WPQ26blv7OSx_HMEa-9MJhMTN_GxGi8UllY1cLg1N4ZywRhqnRtJ3HbM7R-WUXALto83aoNU9CLVs3Q"/>
+<div>
+<p class="text-sm font-bold text-luxury-charcoal">Анна Петрова</p>
+<p class="text-xs text-primary">Senior Partner Manager</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-[#229ED9] text-white text-xs font-bold py-2 rounded-md hover:bg-[#1A86B9] transition-colors">
+<svg class="size-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"></path></svg>
+                                Связаться в Telegram
+                            </button>
+</div>
+</nav>
+</aside>
+<div class="flex-1 min-w-0">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="text-3xl font-serif text-luxury-charcoal font-medium">Оптовая корзина</h1>
+<p class="text-gray-500 mt-1 text-sm">24 товара в заказе</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-white border border-gray-200 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-luxury-charcoal hover:border-primary hover:text-primary transition-all duration-300 rounded-sm shadow-sm">
+<span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                                Очистить корзину
+                            </button>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-6 mb-8 relative overflow-hidden">
+<div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none"></div>
+<div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-4 relative z-10">
+<div>
+<h2 class="text-lg font-serif font-bold text-luxury-charcoal">Ваша скидка</h2>
+<p class="text-sm text-gray-500 mt-1">Текущая скидка: <span class="font-bold text-primary text-lg">10%</span></p>
+</div>
+<p class="text-sm font-medium text-luxury-charcoal bg-gray-50 px-3 py-1.5 rounded-md border border-gray-100 mt-2 md:mt-0">
+                                Добавьте товаров ещё на <span class="font-bold text-primary whitespace-nowrap">45 800 ₽</span>, чтобы получить скидку <span class="font-bold text-primary">15%</span> на весь заказ
+                            </p>
+</div>
+<div class="relative w-full h-8 bg-gray-100 rounded-full mt-6 mb-2">
+<div class="absolute top-0 left-0 h-full bg-positive-green rounded-full transition-all duration-500 ease-out" style="width: 77%;">
+<div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+</div>
+<div class="absolute top-0 left-0 w-full h-full flex justify-between items-center px-2 text-xs font-bold text-gray-500 pointer-events-none">
+<div class="relative h-full flex items-center justify-center w-1/3 border-r border-white/50">
+<span class="relative z-10 mix-blend-multiply text-luxury-charcoal/70">5%</span>
+<span class="absolute bottom-full mb-2 text-[10px] text-gray-400 font-normal whitespace-nowrap">50 000 ₽</span>
+</div>
+<div class="relative h-full flex items-center justify-center w-1/3 border-r border-white/50">
+<span class="relative z-10 mix-blend-screen text-white">10%</span>
+<span class="absolute bottom-full mb-2 text-[10px] text-luxury-charcoal font-bold whitespace-nowrap">100 000 ₽</span>
+</div>
+<div class="relative h-full flex items-center justify-center w-1/3">
+<span class="relative z-10 mix-blend-multiply text-gray-400">15%</span>
+<span class="absolute bottom-full mb-2 text-[10px] text-gray-400 font-normal whitespace-nowrap">200 000 ₽</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-6 mb-8">
+<h2 class="text-sm font-bold uppercase tracking-widest text-luxury-charcoal mb-4">Быстрое добавление</h2>
+<div class="flex flex-col md:flex-row gap-4 items-center">
+<div class="relative flex-1 w-full">
+<span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 material-symbols-outlined">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm placeholder-gray-400 text-luxury-charcoal" placeholder="Введите артикул (SKU) для добавления..." type="text"/>
+</div>
+<button class="w-full md:w-auto flex items-center justify-center gap-2 bg-luxury-charcoal text-white px-6 py-3 rounded-md hover:bg-primary transition-colors text-xs font-bold uppercase tracking-widest whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                                Добавить
+                            </button>
+<div class="h-8 w-px bg-gray-200 hidden md:block mx-2"></div>
+<button class="w-full md:w-auto flex items-center justify-center gap-2 bg-white border border-gray-200 text-luxury-charcoal px-6 py-3 rounded-md hover:border-primary hover:text-primary transition-colors text-xs font-bold uppercase tracking-widest whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">download_for_offline</span>
+                                Выгрузить в Excel
+                            </button>
+</div>
+</div>
+<div class="flex flex-col gap-8">
+<div class="w-full bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm text-gray-500">
+<thead class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+<tr>
+<th class="px-6 py-4 font-semibold w-24">Фото</th>
+<th class="px-6 py-4 font-semibold">Артикул / Товар</th>
+<th class="px-6 py-4 font-semibold text-right">Цена шт.</th>
+<th class="px-6 py-4 font-semibold text-right text-primary">Ваша цена (-10%)</th>
+<th class="px-6 py-4 font-semibold text-center w-32">Кол-во</th>
+<th class="px-6 py-4 font-semibold text-right">Сумма</th>
+<th class="px-6 py-4 font-semibold w-10"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<tr class="hover:bg-gray-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-16 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+<img alt="Bedding" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrdefhOgaLvwtckabVSIXW4-952v_3DDRDjfx3CN6ad6hrHwWVr3vnAUs9uolFjYraEHwVMVn0wSsT7jTPaEpseOct91-sYVpAKLgk-VLflag-Uz02pI_48DIJwtSpnh-AonvB6W_p4MRUzgIoCDrCvdrEVGBEWLzSvSua54tPw-OynfdN4hmXrgH9rePSQKMb7yVVVOu3jHpdjjQbQvHxYqnKWsTs4jSPWtN_V39pbTqaIw76LJBbGiwBh0nESCdgFrlNEskYbTI"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-gray-400 mb-1">SKU-89210</p>
+<p class="text-sm font-bold text-luxury-charcoal line-clamp-2">Комплект постельного белья "Royal Satin"</p>
+<p class="text-xs text-gray-500 mt-1">Размер: Евро (220х240)</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-medium text-discount-red line-through whitespace-nowrap">4 500 ₽</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal text-base whitespace-nowrap">4 050 ₽</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center">
+<div class="flex items-center border border-gray-200 rounded-md bg-white">
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">-</button>
+<input class="w-12 text-center border-none p-1 text-sm text-luxury-charcoal focus:ring-0" type="number" value="12"/>
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">+</button>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal whitespace-nowrap">48 600 ₽</p>
+</td>
+<td class="px-6 py-4 text-center">
+<button class="text-gray-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-16 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+<img alt="Towels" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANLDc02zc6jc9RZYUAlvpDgwEM_TLTZfd80HsBzmYFQTZM20jgHu7a9-4XpIw8C23y0_TxatTZaCaUP1luwJTwC-ZZnSvRBwwnSncAib0qla9aQVSmkriEoRcwQObK7WAyfPmvObGHMr4deYDPMEtdKm9cB43Tdi8yUQoOyWflvtf1q6v4CXJCmzkmkHEa58HMjayvgn8YdpDkYs_dBJEC9KmuZQeVs_x9-f1atVK1ba0zE0KeHdGunT54PkQK-feGbD5eNISUAzg"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-gray-400 mb-1">SKU-44102</p>
+<p class="text-sm font-bold text-luxury-charcoal line-clamp-2">Полотенце махровое, хлопок 100%</p>
+<p class="text-xs text-gray-500 mt-1">Размер: 70х140, Цвет: Бежевый</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-medium text-discount-red line-through whitespace-nowrap">850 ₽</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal text-base whitespace-nowrap">765 ₽</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center">
+<div class="flex items-center border border-gray-200 rounded-md bg-white">
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">-</button>
+<input class="w-12 text-center border-none p-1 text-sm text-luxury-charcoal focus:ring-0" type="number" value="60"/>
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">+</button>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal whitespace-nowrap">45 900 ₽</p>
+</td>
+<td class="px-6 py-4 text-center">
+<button class="text-gray-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-16 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+<img alt="Pillows" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnEYcPsqWA8_vd2MR70qoargZlEfjmt1-z6iBo6cbvGm8yEbP1x8pTEDQ2p7qsdnb_bE69S8wZJP7V4wFiS437y18sGXvb4pzjw14qCDXjXnGE3U0xstSBq5CnNQjU0KhwHNuiDlIfiO_PH0iQZci4dMB7noWq4rNI2qphm6KM8l9rZ9FtxM8IR4kgei1TnadU8rfbsuPDbycMGRlGlTXoRe_YAm2X3uXQjyjlFa82tJWFE_WmMF5Rpl7tKiY5VnvwW9Gs72mh5kI"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-gray-400 mb-1">SKU-11205</p>
+<p class="text-sm font-bold text-luxury-charcoal line-clamp-2">Подушка "Облако", гусиный пух</p>
+<p class="text-xs text-gray-500 mt-1">Размер: 50х70</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-medium text-discount-red line-through whitespace-nowrap">2 100 ₽</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal text-base whitespace-nowrap">1 890 ₽</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center">
+<div class="flex items-center border border-gray-200 rounded-md bg-white">
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">-</button>
+<input class="w-12 text-center border-none p-1 text-sm text-luxury-charcoal focus:ring-0" type="number" value="10"/>
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">+</button>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal whitespace-nowrap">18 900 ₽</p>
+</td>
+<td class="px-6 py-4 text-center">
+<button class="text-gray-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="size-16 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+<img alt="Bathrobes" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKmxX6M0hkdT9rWVTYDJsa5w6sTVrgZRM_xfh_WvxsOWEQebiowfeDZsATrXoewbyNHE-AFXwMEkfIxnjvbfPcQXZIYPwJUytat3b7KV8nemw_SL0QnWQw69E02JovqBKrt57bPxt1zzzMDzsOltYXMFNqvlnFQQy18eWf3GoL3TNi_3piWxukfr8WnXoAhkyfnaXySOEf2DaBDy_aX_OBnjU5abTSuaiW67PQxe3F5sxdqFrrX_RAQWRU8_k6YtKilRnGez9i8ow"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-gray-400 mb-1">SKU-77301</p>
+<p class="text-sm font-bold text-luxury-charcoal line-clamp-2">Халат вафельный "Spa Comfort"</p>
+<p class="text-xs text-gray-500 mt-1">Размер: L/XL, Цвет: Белый</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-medium text-discount-red line-through whitespace-nowrap">1 800 ₽</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal text-base whitespace-nowrap">1 620 ₽</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center justify-center">
+<div class="flex items-center border border-gray-200 rounded-md bg-white">
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">-</button>
+<input class="w-12 text-center border-none p-1 text-sm text-luxury-charcoal focus:ring-0" type="number" value="20"/>
+<button class="px-2 py-1 hover:bg-gray-100 text-gray-500 transition-colors">+</button>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="font-bold text-luxury-charcoal whitespace-nowrap">32 400 ₽</p>
+</td>
+<td class="px-6 py-4 text-center">
+<button class="text-gray-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-gray-100 flex justify-center bg-gray-50">
+<button class="text-primary text-xs font-bold uppercase tracking-widest hover:text-luxury-charcoal transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+                                    Показать еще 20 товаров
+                                </button>
+</div>
+</div>
+<div class="w-full bg-white rounded-lg shadow-card-depth border border-gray-100 p-8">
+<div class="flex flex-col lg:flex-row justify-between items-center gap-8">
+<div class="flex flex-wrap gap-8 lg:gap-12 flex-1 justify-start w-full lg:w-auto items-center">
+<div class="flex flex-col gap-1">
+<span class="text-xs text-gray-400 uppercase tracking-widest font-bold">Общий вес</span>
+<span class="text-xl font-medium text-luxury-charcoal">45 кг</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-gray-400 uppercase tracking-widest font-bold">Объем</span>
+<span class="text-xl font-medium text-luxury-charcoal">0.8 м³</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-8 w-full lg:w-auto mt-4 lg:mt-0 items-center">
+<div class="flex flex-col gap-1 text-right">
+<span class="text-xs text-gray-400 uppercase tracking-widest font-bold">Итого к оплате</span>
+<span class="text-3xl font-serif font-bold text-luxury-charcoal whitespace-nowrap">145 800 ₽</span>
+</div>
+<button class="flex-1 sm:flex-none whitespace-nowrap bg-[#263238] text-white px-8 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors shadow-lg flex items-center justify-center gap-2">
+                                        Перейти к оформлению
+                                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10 mt-auto">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 text-white">
+<div class="size-6 text-primary-light">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+</div>
+<p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани, чистые линии и спокойствие в каждой детали вашего дома.</p>
+<div class="flex flex-col gap-3">
+<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="tel:88005553535">
+<span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                    </a>
+<a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base" href="mailto:b2b@maisontextile.ru">
+<span class="material-symbols-outlined text-[20px]">mail</span> b2b@maisontextile.ru
+                    </a>
+</div>
+</div>
+<div class="md:pl-8">
+<h3 class="font-serif text-white text-lg mb-6">Кабинет</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Заказы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Документы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Прайс-лист</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Поддержка</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-serif text-white text-lg mb-6">Документация</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Договор оферты</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Сертификаты качества</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Условия возврата</a></li>
+<li><a class="hover:text-white transition-colors" href="#">API документация</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-serif text-white text-lg mb-6">Помощь</h3>
+<ul class="flex flex-col gap-3 text-sm text-gray-400">
+<li><a class="hover:text-white transition-colors" href="#">Частые вопросы</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Связаться с менеджером</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+<p>© 2024 Maison Textile B2B. Все права защищены.</p>
+<div class="flex gap-8">
+<a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+<a class="hover:text-white transition-colors" href="#">Условия использования</a>
+</div>
+</div>
+</footer>
+</div>
+<script>
+    // Mobile Menu Toggle Logic
+    const appRoot = document.getElementById('app-root');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const drawer = document.getElementById('mobile-menu-drawer');
+    function toggleMobileMenu() {
+        const isOpen = !drawer.classList.contains('-translate-x-full');
+        if (isOpen) {
+            // Close
+            drawer.classList.add('-translate-x-full');
+            overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+        } else {
+            // Open
+            drawer.classList.remove('-translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100', 'pointer-events-auto');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+</script>
+
+</body></html>

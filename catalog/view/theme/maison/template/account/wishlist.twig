@@ -55,10 +55,10 @@
                       {% endif %}
                     </div>
                     <div class="flex items-center gap-2">
-                      <button type="button" onclick="cart.add('{{ product.product_id }}');" data-toggle="tooltip" title="{{ button_cart }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+                      {# <button type="button" onclick="cart.add('{{ product.product_id }}');" data-toggle="tooltip" title="{{ button_cart }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
                         <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
                         {{ button_cart }}
-                      </button>
+                      </button> #}
                       <a href="{{ product.remove }}" data-toggle="tooltip" title="{{ button_remove }}" class="inline-flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 rounded-sm transition-colors">
                         <span class="material-symbols-outlined text-[18px]">delete</span>
                         {{ button_remove }}

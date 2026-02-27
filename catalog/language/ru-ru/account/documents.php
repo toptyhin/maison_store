@@ -1,0 +1,23 @@
+<?php
+$_['heading_title']           = 'Мои документы';
+$_['text_account']            = 'Личный кабинет';
+$_['text_empty']              = 'У вас пока нет загруженных документов.';
+$_['text_document_invoice']         = 'Счет';
+$_['text_document_invoice_factura'] = 'Счет-фактура';
+$_['text_document_delivery_note']   = 'Накладная';
+$_['text_document_act']             = 'Акт';
+$_['text_document_contract']        = 'Договор';
+$_['column_document_type']    = 'Тип документа';
+$_['column_filename']         = 'Файл';
+$_['column_date_added']       = 'Дата';
+$_['column_order_id']         = '№ Заказа';
+$_['button_download']         = 'Скачать';
+$_['button_continue']         = 'Вернуться в личный кабинет';
+$_['filter_search_placeholder']    = 'Поиск по номеру документа...';
+$_['filter_all_types']             = 'Все типы';
+$_['filter_period_placeholder']    = 'Период';
+$_['button_show_older']             = 'Показать старые документы';
+$_['text_no_order']                 = '—';
+$_['text_no_results']               = 'По вашему запросу документов не найдено. Измените параметры фильтрации.';
+$_['button_apply']                  = 'Применить';
+$_['button_reset_filters']           = 'Сбросить фильтры';
