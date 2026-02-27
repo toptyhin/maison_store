@@ -1,0 +1,1100 @@
+{{ header }}
+{% if dadata_token %}
+<link href="https://cdn.jsdelivr.net/npm/@dadata/suggestions@25.11.0/dist/suggestions.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@dadata/suggestions@25.11.0/dist/suggestions.min.js"></script>
+{% endif %}
+<style>
+    .peer:checked ~ .custom-radio-border { border-color: #263238; background-color: #F5F7FA; }
+    .peer:checked ~ .custom-radio-border .radio-indicator { border-color: #263238; }
+    .peer:checked ~ .custom-radio-border .radio-indicator::after { transform: scale(1); }
+    #maison-checkout .form-control { width: 100%; border-radius: 0.125rem; border: 1px solid #e5e7eb; background: #f9fafb; padding: 0.75rem; font-size: 0.875rem; }
+    #maison-checkout .form-control:focus { border-color: #263238; outline: none; }
+    #maison-checkout .form-group { margin-bottom: 1rem; }
+    #maison-checkout .control-label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 0.5rem; }
+    #maison-checkout .maison-field-error { border-color: #dc2626 !important; background-color: #fef2f2 !important; }
+    #maison-checkout .maison-section-highlight-error { border-color: #dc2626; box-shadow: 0 0 0 1px #dc2626; }
+</style>
+<div id="maison-checkout" class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark font-display text-luxury-charcoal antialiased">
+    {{ include('maison/template/checkout/checkout_header.twig') }}
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12">
+        {% if error_warning %}
+        <div class="mb-4 rounded-md border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900 flex items-start gap-2">
+            <span class="material-symbols-outlined text-[18px] mt-0.5">error</span>
+            <div class="flex-1">{{ error_warning }}</div>
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-luxury-charcoal">Оформление заказа</h1>
+            <div class="flex items-center gap-4 text-xs md:text-sm font-medium">
+                <a href="{{ cart_link }}" class="flex items-center gap-2 text-gray-400 hover:text-luxury-charcoal"><span>1. Корзина</span></a>
+                <div class="h-px w-6 bg-gray-300"></div>
+                <span class="flex items-center gap-2 text-luxury-charcoal font-bold">2. Оформление заказа</span>
+                <div class="h-px w-6 bg-gray-300"></div>
+                <span class="flex items-center gap-2 text-gray-400">3. Готово</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <div class="lg:col-span-8 flex flex-col gap-8">
+                <section id="maison-contact-section-wrapper" class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                    <h2 class="text-xl font-serif font-medium mb-6">Данные получателя</h2>
+                    <div id="maison-contact-section">
+                        <div class="flex justify-center py-8 text-gray-400">
+                            <span class="animate-pulse">Загрузка формы...</span>
+                        </div>
+                    </div>
+                </section>
+
+                {% if shipping_required %}
+                <section id="maison-shipping-section-wrapper" class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                    <h2 class="text-xl font-serif font-medium mb-6">Доставка</h2>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Транспортная компания</h3>
+                        <div id="maison-shipping-method-section">{% if shipping_method_html %}{{ shipping_method_html|raw }}{% endif %}</div>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-100">
+                        {# <div id="maison-courier-address-header" class="flex items-center justify-between mb-4 hidden">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500">Адрес доставки</h3>
+                        </div> #}
+                        <div class="space-y-4 mb-6 relative">
+                            <div id="maison-shipping-address-section" class="hidden">
+                            </div>
+                            <div id="maison-pickup-map-block" class="hidden">
+                                <div id="maison-pickup-map-placeholder" class="h-32 w-full bg-gray-100 rounded-md border border-gray-200 flex items-center justify-center text-gray-400 relative overflow-hidden cursor-pointer">
+                                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#263238_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                                    <button id="maison-pickup-map-open-btn" type="button" class="relative z-10 flex items-center gap-2 bg-white text-luxury-charcoal px-5 py-2.5 rounded-full shadow-md font-bold text-xs uppercase tracking-widest hover:bg-luxury-charcoal hover:text-white transition-all duration-300 border border-transparent hover:border-white/20">
+                                        <span class="material-symbols-outlined text-lg">map</span>
+                                        Выбрать на карте
+                                    </button>
+                                </div>
+                                <div id="maison-pickup-map-container" class="hidden flex-col rounded-md border border-gray-200 overflow-hidden">
+                                    <div id="maison-ymap" class="w-full" style="height:420px"></div>
+                                    <div class="flex items-center justify-between gap-3 bg-white border-t border-gray-200 px-4 py-3">
+                                        <div id="maison-pickup-selected-info" class="text-sm text-gray-500 truncate">Выберите пункт выдачи на карте</div>
+                                        <button id="maison-pickup-map-close-btn" type="button" class="shrink-0 flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-luxury-charcoal transition-colors">
+                                            <span class="material-symbols-outlined text-base">close</span>
+                                            Закрыть
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-md p-4 flex items-start gap-4 border border-gray-200/60">
+                            <div class="bg-white p-2 rounded-full border border-gray-100 shadow-sm text-luxury-charcoal">
+                                <span class="material-symbols-outlined text-[20px] block">schedule</span>
+                            </div>
+                            <div>
+                                <h4 class="font-serif font-medium text-luxury-charcoal">Расчетное время доставки</h4>
+                                <p class="text-sm text-gray-500 mt-1">Срок доставки: 2-4 рабочих дня</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {% endif %}
+
+                <section id="maison-payment-section-wrapper" class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                    <h2 class="text-xl font-serif font-medium mb-6">Оплата</h2>
+                    <div id="maison-payment-section">{{ payment_method_html|raw }}</div>
+                </section>
+
+                <div id="maison-ur-lic-block" class="hidden flex flex-col gap-8">
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="size-10 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal border border-gray-100">
+                                <span class="material-symbols-outlined">domain</span>
+                            </div>
+                            <h2 class="text-xl font-serif font-medium">Реквизиты организации</h2>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Название организации (ООО/ИП)</label>
+                                <input name="ur_company" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder='ООО "Мэйсон Текстиль"' type="text" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="relative">
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">ИНН</label>
+                                    <div class="relative">
+                                        <input name="ur_inn" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="Введите ИНН" type="text" />
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <span class="material-symbols-outlined text-gray-400 text-lg">search</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-gray-400 mt-1">Данные организации будут загружены автоматически</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">КПП</label>
+                                    <input name="ur_kpp" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="773601001" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Юридический адрес</label>
+                                <input name="ur_address" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="119049, г. Москва, ул. Житная, д. 14" type="text" />
+                            </div>
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="size-10 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal border border-gray-100">
+                                <span class="material-symbols-outlined">account_balance</span>
+                            </div>
+                            <h2 class="text-xl font-serif font-medium">Банковские реквизиты</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">БИК</label>
+                                <input name="ur_bik" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="044525225" type="text" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Название банка</label>
+                                <input name="ur_bank" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="ПАО Сбербанк" type="text" />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Расчетный счет</label>
+                                <input name="ur_rs" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="40702810938000000000" type="text" />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Корреспондентский счет</label>
+                                <input name="ur_ks" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors" placeholder="30101810400000000225" type="text" />
+                            </div>
+                        </div>
+                    </section>
+                    <div class="flex items-center gap-3">
+                        <button type="button" id="maison-ur-lic-submit-btn" class="bg-[#263238] text-white border border-transparent py-4 px-8 font-bold uppercase text-sm tracking-[0.15em] rounded-sm transition-colors hover:bg-primary-dark shadow-lg">
+                            Сформировать счет
+                        </button>
+                        <button type="button" id="maison-ur-lic-back-btn" class="text-gray-500 hover:text-luxury-charcoal py-4 px-4 font-medium text-sm transition-colors">
+                            Назад
+                        </button>
+                    </div>
+                </div>
+
+                <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                    <h2 class="text-xl font-serif font-medium mb-2 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-luxury-charcoal">loyalty</span>
+                        Бонусная программа
+                    </h2>
+                    <p class="text-sm text-gray-500">Доступно баллов будет рассчитано после ввода данных</p>
+                </section>
+            </div>
+
+            <div class="lg:col-span-4 relative">
+                <div class="sticky top-24 flex flex-col gap-6">
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">Промокод</label>
+                        <div class="flex flex-col gap-3">
+                            <input id="maison-coupon-input" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400" placeholder="Введите код" type="text"/>
+                            <button type="button" id="maison-coupon-btn" class="w-full bg-[#263238] text-white border border-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors rounded-sm shadow-sm">
+                                Применить
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="bg-white p-6 md:p-8 rounded-lg shadow-card-depth border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none"></div>
+                        <h2 class="text-xl font-serif font-medium mb-6 relative z-10">Ваш заказ</h2>
+                        <div id="maison-order-summary" class="flex flex-col gap-4 mb-6 border-b border-gray-100 pb-6 relative z-10">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500">{{ items_count }} {{ items_count == 1 ? 'товар' : (items_count < 5 ? 'товара' : 'товаров') }} на сумму</span>
+                                <span id="maison-order-sub-total" class="text-luxury-charcoal font-medium">{{ sub_total_text }}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500">Доставка</span>
+                                <span id="maison-order-shipping" class="{% if shipping_text == 'Бесплатно' %}text-green-600{% else %}text-luxury-charcoal{% endif %} font-bold uppercase text-xs tracking-wide">{{ shipping_text }}</span>
+                            </div>
+                            <div id="maison-order-discount-row" class="flex justify-between items-center text-sm {% if not discount_text %}hidden{% endif %}">
+                                <span class="text-gray-500">Ваша скидка</span>
+                                <span id="maison-order-discount" class="text-red-600 font-medium">{{ discount_text }}</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-baseline mb-8 relative z-10">
+                            <span class="text-lg font-serif font-medium text-luxury-charcoal">Итого к оплате</span>
+                            <span id="maison-order-total" class="text-3xl font-bold text-luxury-charcoal tracking-tight">{% if order_total_text %}{{ order_total_text }}{% else %}{{ sub_total_text }}{% endif %}</span>
+                        </div>
+                        <div id="maison-confirm-section">
+                            <button type="button" id="maison-confirm-order-btn"
+                                class="w-full bg-[#263238] text-white border border-transparent py-4 font-bold uppercase text-sm tracking-[0.15em] mb-6 rounded-sm transition-colors hover:bg-primary-dark shadow-lg">
+                                Подтвердить заказ
+                            </button>                        
+                        </div>
+                        
+                        <div class="text-[10px] leading-relaxed text-gray-400 text-center mt-4">
+                            Нажимая кнопку «Подтвердить заказ», вы соглашаетесь с <a class="underline hover:text-luxury-charcoal" href="#">политикой обработки данных</a> и <a class="underline hover:text-luxury-charcoal" href="#">условиями продажи</a>.
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-6 text-gray-300">
+                        <span class="material-symbols-outlined text-[24px]">lock</span>
+                        <span class="material-symbols-outlined text-[24px]">verified_user</span>
+                        <span class="material-symbols-outlined text-[24px]">local_shipping</span>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100 flex flex-col items-center text-center">
+                        <div class="flex flex-col items-center justify-center gap-3 mb-6 w-full">
+                            <div class="size-12 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal mx-auto">
+                                <span class="material-symbols-outlined text-[24px]">help</span>
+                            </div>
+                            <h3 class="font-serif font-medium text-xl text-luxury-charcoal text-center">Нужна помощь?</h3>
+                        </div>
+                        <div class="flex flex-col items-center justify-center gap-4 w-full">
+                            <a class="text-luxury-charcoal hover:text-primary-dark transition-colors text-center" href="tel:88005553535">
+                                <span class="font-display font-bold text-xl tracking-wide">8 (800) 555-35-35</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+(function() {
+    const base = '{{ base }}';
+    const baseUrl = base + 'index.php?route=';
+    const shippingRequired = {{ shipping_required ? 'true' : 'false' }};
+    const logged = {{ logged ? 'true' : 'false' }};
+    const dadataToken = {{ dadata_token|json_encode|raw }};
+
+    function showError(container, message) {
+        container.innerHTML = '<div class="rounded-md border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900">' + message + '</div>';
+    }
+
+    function showErrorInSection(container, message) {
+        let err = container.querySelector('.maison-section-error');
+        if (!err) {
+            err = document.createElement('div');
+            err.className = 'maison-section-error mb-4 rounded-md border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900';
+            container.insertBefore(err, container.firstChild);
+        }
+        err.innerHTML = message || '';
+        err.style.display = message ? 'block' : 'none';
+    }
+
+    function showLoading(container, text) {
+        container.innerHTML = '<div class="flex justify-center py-4 text-gray-400"><span class="animate-pulse">' + (text || 'Загрузка...') + '</span></div>';
+    }
+
+    async function fetchHtml(route) {
+        const res = await fetch(baseUrl + route);
+        if (!res.ok) throw new Error(res.statusText);
+        return res.text();
+    }
+
+    async function fetchJson(route, formData) {
+        const res = await fetch(baseUrl + route, {
+            method: 'POST',
+            body: formData
+        });
+        const text = await res.text();
+        try {
+            return JSON.parse(text);
+        } catch {
+            throw new Error(text || 'Invalid response');
+        }
+    }
+
+    function collectFormData(selector) {
+        const form = document.querySelector(selector);
+        if (!form) return new FormData();
+        return new FormData(form);
+    }
+
+    function debounce(fn, ms) {
+        let t;
+        return function() {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, arguments), ms);
+        };
+    }
+
+    async function loadContactForm() {
+        const container = document.getElementById('maison-contact-section');
+        const shippingSection = document.getElementById('maison-shipping-address-section');
+        try {
+            const route = 'checkout/guest&maison=1';
+            const html = await fetchHtml(route);
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            const form = wrapper.querySelector('form');
+            const addressPart = wrapper.querySelector('#maison-guest-address-part');
+            if (form) {
+                form.id = 'maison-contact-form';
+                if (addressPart && shippingRequired && shippingSection) {
+                    addressPart.querySelector('input')?.setAttribute('form', 'maison-contact-form');
+                    shippingSection.appendChild(addressPart);
+                } else if (addressPart && !shippingRequired) {
+                    addressPart.querySelector('input')?.removeAttribute('form');
+                    form.appendChild(addressPart);
+                }
+                container.innerHTML = '';
+                container.appendChild(form);
+                initCountrySelect(container);
+                initContactDebounce();
+                initDaDataAddress();
+            } else {
+                container.innerHTML = html;
+                const f = container.querySelector('form');
+                if (f) {
+                    f.id = 'maison-contact-form';
+                    const btn = f.querySelector('#button-guest') || f.querySelector('#button-payment-address') || f.querySelector('[type="submit"]');
+                    if (btn) btn.style.display = 'none';
+                    initCountrySelect(container);
+                    initContactDebounce();
+                    initDaDataAddress();
+                }
+            }
+        } catch (e) {
+            showError(container, 'Ошибка загрузки формы: ' + e.message);
+        }
+    }
+
+    function initDaDataAddress() {
+        if (!dadataToken || typeof Dadata === 'undefined') return;
+        const addressPart = document.getElementById('maison-guest-address-part');
+        if (!addressPart || addressPart.dataset.dadataInit) return;
+        const input = addressPart.querySelector('#input-payment-address-1');
+        if (!input) return;
+        addressPart.dataset.dadataInit = '1';
+        try {
+            Dadata.createSuggestions(input, {
+                token: dadataToken,
+                type: 'address',
+                onSelect: function(suggestion) {
+                    const cityEl = document.querySelector('#input-payment-city');
+                    const postcodeEl = document.querySelector('input[name="postcode"]');
+                    if (cityEl && suggestion.data?.city) cityEl.value = suggestion.data.city;
+                    if (postcodeEl && suggestion.data?.postal_code) postcodeEl.value = suggestion.data.postal_code;
+                    saveShippingAddress();
+                }
+            });
+        } catch (e) {
+            console.error('DaData init error:', e);
+        }
+    }
+
+    function initContactDebounce() {
+        const form = document.querySelector('#maison-contact-form') || document.querySelector('#maison-contact-section form');
+        if (!form || form.dataset.debounceInit) return;
+        form.dataset.debounceInit = '1';
+        if (logged) {
+            const debouncedSave = debounce(saveContact, 600);
+            form.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('input', debouncedSave);
+                el.addEventListener('change', debouncedSave);
+            });
+            document.getElementById('maison-checkout')?.querySelectorAll('input[name="address_1"], #input-payment-address-1, #input-shipping-address-1').forEach(el => {
+                el.addEventListener('input', clearAddressError);
+                el.addEventListener('change', clearAddressError);
+            });
+            return;
+        }
+        const debouncedSaveCustomer = debounce(saveCustomer, 1500);
+        const debouncedSaveAddress = debounce(saveShippingAddress, 1200);
+        form.querySelectorAll('input[name="firstname"], input[name="lastname"], input[name="email"], input[name="telephone"]').forEach(el => {
+            el.addEventListener('input', debouncedSaveCustomer);
+        });
+        const checkoutEl = document.getElementById('maison-checkout');
+        if (checkoutEl) {
+            checkoutEl.querySelectorAll('input[name="address_1"], input[name="city"], input[name="postcode"]').forEach(el => {
+                el.addEventListener('input', debouncedSaveAddress);
+                el.addEventListener('input', clearAddressError);
+                el.addEventListener('change', clearAddressError);
+            });
+        // checkoutEl.querySelectorAll('select[name="country_id"], select[name="zone_id"]').forEach(el => {
+        //         el.addEventListener('change', debouncedSaveAddress);
+        //     });
+        }
+    }
+
+    function initCountrySelect(container) {
+        const countrySelect = container.querySelector('select[name="country_id"]');
+        if (!countrySelect) return;
+        countrySelect.addEventListener('change', async function() {
+            const zoneSelect = container.querySelector('select[name="zone_id"]');
+            if (!zoneSelect) return;
+            try {
+                const json = await fetch(baseUrl + 'checkout/checkout/country&country_id=' + this.value).then(r => r.json());
+                let html = '<option value="">Выберите</option>';
+                if (json.zone && json.zone.length) {
+                    json.zone.forEach(z => {
+                        html += '<option value="' + z.zone_id + '">' + z.name + '</option>';
+                    });
+                } else {
+                    html += '<option value="0" selected>—</option>';
+                }
+                zoneSelect.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+            }
+        });
+        if (countrySelect.value) countrySelect.dispatchEvent(new Event('change'));
+    }
+
+    async function saveCustomer() {
+        const form = document.querySelector('#maison-contact-form') || document.querySelector('#maison-contact-section form');
+        if (!form) return;
+        const formData = new FormData();
+        formData.set('firstname', (form.querySelector('input[name="firstname"]')?.value || '').trim());
+        formData.set('lastname', (form.querySelector('#input-payment-firstname')?.value || '').trim() || (form.querySelector('#input-payment-lastname')?.value || form.querySelector('input[name="lastname"]')?.value || '').trim());
+        formData.set('email', (form.querySelector('input[name="email"]')?.value || '').trim());
+        formData.set('telephone', (form.querySelector('input[name="telephone"]')?.value || '').trim());
+        if (shippingRequired) formData.set('shipping_address', '1');
+        const btn = document.getElementById('maison-contact-continue') || form.querySelector('button[type="button"]');
+        if (btn) btn.disabled = true;
+        try {
+            const json = await fetchJson('checkout/maison_checkout/saveCustomer', formData);
+            if (json.redirect) {
+                window.location = json.redirect;
+                return;
+            }
+            if (json.error) {
+                const err = json.error.warning || (typeof json.error === 'object' ? Object.values(json.error).join(' ') : json.error);
+                showErrorInSection(document.getElementById('maison-contact-section'), err);
+                if (btn) btn.disabled = false;
+                return;
+            }
+            showErrorInSection(document.getElementById('maison-contact-section'), '');
+            if (!shippingRequired) await loadPaymentMethod();
+        } catch (e) {
+            showErrorInSection(document.getElementById('maison-contact-section'), 'Ошибка: ' + e.message);
+        }
+        if (btn) btn.disabled = false;
+    }
+
+    async function saveContact() {
+        const form = document.querySelector('#maison-contact-form') || document.querySelector('#maison-contact-section form');
+        if (!form) return;
+        const lastnameEl = form.querySelector('#input-payment-lastname');
+        if (lastnameEl) lastnameEl.value = (form.querySelector('#input-payment-firstname')?.value || '').trim() || lastnameEl.value;
+        const cityEl = form.querySelector('#input-payment-city');
+        const addressEl = form.querySelector('#input-payment-address-1') || document.querySelector('#input-payment-address-1');
+        if (cityEl && addressEl) cityEl.value = (addressEl.value || '').trim() || cityEl.value;
+        if (cityEl && !cityEl.value.trim()) cityEl.value = '—';
+        const countrySelect = form.querySelector('select[name="country_id"]');
+        const zoneSelect = form.querySelector('select[name="zone_id"]');
+        if (countrySelect && !countrySelect.value && countrySelect.options.length > 1) {
+            countrySelect.value = countrySelect.options[1].value;
+        }
+        if (zoneSelect && !zoneSelect.value && zoneSelect.options.length > 1) {
+            zoneSelect.value = zoneSelect.options[1].value;
+        }
+        const route = 'checkout/maison_checkout/saveContact';
+        const btn = document.getElementById('maison-contact-continue') || form.querySelector('button[type="button"]');
+        if (btn) btn.disabled = true;
+        try {
+            const formData = new FormData(form);
+            const json = await fetchJson(route, formData);
+            if (json.redirect) {
+                window.location = json.redirect;
+                return;
+            }
+            if (json.error) {
+                const err = json.error.warning || (typeof json.error === 'object' ? Object.values(json.error).join(' ') : json.error);
+                showErrorInSection(document.getElementById('maison-contact-section'), err);
+                if (btn) btn.disabled = false;
+                return;
+            }
+            showErrorInSection(document.getElementById('maison-contact-section'), '');
+            if (shippingRequired) {
+                await loadShippingAddress();
+            } else {
+                await loadPaymentMethod();
+            }
+        } catch (e) {
+            showErrorInSection(document.getElementById('maison-contact-section'), 'Ошибка: ' + e.message);
+        }
+        if (btn) btn.disabled = false;
+    }
+
+    async function loadShippingAddress() {
+        const container = document.getElementById('maison-shipping-address-section');
+        if (!container) return;
+        showLoading(container);
+        try {
+            const html = await fetchHtml('checkout/guest_shipping&maison=1');
+            container.innerHTML = html;
+            const form = container.querySelector('form');
+            if (form) form.id = 'maison-shipping-form';
+            initCountrySelect(container);
+            initShippingDebounce();
+        } catch (e) {
+            showError(container, 'Ошибка загрузки: ' + e.message);
+        }
+    }
+
+    function initShippingDebounce() {
+        const form = document.querySelector('#maison-shipping-form') || document.querySelector('#maison-shipping-address-section form');
+        if (!form || form.dataset.debounceInit) return;
+        form.dataset.debounceInit = '1';
+        const debouncedSave = debounce(saveShippingAddress, 1200);
+        form.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', debouncedSave);
+            el.addEventListener('change', debouncedSave);
+        });
+        form.querySelectorAll('input[name="address_1"], #input-shipping-address-1').forEach(el => {
+            el.addEventListener('input', clearAddressError);
+            el.addEventListener('change', clearAddressError);
+        });
+    }
+
+    async function saveShippingAddress() {
+        let form = document.querySelector('#maison-shipping-form') || document.querySelector('#maison-shipping-address-section form');
+        if (!form) {
+            form = document.querySelector('#maison-contact-form');
+        }
+        if (!form) return;
+        const cityEl = form.querySelector('#input-shipping-city') || form.querySelector('#input-payment-city');
+        const addressEl = form.querySelector('#input-shipping-address-1') || form.querySelector('#input-payment-address-1');
+        if (cityEl && addressEl) cityEl.value = (addressEl.value || '').trim() || cityEl.value;
+        if (cityEl && !cityEl.value.trim()) cityEl.value = '—';
+        const countrySelect = form.querySelector('select[name="country_id"]');
+        const zoneSelect = form.querySelector('select[name="zone_id"]');
+        if (countrySelect && !countrySelect.value && countrySelect.options.length > 1) {
+            countrySelect.value = countrySelect.options[1].value;
+        }
+        if (zoneSelect && !zoneSelect.value && zoneSelect.options.length > 1) {
+            zoneSelect.value = zoneSelect.options[1].value;
+        }
+        const btn = document.getElementById('maison-shipping-continue');
+        if (btn) btn.disabled = true;
+        try {
+            const formData = new FormData(form);
+            formData.set('maison', '1');
+            const json = await fetchJson('checkout/maison_checkout/saveShippingAddress', formData);
+            if (json.redirect) {
+                window.location = json.redirect;
+                return;
+            }
+            if (json.error) {
+                const err = json.error.warning || (typeof json.error === 'object' ? Object.values(json.error).join(' ') : json.error);
+                showErrorInSection(document.getElementById('maison-shipping-address-section'), err);
+                if (btn) btn.disabled = false;
+                return;
+            }
+            // showErrorInSection(document.getElementById('maison-shipping-address-section'), '');
+            // await loadShippingMethod();
+        } catch (e) {
+            showErrorInSection(document.getElementById('maison-shipping-address-section'), 'Ошибка: ' + e.message);
+        }
+        if (btn) btn.disabled = false;
+    }
+
+    async function loadShippingMethod() {
+        const container = document.getElementById('maison-shipping-method-section');
+        if (!container) return;
+        const section = container.closest('section');
+        const previousContent = container.innerHTML;
+        showLoading(container);
+        try {
+            const html = await fetchHtml('checkout/shipping_method');
+            if (!html || !html.includes('maison-carrier-radio')) {
+                container.innerHTML = previousContent;
+                if (section) showErrorInSection(section, 'Не удалось загрузить варианты доставки. Проверьте адрес и попробуйте снова.');
+                return;
+            }
+            container.innerHTML = html;
+            delete container.dataset.shippingDebounceInit;
+            if (section) showErrorInSection(section, '');
+            initShippingMethodDebounce();
+            initPickupMapListeners();
+        } catch (e) {
+            container.innerHTML = previousContent;
+            if (section) showErrorInSection(section, 'Ошибка загрузки вариантов доставки: ' + e.message);
+        }
+    }
+
+    function updateCourierAddressVisibility(container) {
+        const header = document.getElementById('maison-courier-address-header');
+        const addressSection = document.getElementById('maison-shipping-address-section');
+        const mapBlock = document.getElementById('maison-pickup-map-block');
+        const deliveryTypeRadio = container && container.querySelector('input[name="delivery_type"]:checked');
+        const value = deliveryTypeRadio ? deliveryTypeRadio.value : '';
+        const isCourier = value.includes('courier');
+        const isPickup = value.includes('pickup_point');
+        if (header) header.classList.toggle('hidden', !isCourier);
+        if (addressSection) addressSection.classList.toggle('hidden', !isCourier);
+        if (mapBlock) mapBlock.classList.toggle('hidden', !isPickup);
+    }
+
+    function initShippingMethodDebounce() {
+        const container = document.getElementById('maison-shipping-method-section');
+        if (!container || container.dataset.shippingDebounceInit) return;
+        container.dataset.shippingDebounceInit = '1';
+        const carrierRadios = container.querySelectorAll('input.maison-carrier-radio');
+        const deliveryTypeRadios = container.querySelectorAll('input[name="delivery_type"]');
+        const commentEl = container.querySelector('textarea[name="comment"]');
+        const debouncedSave = debounce(saveShippingMethod, 400);
+        carrierRadios.forEach(r => r.addEventListener('change', saveShippingMethod));
+        deliveryTypeRadios.forEach(r => r.addEventListener('change', function() {
+            updateCourierAddressVisibility(container);
+            saveShippingMethod();
+        }));
+        if (commentEl) {
+            commentEl.addEventListener('input', debouncedSave);
+            commentEl.addEventListener('change', debouncedSave);
+        }
+        updateCourierAddressVisibility(container);
+    }
+
+    async function saveShippingMethod() {
+        const container = document.getElementById('maison-shipping-method-section');
+        const formData = new FormData();
+        const carrierRadio = container && container.querySelector('input.maison-carrier-radio:checked');
+        const deliveryTypeRadio = container && container.querySelector('input[name="delivery_type"]:checked');
+        if (carrierRadio && deliveryTypeRadio) {
+            formData.set('shipping_method', carrierRadio.value + '.' + deliveryTypeRadio.value);
+        } else if (carrierRadio) {
+            formData.set('shipping_method', carrierRadio.value);
+        }
+        const comment = container && container.querySelector('textarea[name="comment"]');
+        if (comment) formData.set('comment', comment.value);
+
+        const btn = document.getElementById('maison-shipping-method-btn');
+        if (btn) btn.disabled = true;
+        try {
+            const json = await fetchJson('checkout/shipping_method/save', formData);
+            if (json.redirect) {
+                window.location = json.redirect;
+                return;
+            }
+            if (json.error) {
+                showErrorInSection(container, json.error.warning || 'Ошибка');
+                if (btn) btn.disabled = false;
+                return;
+            }
+            showErrorInSection(container, '');
+            // Обновление тоталов с учётом стоимости доставки
+            if (json.order_total_text) {
+                const subEl = document.getElementById('maison-order-sub-total');
+                const shipEl = document.getElementById('maison-order-shipping');
+                const totalEl = document.getElementById('maison-order-total');
+                const discountRow = document.getElementById('maison-order-discount-row');
+                const discountEl = document.getElementById('maison-order-discount');
+                if (subEl && json.sub_total_text) subEl.textContent = json.sub_total_text;
+                if (shipEl) {
+                    shipEl.textContent = json.shipping_text || '—';
+                    shipEl.classList.toggle('text-green-600', json.shipping_text === 'Бесплатно');
+                    shipEl.classList.toggle('text-luxury-charcoal', json.shipping_text !== 'Бесплатно');
+                }
+                if (totalEl) totalEl.textContent = json.order_total_text;
+                if (discountRow && discountEl) {
+                    if (json.discount_text) {
+                        discountEl.textContent = json.discount_text;
+                        discountRow.classList.remove('hidden');
+                    } else {
+                        discountRow.classList.add('hidden');
+                    }
+                }
+            }
+        } catch (e) {
+            showErrorInSection(container, 'Ошибка: ' + e.message);
+        }
+        if (btn) btn.disabled = false;
+    }
+
+    async function loadPaymentMethod() {
+        const container = document.getElementById('maison-payment-section');
+        if (!container) return;
+        showLoading(container);
+        try {
+            const html = await fetchHtml('checkout/payment_method');
+            container.innerHTML = html;
+            delete container.dataset.paymentDebounceInit;
+            initPaymentMethodDebounce();
+        } catch (e) {
+            showError(container, 'Ошибка загрузки: ' + e.message);
+        }
+    }
+
+    function initPaymentMethodDebounce() {
+        const container = document.getElementById('maison-payment-section');
+        if (!container || container.dataset.paymentDebounceInit) return;
+        container.dataset.paymentDebounceInit = '1';
+        const radios = container.querySelectorAll('input[name="payment_method"]');
+        const agreeEl = container.querySelector('input[name="agree"]');
+        const commentEl = container.querySelector('textarea[name="comment"]');
+        const debouncedSave = debounce(savePaymentMethod, 400);
+        radios.forEach(r => r.addEventListener('change', savePaymentMethod));
+        container.addEventListener('click', function(e) {
+            const label = e.target.closest('label.group');
+            const customBorder = e.target.closest('.custom-radio-border');
+            if (label || customBorder) {
+                const radio = (label || customBorder?.closest('label'))?.querySelector('input[name="payment_method"]');
+                if (radio && !radio.checked) {
+                    radio.checked = true;
+                    savePaymentMethod();
+                }
+            }
+        });
+        if (agreeEl) agreeEl.addEventListener('change', savePaymentMethod);
+        if (commentEl) {
+            commentEl.addEventListener('input', debouncedSave);
+            commentEl.addEventListener('change', debouncedSave);
+        }
+    }
+
+    async function savePaymentMethod() {
+        const container = document.getElementById('maison-payment-section');
+        const formData = new FormData();
+        const method = container && container.querySelector('input[name="payment_method"]:checked');
+        if (method) formData.set('payment_method', method.value);
+        const agree = container && container.querySelector('input[name="agree"]');
+        if (agree && agree.checked) formData.set('agree', '1');
+        const comment = container && container.querySelector('textarea[name="comment"]');
+        if (comment) formData.set('comment', comment.value);
+
+        const btn = document.getElementById('maison-payment-method-btn');
+        if (btn) btn.disabled = true;
+        try {
+            const json = await fetchJson('checkout/payment_method/save', formData);
+            if (json.redirect) {
+                window.location = json.redirect;
+                return;
+            }
+            if (json.error) {
+                showErrorInSection(container, json.error.warning || 'Ошибка');
+                if (btn) btn.disabled = false;
+                return;
+            }
+            showErrorInSection(container, '');
+            // await loadConfirm();
+        } catch (e) {
+            showErrorInSection(container, 'Ошибка: ' + e.message);
+        }
+        if (btn) btn.disabled = false;
+    }
+
+    // async function loadConfirm() {
+    //     const container = document.getElementById('maison-confirm-section');
+    //     if (!container) return;
+    //     showLoading(container);
+    //     try {
+    //         const html = await fetchHtml('checkout/confirm');
+    //         console.log(html);
+    //         container.innerHTML = html;
+    //     } catch (e) {
+    //         showError(container, 'Ошибка загрузки: ' + e.message);
+    //     }
+    // }
+
+    const YANDEX_MAPS_API_KEY = '';
+
+    let ymapsReady = false;
+    let ymapsLoading = false;
+    let ymapsCallbacks = [];
+
+    function loadYmaps(cb) {
+        if (ymapsReady) { cb(); return; }
+        ymapsCallbacks.push(cb);
+        if (ymapsLoading) return;
+        ymapsLoading = true;
+        const script = document.createElement('script');
+        const key = YANDEX_MAPS_API_KEY ? '&apikey=' + YANDEX_MAPS_API_KEY : '';
+        script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU' + key;
+        script.onload = function() {
+            ymaps.ready(function() {
+                ymapsReady = true;
+                ymapsCallbacks.forEach(fn => fn());
+                ymapsCallbacks = [];
+            });
+        };
+        document.head.appendChild(script);
+    }
+
+    let pickupMap = null;
+    let selectedPickupPoint = null;
+
+    function initPickupMap() {
+        const placeholder = document.getElementById('maison-pickup-map-placeholder');
+        const mapContainer = document.getElementById('maison-pickup-map-container');
+        if (!placeholder || !mapContainer) return;
+
+        placeholder.classList.add('hidden');
+        mapContainer.classList.remove('hidden');
+        mapContainer.classList.add('flex');
+
+        if (pickupMap) { pickupMap.container.fitToViewport(); return; }
+
+        pickupMap = new ymaps.Map('maison-ymap', {
+            center: [55.751574, 37.573856],
+            zoom: 10,
+            controls: ['zoomControl', 'geolocationControl']
+        });
+
+        const searchControl = new ymaps.control.SearchControl({
+            options: { float: 'right', noPlacemark: true }
+        });
+        pickupMap.controls.add(searchControl);
+
+        pickupMap.events.add('click', function(e) {
+            const coords = e.get('coords');
+            setPickupCoords(coords);
+        });
+    }
+
+    function setPickupCoords(coords) {
+        if (!pickupMap) return;
+        pickupMap.geoObjects.removeAll();
+        const placemark = new ymaps.Placemark(coords, {}, {
+            preset: 'islands#darkBlueDotIconWithCaption',
+            iconCaptionMaxWidth: '200'
+        });
+        pickupMap.geoObjects.add(placemark);
+        selectedPickupPoint = coords;
+
+        ymaps.geocode(coords, { results: 1 }).then(function(res) {
+            const obj = res.geoObjects.get(0);
+            const address = obj ? obj.getAddressLine() : coords[0].toFixed(5) + ', ' + coords[1].toFixed(5);
+            placemark.properties.set('iconCaption', address);
+            const infoEl = document.getElementById('maison-pickup-selected-info');
+            if (infoEl) infoEl.textContent = address;
+            const shippingInput = document.getElementById('maison-shipping-address-input');
+            if (shippingInput) shippingInput.value = address;
+        });
+    }
+
+    function initPickupMapListeners() {
+        const openBtn = document.getElementById('maison-pickup-map-open-btn');
+        const closeBtn = document.getElementById('maison-pickup-map-close-btn');
+        if (openBtn && !openBtn.dataset.mapInit) {
+            openBtn.dataset.mapInit = '1';
+            openBtn.addEventListener('click', function() {
+                loadYmaps(initPickupMap);
+            });
+        }
+        if (closeBtn && !closeBtn.dataset.mapInit) {
+            closeBtn.dataset.mapInit = '1';
+            closeBtn.addEventListener('click', function() {
+                document.getElementById('maison-pickup-map-placeholder')?.classList.remove('hidden');
+                const mapContainer = document.getElementById('maison-pickup-map-container');
+                if (mapContainer) {
+                    mapContainer.classList.add('hidden');
+                    mapContainer.classList.remove('flex');
+                }
+            });
+        }
+    }
+
+    function clearValidationHighlights() {
+        document.querySelectorAll('#maison-checkout .maison-field-error').forEach(el => el.classList.remove('maison-field-error'));
+        document.querySelectorAll('#maison-checkout .maison-section-highlight-error').forEach(el => el.classList.remove('maison-section-highlight-error'));
+        document.querySelectorAll('#maison-checkout .maison-section-error').forEach(el => { el.style.display = 'none'; el.innerHTML = ''; });
+    }
+
+    function clearAddressError() {
+        const addressSection = document.getElementById('maison-shipping-address-section');
+        if (addressSection) {
+            showErrorInSection(addressSection, '');
+            addressSection.closest('section')?.classList.remove('maison-section-highlight-error');
+        }
+        document.querySelectorAll('#input-payment-address-1, #input-shipping-address-1').forEach(el => el.classList.remove('maison-field-error'));
+    }
+
+    function validateAndConfirmOrder() {
+        clearValidationHighlights();
+        const errors = [];
+
+        const contactSection = document.getElementById('maison-contact-section');
+        const contactForm = document.querySelector('#maison-contact-form') || contactSection?.querySelector('form');
+        const requiredContact = ['firstname', 'email', 'telephone'];
+        if (contactForm) {
+            for (const name of requiredContact) {
+                const el = contactForm.querySelector(`input[name="${name}"]`);
+                if (el && !(el.value || '').trim()) {
+                    el.classList.add('maison-field-error');
+                    errors.push({ section: contactSection, message: 'Заполните все обязательные поля' });
+                }
+            }
+            if (shippingRequired) {
+                const addressSection = document.getElementById('maison-shipping-address-section');
+                const addressEl = document.querySelector('#input-payment-address-1') || document.querySelector('#input-shipping-address-1') || contactForm.querySelector('input[name="address_1"]');
+                if (addressEl && (addressEl.value || '').trim().length < 3) {
+                    addressEl.classList.add('maison-field-error');
+                    if (addressSection) {
+                        errors.push({ section: addressSection.closest('section'), message: 'Укажите адрес доставки' });
+                        addressSection.closest('section')?.classList.add('maison-section-highlight-error');
+                        showErrorInSection(addressSection, 'Укажите адрес доставки');
+                    }
+                }
+            }
+            if (errors.some(e => e.section === contactSection)) {
+                contactSection?.closest('section')?.classList.add('maison-section-highlight-error');
+                showErrorInSection(contactSection, errors.find(e => e.section === contactSection)?.message || 'Заполните данные получателя');
+            }
+        }
+
+        if (shippingRequired) {
+            const shippingSection = document.getElementById('maison-shipping-method-section');
+            const shippingSectionParent = shippingSection?.closest('section');
+            const carrierRadio = shippingSection?.querySelector('input.maison-carrier-radio:checked');
+            const deliveryTypeRadio = shippingSection?.querySelector('input[name="delivery_type"]:checked');
+            if (!carrierRadio || !deliveryTypeRadio) {
+                shippingSectionParent?.classList.add('maison-section-highlight-error');
+                showErrorInSection(shippingSectionParent, 'Выберите способ доставки');
+                errors.push({ section: shippingSectionParent });
+            }
+        }
+
+        const paymentSection = document.getElementById('maison-payment-section');
+        const paymentRadio = paymentSection?.querySelector('input[name="payment_method"]:checked');
+        if (!paymentRadio) {
+            paymentSection?.closest('section')?.classList.add('maison-section-highlight-error');
+            showErrorInSection(paymentSection, 'Выберите способ оплаты');
+            errors.push({ section: paymentSection });
+        }
+
+        if (errors.length > 0) {
+            const firstSection = errors[0].section;
+            firstSection?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        const btn = document.getElementById('maison-confirm-order-btn');
+        if (btn) btn.disabled = true;
+
+        async function doConfirm() {
+            try {
+                const contactForm = document.querySelector('#maison-contact-form') || document.querySelector('#maison-contact-section form');
+                if (contactForm) {
+                    const fd = new FormData(contactForm);
+                    if (shippingRequired) fd.set('shipping_address', '1');
+                    const r1 = await fetchJson('checkout/maison_checkout/saveContact', fd);
+                    if (r1.redirect) { window.location = r1.redirect; return; }
+                    if (r1.error) {
+                        showErrorInSection(contactSection, r1.error.warning || Object.values(r1.error || {}).join(' '));
+                        btn.disabled = false;
+                        return;
+                    }
+                }
+                if (shippingRequired) {
+                    let addrForm = document.querySelector('#maison-shipping-form') || document.querySelector('#maison-shipping-address-section form');
+                    if (!addrForm) addrForm = document.querySelector('#maison-contact-form');
+                    if (addrForm) {
+                        const fd = new FormData(addrForm);
+                        fd.set('maison', '1');
+                        const r2 = await fetchJson('checkout/maison_checkout/saveShippingAddress', fd);
+                        if (r2.redirect) { window.location = r2.redirect; return; }
+                        if (r2.error) {
+                            const shipSection = document.getElementById('maison-shipping-method-section')?.closest('section');
+                            showErrorInSection(shipSection, r2.error.warning || Object.values(r2.error || {}).join(' '));
+                            btn.disabled = false;
+                            return;
+                        }
+                    }
+                    const shipContainer = document.getElementById('maison-shipping-method-section');
+                    const shipFd = new FormData();
+                    const cr = shipContainer?.querySelector('input.maison-carrier-radio:checked');
+                    const dt = shipContainer?.querySelector('input[name="delivery_type"]:checked');
+                    if (cr && dt) shipFd.set('shipping_method', cr.value + '.' + dt.value);
+                    const cmt = shipContainer?.querySelector('textarea[name="comment"]');
+                    if (cmt) shipFd.set('comment', cmt.value);
+                    const r3 = await fetchJson('checkout/shipping_method/save', shipFd);
+                    if (r3.redirect) { window.location = r3.redirect; return; }
+                    if (r3.error) {
+                        showErrorInSection(shipContainer?.closest('section'), r3.error.warning || 'Ошибка доставки');
+                        btn.disabled = false;
+                        return;
+                    }
+                }
+                const payContainer = document.getElementById('maison-payment-section');
+                const payFd = new FormData();
+                const pm = payContainer?.querySelector('input[name="payment_method"]:checked');
+                if (pm) payFd.set('payment_method', pm.value);
+                const agree = payContainer?.querySelector('input[name="agree"]');
+                if (agree?.checked) payFd.set('agree', '1');
+                const payCmt = payContainer?.querySelector('textarea[name="comment"]');
+                if (payCmt) payFd.set('comment', payCmt.value);
+                const r4 = await fetchJson('checkout/payment_method/save', payFd);
+                if (r4.redirect) { window.location = r4.redirect; return; }
+                if (r4.error) {
+                    showErrorInSection(payContainer, r4.error.warning || 'Ошибка оплаты');
+                    btn.disabled = false;
+                    return;
+                }
+                if (pm && pm.value === 'bank_transfer') {
+                    const urLicBlock = document.getElementById('maison-ur-lic-block');
+                    urLicBlock?.querySelectorAll('.maison-section-error').forEach(el => el.remove());
+                    urLicBlock?.classList.remove('hidden');
+                    urLicBlock?.classList.add('flex');
+                    document.getElementById('maison-confirm-section')?.classList.add('hidden');
+                    document.getElementById('maison-contact-section-wrapper')?.classList.add('hidden');
+                    document.getElementById('maison-shipping-section-wrapper')?.classList.add('hidden');
+                    document.getElementById('maison-payment-section-wrapper')?.classList.add('hidden');
+                    urLicBlock?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    btn.disabled = false;
+                    return;
+                }
+                const r5 = await fetch(baseUrl + 'checkout/maison_checkout/confirmOrder', { method: 'POST' }).then(res => res.json());
+                if (r5.redirect) window.location = r5.redirect;
+                else if (r5.error) {
+                    showErrorInSection(document.getElementById('maison-confirm-section'), r5.error.warning || 'Ошибка подтверждения');
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                console.error(e);
+                btn.disabled = false;
+            }
+        }
+        doConfirm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadContactForm();
+        initShippingMethodDebounce();
+        initPaymentMethodDebounce();
+        initPickupMapListeners();
+
+        document.getElementById('maison-confirm-order-btn')?.addEventListener('click', function() {
+            validateAndConfirmOrder();
+        });
+
+        document.getElementById('maison-ur-lic-back-btn')?.addEventListener('click', function() {
+            document.getElementById('maison-ur-lic-block')?.classList.add('hidden');
+            document.getElementById('maison-ur-lic-block')?.classList.remove('flex');
+            document.getElementById('maison-confirm-section')?.classList.remove('hidden');
+            document.getElementById('maison-contact-section-wrapper')?.classList.remove('hidden');
+            document.getElementById('maison-shipping-section-wrapper')?.classList.remove('hidden');
+            document.getElementById('maison-payment-section-wrapper')?.classList.remove('hidden');
+        });
+
+        document.getElementById('maison-ur-lic-submit-btn')?.addEventListener('click', async function() {
+            const block = document.getElementById('maison-ur-lic-block');
+            const btn = document.getElementById('maison-ur-lic-submit-btn');
+            const fd = new FormData();
+            block?.querySelectorAll('input[name^="ur_"]').forEach(function(inp) {
+                if (inp.name) fd.set(inp.name, inp.value || '');
+            });
+            try {
+                btn.disabled = true;
+                const r = await fetch(baseUrl + 'checkout/maison_checkout/saveUrLic', { method: 'POST', body: fd }).then(res => res.json());
+                if (r.redirect) window.location = r.redirect;
+                else if (r.error) {
+                    showErrorInSection(block, r.error.warning || 'Ошибка сохранения');
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                console.error(e);
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('maison-coupon-btn')?.addEventListener('click', async function() {
+            const input = document.getElementById('maison-coupon-input');
+            const code = input?.value?.trim();
+            if (!code) return;
+            try {
+                const formData = new FormData();
+                formData.set('coupon', code);
+                const res = await fetch('{{ coupon_action }}', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.error) alert(json.error);
+                else if (json.redirect) location.reload();
+            } catch (e) {
+                alert('Ошибка: ' + e.message);
+            }
+        });
+    });
+})();
+</script>
+{{ footer }}

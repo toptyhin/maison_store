@@ -1,165 +1,203 @@
 {{ header }}
-<div id="account-order" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  {% if success %}
-  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  {% if error_warning %}
-  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    {% if success %}
+    <div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[20px]">check_circle</span>
+      {{ success }}
+    </div>
     {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h2>{{ heading_title }}</h2>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <td class="text-left" colspan="2">{{ text_order_detail }}</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-left" style="width: 50%;">{% if invoice_no %} <b>{{ text_invoice_no }}</b> {{ invoice_no }}<br/>
-              {% endif %} <b>{{ text_order_id }}</b> #{{ order_id }}<br/>
-              <b>{{ text_date_added }}</b> {{ date_added }}</td>
-            <td class="text-left" style="width: 50%;">{% if payment_method %} <b>{{ text_payment_method }}</b> {{ payment_method }}<br/>
+    {% if error_warning %}
+    <div class="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[20px]">warning</span>
+      {{ error_warning }}
+    </div>
+    {% endif %}
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0">
+        {{ content_top }}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+            <p class="text-gray-500 mt-1 text-sm">{{ text_order_detail }}</p>
+          </div>
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+
+        {# Информация о заказе #}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-serif text-luxury-charcoal font-bold">{{ text_order_detail }}</h2>
+          </div>
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              {% if invoice_no %}
+              <p class="text-sm"><span class="text-gray-500 font-medium">{{ text_invoice_no }}</span> {{ invoice_no }}</p>
               {% endif %}
-              {% if shipping_method %} <b>{{ text_shipping_method }}</b> {{ shipping_method }} {% endif %}</td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <td class="text-left" style="width: 50%; vertical-align: top;">{{ text_payment_address }}</td>
+              <p class="text-sm"><span class="text-gray-500 font-medium">{{ text_order_id }}</span> #{{ order_id }}</p>
+              <p class="text-sm"><span class="text-gray-500 font-medium">{{ text_date_added }}</span> {{ date_added }}</p>
+            </div>
+            <div class="space-y-2">
+              {% if payment_method %}
+              <p class="text-sm"><span class="text-gray-500 font-medium">{{ text_payment_method }}</span> {{ payment_method }}</p>
+              {% endif %}
+              {% if shipping_method %}
+              <p class="text-sm"><span class="text-gray-500 font-medium">{{ text_shipping_method }}</span> {{ shipping_method }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {# Адреса #}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-serif text-luxury-charcoal font-bold">{{ text_payment_address }}{% if shipping_address %} / {{ text_shipping_address }}{% endif %}</h2>
+          </div>
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-sm text-luxury-charcoal leading-relaxed">{{ payment_address|raw }}</p>
+            </div>
             {% if shipping_address %}
-            <td class="text-left" style="width: 50%; vertical-align: top;">{{ text_shipping_address }}</td>
-            {% endif %} </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-left">{{ payment_address }}</td>
-            {% if shipping_address %}
-            <td class="text-left">{{ shipping_address }}</td>
-            {% endif %} </tr>
-        </tbody>
-      </table>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <td class="text-left">{{ column_name }}</td>
-              <td class="text-left">{{ column_model }}</td>
-              <td class="text-right">{{ column_quantity }}</td>
-              <td class="text-right">{{ column_price }}</td>
-              <td class="text-right">{{ column_total }}</td>
-              {% if products %}
-              <td style="width: 20px;"></td>
-              {% endif %} </tr>
-          </thead>
-          <tbody>
-          
-          {% for product in products %}
-          <tr>
-            <td class="text-left">{{ product.name }}
-              {% for option in product.option %} <br/>
-              &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% endfor %}</td>
-            <td class="text-left">{{ product.model }}</td>
-            <td class="text-right">{{ product.quantity }}</td>
-            <td class="text-right">{{ product.price }}</td>
-            <td class="text-right">{{ product.total }}</td>
-            <td class="text-right" style="white-space: nowrap;">{% if product.reorder %} <a href="{{ product.reorder }}" data-toggle="tooltip" title="{{ button_reorder }}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i></a> {% endif %} <a href="{{ product.return }}" data-toggle="tooltip" title="{{ button_return }}" class="btn btn-danger"><i class="fa fa-reply"></i></a></td>
-          </tr>
-          {% endfor %}
-          {% for voucher in vouchers %}
-          <tr>
-            <td class="text-left">{{ voucher.description }}</td>
-            <td class="text-left"></td>
-            <td class="text-right">1</td>
-            <td class="text-right">{{ voucher.amount }}</td>
-            <td class="text-right">{{ voucher.amount }}</td>
-            {% if products %}
-            <td></td>
-            {% endif %} </tr>
-          {% endfor %}
-            </tbody>
-          
-          <tfoot>
-          
-          {% for total in totals %}
-          <tr>
-            <td colspan="3"></td>
-            <td class="text-right"><b>{{ total.title }}</b></td>
-            <td class="text-right">{{ total.text }}</td>
-            {% if products %}
-            <td></td>
-            {% endif %} </tr>
-          {% endfor %}
-            </tfoot>
-          
-        </table>
-      </div>
-      {% if comment %}
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <td class="text-left">{{ text_comment }}</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-left">{{ comment }}</td>
-          </tr>
-        </tbody>
-      </table>
-      {% endif %}
-      {% if histories %}
-      <h3>{{ text_history }}</h3>
-      <table class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <td class="text-left">{{ column_date_added }}</td>
-            <td class="text-left">{{ column_status }}</td>
-            <td class="text-left">{{ column_comment }}</td>
-          </tr>
-        </thead>
-        <tbody>
-        
-        {% if histories %}
-        {% for history in histories %}
-        <tr>
-          <td class="text-left">{{ history.date_added }}</td>
-          <td class="text-left">{{ history.status }}</td>
-          <td class="text-left">{{ history.comment }}</td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <tr>
-          <td colspan="3" class="text-center">{{ text_no_results }}</td>
-        </tr>
+            <div>
+              <p class="text-sm text-luxury-charcoal leading-relaxed">{{ shipping_address|raw }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {# Товары #}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100 flex items-baseline justify-between">
+            <h2 class="text-lg font-serif text-luxury-charcoal font-bold">{{ column_name }}</h2>
+            {% set item_count = products|length + vouchers|length %}
+            {% set mod10 = item_count % 10 %}
+            {% set mod100 = item_count % 100 %}
+            <span class="text-gray-400 text-sm">{{ item_count }} {% if mod10 == 1 and mod100 != 11 %}позиция{% elseif mod10 >= 2 and mod10 <= 4 and (mod100 < 10 or mod100 >= 20) %}позиции{% else %}позиций{% endif %}</span>
+          </div>
+          <div class="divide-y divide-gray-100">
+            {% for product in products %}
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 p-6 items-start">
+              {% if product.href %}
+              <a href="{{ product.href }}" class="w-full sm:w-32 aspect-square rounded-sm overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+              </a>
+              {% else %}
+              <div class="w-full sm:w-32 aspect-square rounded-sm overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+              </div>
+              {% endif %}
+              <div class="flex-1 min-w-0">
+                {% if product.href %}
+                <a href="{{ product.href }}" class="text-lg font-serif font-medium text-luxury-charcoal hover:text-primary transition-colors">
+                  {{ product.name }}
+                </a>
+                {% else %}
+                <span class="text-lg font-serif font-medium text-luxury-charcoal">{{ product.name }}</span>
+                {% endif %}
+                {% for option in product.option %}
+                <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">— {{ option.name }}: {{ option.value }}</p>
+                {% endfor %}
+                <div class="flex flex-wrap items-center gap-4 mt-4 text-sm">
+                  <span class="text-gray-500">{{ column_model }}: {{ product.model }}</span>
+                  <span class="text-gray-500">{{ column_quantity }}: {{ product.quantity }}</span>
+                  <span class="text-gray-500">{{ column_price }}: {{ product.price }}</span>
+                  <span class="font-bold text-luxury-charcoal">{{ column_total }}: {{ product.total }}</span>
+                </div>
+                <div class="flex items-center gap-2 mt-4">
+                  {# {% if product.reorder %}
+                  <a href="{{ product.reorder }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors" title="{{ button_reorder }}">
+                    <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                    {{ button_reorder }}
+                  </a>
+                  {% endif %}
+                  <a href="{{ product.return }}" class="inline-flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 rounded-sm transition-colors text-xs font-bold uppercase tracking-widest" title="{{ button_return }}">
+                    <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+                    {{ button_return }}
+                  </a> #}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            {% for voucher in vouchers %}
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 p-6 items-start">
+              <div class="w-full sm:w-32 aspect-square rounded-sm overflow-hidden bg-gray-100 shrink-0 border border-gray-200 flex items-center justify-center">
+                <span class="material-symbols-outlined text-4xl text-gray-400">card_giftcard</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-lg font-serif font-medium text-luxury-charcoal">{{ voucher.description }}</p>
+                <div class="flex flex-wrap items-center gap-4 mt-4 text-sm">
+                  <span class="text-gray-500">{{ column_quantity }}: 1</span>
+                  <span class="font-bold text-luxury-charcoal">{{ column_total }}: {{ voucher.amount }}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="p-6 border-t border-gray-100 bg-gray-50/50">
+            {% for total in totals %}
+            <div class="flex justify-between items-center py-2 {% if loop.last %}border-t border-gray-200 mt-2 pt-4{% endif %}">
+              <span class="text-sm {% if loop.last %}font-serif font-medium text-luxury-charcoal{% else %}text-gray-500{% endif %}">{{ total.title }}</span>
+              <span class="text-sm font-bold text-luxury-charcoal">{{ total.text }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if comment %}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-serif text-luxury-charcoal font-bold">{{ text_comment }}</h2>
+          </div>
+          <div class="p-6">
+            <p class="text-sm text-luxury-charcoal leading-relaxed">{{ comment|raw }}</p>
+          </div>
+        </div>
         {% endif %}
-          </tbody>
-        
-      </table>
-      {% endif %}
-      <div class="buttons clearfix">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+
+        {% if histories %}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-serif text-luxury-charcoal font-bold">{{ text_history }}</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-500">
+              <thead class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+                <tr>
+                  <th class="px-6 py-4 font-semibold">{{ column_date_added }}</th>
+                  <th class="px-6 py-4 font-semibold">{{ column_status }}</th>
+                  <th class="px-6 py-4 font-semibold">{{ column_comment }}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                {% for history in histories %}
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                  <td class="px-6 py-4">{{ history.date_added }}</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ history.status }}</span>
+                  </td>
+                  <td class="px-6 py-4 text-luxury-charcoal">{{ history.comment|raw }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-6">
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+        {{ content_bottom }}
       </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+    </div>
+  </div>
+</main>
 {{ footer }}

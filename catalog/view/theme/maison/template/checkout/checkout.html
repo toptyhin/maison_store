@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Maison Textile: Оформление заказа</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#546E7A",
+                        "primary-dark": "#37474F",
+                        "primary-light": "#B0BEC5",
+                        "background-dark": "#F5F7FA",
+                        "background-card": "#FFFFFF",
+                        "background-section": "#ECEFF1",
+                        "luxury-charcoal": "#263238",
+                        "luxury-silver": "#CFD8DC",
+                        "luxury-cream": "#FFFFFF",
+                        "midnight-blue": "#F5F7FA",
+                        "soft-gold-bg": "#FFFFFF",
+                        "dark-beige": "#90A4AE",
+                        "badge-gold": "#C1A687",
+                        "badge-teal": "#80CBC4",
+                        "accent-bronze": "#C28257"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
+                        "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
+                        "soft": "0 4px 20px -5px rgba(0,0,0,0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CFD8DC;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #546E7A;
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .peer:checked~.custom-radio-border {
+            border-color: #263238;
+            background-color: #F5F7FA;
+        }
+
+        .peer:checked~.custom-radio-border .radio-indicator {
+            border-color: #263238;
+        }
+
+        .peer:checked~.custom-radio-border .radio-indicator::after {
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <header
+            class="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
+                <div class="flex items-center gap-6 lg:gap-12">
+                    <a class="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-luxury-charcoal transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        <span class="hidden sm:inline">В корзину</span>
+                    </a>
+                    <div class="flex items-center gap-3 text-luxury-charcoal">
+                        <div class="size-6 lg:size-8 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg lg:text-2xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison
+                            Textile</h2>
+                    </div>
+                </div>
+                <div>
+                    <button
+                        class="flex items-center gap-2 border border-gray-200 hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white px-4 py-2.5 rounded-full transition-all duration-300 group">
+                        <span class="material-symbols-outlined text-[18px]">call</span>
+                        <span class="text-xs font-bold uppercase tracking-widest hidden sm:inline">Заказать по
+                            телефону</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <h1 class="text-3xl md:text-4xl font-serif font-bold text-luxury-charcoal">Оформление заказа</h1>
+                <div class="flex items-center gap-4 text-xs md:text-sm font-medium">
+                    <div class="flex items-center gap-2 text-gray-400">
+                        <span>1. Корзина</span>
+                    </div>
+                    <div class="h-px w-6 bg-gray-300"></div>
+                    <div class="flex items-center gap-2 text-luxury-charcoal font-bold">
+                        <span>2. Оформление заказа</span>
+                    </div>
+                    <div class="h-px w-6 bg-gray-300"></div>
+                    <div class="flex items-center gap-2 text-gray-400">
+                        <span>3. Готово</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+                <div class="lg:col-span-8 flex flex-col gap-8">
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <h2 class="text-xl font-serif font-medium mb-6">Данные получателя</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-1 md:col-span-2">
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">ФИО</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"
+                                    placeholder="Ваше имя" type="text" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Email</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"
+                                    placeholder="example@mail.ru" type="email" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Телефон</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"
+                                    placeholder="+7 (___) ___-__-__" type="tel" />
+                            </div>
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <h2 class="text-xl font-serif font-medium mb-6">Доставка</h2>
+                        <div class="mb-8">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Транспортная
+                                компания</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="cursor-pointer group relative">
+                                    <input checked="" class="peer sr-only" name="carrier" type="radio" />
+                                    <div
+                                        class="h-16 flex items-center justify-center border border-gray-200 rounded-md bg-white peer-checked:bg-gray-50 peer-checked:border-luxury-charcoal hover:border-gray-300 transition-all">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="font-display font-black text-xl italic text-[#3C8F32]">CDEK</span>
+                                        </div>
+                                        <div
+                                            class="absolute top-0 right-0 size-3 bg-luxury-charcoal rounded-bl-md opacity-0 peer-checked:opacity-100 transition-opacity">
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group relative">
+                                    <input class="peer sr-only" name="carrier" type="radio" />
+                                    <div
+                                        class="h-16 flex items-center justify-center border border-gray-200 rounded-md bg-white peer-checked:bg-gray-50 peer-checked:border-luxury-charcoal hover:border-gray-300 transition-all">
+                                        <div class="flex items-center">
+                                            <span class="font-display font-black text-xl text-[#005BFF]">OZON</span>
+                                            <span
+                                                class="font-display font-black text-xl text-[#F91155] ml-1">Доставка</span>
+                                        </div>
+                                        <div
+                                            class="absolute top-0 right-0 size-3 bg-luxury-charcoal rounded-bl-md opacity-0 peer-checked:opacity-100 transition-opacity">
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-8">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Способ получения
+                            </h3>
+                            <div class="flex p-1 bg-gray-100 rounded-md max-w-md">
+                                <button
+                                    class="flex-1 py-2.5 px-4 rounded-sm text-sm font-bold uppercase tracking-widest transition-all shadow-sm bg-luxury-charcoal text-white">
+                                    Пункт выдачи
+                                </button>
+                                <button
+                                    class="flex-1 py-2.5 px-4 rounded-sm text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-luxury-charcoal transition-all">
+                                    Курьером
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-6 border-t border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500">Адрес доставки
+                                </h3>
+                            </div>
+                            <div class="space-y-4 mb-6 relative">
+                                <div class="relative group z-30">
+                                    <input
+                                        class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 peer"
+                                        placeholder="Город, Улица, Дом, Квартира" type="text" value="г. Москва, у" />
+                                    <div
+                                        class="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-md shadow-lg mt-1 hidden group-hover:block peer-focus:block">
+                                        <ul class="py-2 text-sm text-gray-700">
+                                            <li
+                                                class="px-4 py-2 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                                                <span><span class="font-bold text-luxury-charcoal">г Москва, ул</span>
+                                                    Тверская, д 1</span>
+                                                <span class="text-xs text-gray-400">Москва</span>
+                                            </li>
+                                            <li
+                                                class="px-4 py-2 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                                                <span><span class="font-bold text-luxury-charcoal">г Москва, ул</span>
+                                                    Арбат, д 10</span>
+                                                <span class="text-xs text-gray-400">Москва</span>
+                                            </li>
+                                            <li
+                                                class="px-4 py-2 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                                                <span><span class="font-bold text-luxury-charcoal">г Москва, ул</span>
+                                                    Ленина, д 5</span>
+                                                <span class="text-xs text-gray-400">Московский</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div
+                                    class="h-32 w-full bg-gray-100 rounded-md border border-gray-200 flex items-center justify-center text-gray-400 relative overflow-hidden group/map cursor-pointer">
+                                    <div
+                                        class="absolute inset-0 opacity-10 bg-[radial-gradient(#263238_1px,transparent_1px)] [background-size:16px_16px]">
+                                    </div>
+                                    <button
+                                        class="relative z-10 flex items-center gap-2 bg-white text-luxury-charcoal px-5 py-2.5 rounded-full shadow-md font-bold text-xs uppercase tracking-widest hover:bg-luxury-charcoal hover:text-white transition-all duration-300 border border-transparent hover:border-white/20">
+                                        <span class="material-symbols-outlined text-lg">map</span>
+                                        Выбрать на карте
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-md p-4 flex items-start gap-4 border border-gray-200/60">
+                                <div
+                                    class="bg-white p-2 rounded-full border border-gray-100 shadow-sm text-luxury-charcoal">
+                                    <span class="material-symbols-outlined text-[20px] block">schedule</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif font-medium text-luxury-charcoal">Расчетное время доставки
+                                    </h4>
+                                    <p class="text-sm text-gray-500 mt-1">Срок доставки: 2-4 рабочих дня</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section> 
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <h2 class="text-xl font-serif font-medium mb-6">Оплата</h2>
+                        <div class="grid grid-cols-1 gap-4">
+                            <label class="relative cursor-pointer group">
+                                <input checked="" class="peer sr-only" name="payment" type="radio" />
+                                <div
+                                    class="custom-radio-border p-5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-all flex items-center gap-4">
+                                    <div
+                                        class="radio-indicator size-5 rounded-full border border-gray-300 flex items-center justify-center relative after:content-[''] after:size-2.5 after:bg-luxury-charcoal after:rounded-full after:scale-0 after:transition-transform">
+                                    </div>
+                                    <div class="flex items-center gap-4 flex-1">
+                                        <div class="p-2 bg-gray-50 rounded-full text-luxury-charcoal">
+                                            <span class="material-symbols-outlined">credit_card</span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="block text-sm font-bold uppercase tracking-wide text-luxury-charcoal">Картой
+                                                онлайн</span>
+                                            <span class="text-xs text-gray-500">Apple Pay, Google Pay, Visa,
+                                                Mastercard</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="relative cursor-pointer group">
+                                <input class="peer sr-only" name="payment" type="radio" />
+                                <div
+                                    class="custom-radio-border p-5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-all flex items-center gap-4">
+                                    <div
+                                        class="radio-indicator size-5 rounded-full border border-gray-300 flex items-center justify-center relative after:content-[''] after:size-2.5 after:bg-luxury-charcoal after:rounded-full after:scale-0 after:transition-transform">
+                                    </div>
+                                    <div class="flex items-center gap-4 flex-1">
+                                        <div
+                                            class="p-2 bg-gray-50 rounded-full text-gray-400 group-hover:text-luxury-charcoal transition-colors">
+                                            <span class="material-symbols-outlined">payments</span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="block text-sm font-bold uppercase tracking-wide text-luxury-charcoal">При
+                                                получении</span>
+                                            <span class="text-xs text-gray-500">Картой или наличными</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="relative cursor-pointer group">
+                                <input class="peer sr-only" name="payment" type="radio" />
+                                <div
+                                    class="custom-radio-border p-5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-all flex items-center gap-4">
+                                    <div
+                                        class="radio-indicator size-5 rounded-full border border-gray-300 flex items-center justify-center relative after:content-[''] after:size-2.5 after:bg-luxury-charcoal after:rounded-full after:scale-0 after:transition-transform">
+                                    </div>
+                                    <div class="flex items-center gap-4 flex-1">
+                                        <div
+                                            class="p-2 bg-gray-50 rounded-full text-gray-400 group-hover:text-luxury-charcoal transition-colors">
+                                            <span class="material-symbols-outlined">account_balance_wallet</span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="block text-sm font-bold uppercase tracking-wide text-luxury-charcoal">Безналичный
+                                                расчет</span>
+                                            <span class="text-xs text-gray-500">Для юридических лиц</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h2 class="text-xl font-serif font-medium mb-2 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-luxury-charcoal">loyalty</span>
+                                    Бонусная программа
+                                </h2>
+                                <p class="text-sm text-gray-500">
+                                    Доступно: <span class="font-bold text-luxury-charcoal">1200 баллов</span>
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-medium text-luxury-charcoal">Списать 500 баллов</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input class="sr-only peer" type="checkbox" value="" />
+                                    <div
+                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-luxury-charcoal">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="lg:col-span-4 relative">
+                    <div class="sticky top-24 flex flex-col gap-6">
+                        <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                            <label
+                                class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">Промокод</label>
+                            <div class="flex flex-col gap-3">
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"
+                                    placeholder="Введите код" type="text" />
+                                <button
+                                    class="w-full bg-[#263238] text-white border border-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors rounded-sm shadow-sm">
+                                    Применить
+                                </button>
+                            </div>
+                        </section>
+                        <div
+                            class="bg-white p-6 md:p-8 rounded-lg shadow-card-depth border border-gray-100 relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none">
+                            </div>
+                            <h2 class="text-xl font-serif font-medium mb-6 relative z-10">Ваш заказ</h2>
+                            <div class="flex flex-col gap-4 mb-6 border-b border-gray-100 pb-6 relative z-10">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">1 товар на сумму</span>
+                                    <span class="text-luxury-charcoal font-medium">15 990 ₽</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Доставка</span>
+                                    <span
+                                        class="text-green-600 font-bold uppercase text-xs tracking-wide">Бесплатно</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Ваша скидка</span>
+                                    <span class="text-red-600 font-medium">-3 840 ₽ (-24%)</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-baseline mb-8 relative z-10">
+                                <span class="text-lg font-serif font-medium text-luxury-charcoal">Итого к оплате</span>
+                                <span class="text-3xl font-bold text-luxury-charcoal tracking-tight">12 150 ₽</span>
+                            </div>
+                            <button
+                                class="w-full bg-[#263238] text-white border border-transparent py-4 font-bold uppercase text-sm tracking-[0.15em] mb-6 rounded-sm transition-colors hover:bg-primary-dark shadow-lg">
+                                Подтвердить заказ
+                            </button>
+                            <div class="text-[10px] leading-relaxed text-gray-400 text-center">
+                                Нажимая кнопку «Подтвердить заказ», вы соглашаетесь с <a
+                                    class="underline hover:text-luxury-charcoal" href="#">политикой обработки данных</a>
+                                и <a class="underline hover:text-luxury-charcoal" href="#">условиями продажи</a>.
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center gap-6 text-gray-300">
+                            <span class="material-symbols-outlined text-[24px]">lock</span>
+                            <span class="material-symbols-outlined text-[24px]">verified_user</span>
+                            <span class="material-symbols-outlined text-[24px]">local_shipping</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100 flex flex-col items-center text-center">
+                            <div class="flex flex-col items-center justify-center gap-3 mb-6 w-full">
+                                <div
+                                    class="size-12 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal mx-auto">
+                                    <span class="material-symbols-outlined text-[24px]">help</span>
+                                </div>
+                                <h3 class="font-serif font-medium text-xl text-luxury-charcoal text-center">Нужна
+                                    помощь?</h3>
+                            </div>
+                            <div class="flex flex-col items-center justify-center gap-4 w-full">
+                                <a class="text-luxury-charcoal hover:text-primary-dark transition-colors text-center"
+                                    href="tel:88005553535">
+                                    <span class="font-display font-bold text-xl tracking-wide">8 (800) 555-35-35</span>
+                                </a>
+                                <div class="flex items-center justify-center gap-4 w-full">
+                                    <a class="group flex items-center justify-center size-12 rounded-full border border-gray-200 text-luxury-charcoal hover:bg-luxury-charcoal hover:border-luxury-charcoal hover:text-white transition-all duration-300"
+                                        href="#">
+                                        <svg class="size-5" fill="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M21.6 2.4l-19 7.3c-1.4.6-1.4 1.4 0 1.9l4.9 1.5 11.3-7.1c.5-.3 1-.1.6.3l-9.1 8.2-.2 5.9c.4 0 .6-.2.8-.4l2-2 4.1 3c.7.4 1.2.2 1.4-.7l2.5-14.7c.3-1.2-.4-1.7-1.3-1.2z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a class="group flex items-center justify-center size-12 rounded-full border border-gray-200 text-luxury-charcoal hover:bg-luxury-charcoal hover:border-luxury-charcoal hover:text-white transition-all duration-300"
+                                        href="#">
+                                        <svg class="size-5" fill="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.232-.298.347-.497.116-.198.058-.371-.03-.548-.087-.175-.794-1.912-1.09-2.618-.288-.694-.582-.6-.796-.61l-.68-.01c-.234 0-.616.089-.94.436-.322.348-1.233 1.205-1.233 2.941s1.263 3.412 1.438 3.646c.174.234 2.486 3.795 6.022 5.322 2.365 1.022 2.848.819 3.864.767 1.137-.059 1.758-.718 2.006-1.41.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-white">
+                        <div class="size-6 text-primary-light">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
+                        чистые линии и спокойствие в каждой детали вашего дома.</p>
+                    <div class="flex flex-col gap-3">
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="tel:88005553535">
+                            <span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                        </a>
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="mailto:info@maisontextile.ru">
+                            <span class="material-symbols-outlined text-[20px]">mail</span> info@maisontextile.ru
+                        </a>
+                    </div>
+                </div>
+                <div class="md:pl-8">
+                    <h3 class="font-serif text-white text-lg mb-6">О компании</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">О компании</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Новости</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Контакты</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Покупателям</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Доставка</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Обмен и возврат</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Акции</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Сотрудничество</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Оптовикам</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>© 2024 Maison Textile. Все права защищены.</p>
+                <div class="flex gap-8">
+                    <a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+                    <a class="hover:text-white transition-colors" href="#">Условия использования</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

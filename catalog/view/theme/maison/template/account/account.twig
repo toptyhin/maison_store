@@ -1,62 +1,134 @@
 {{ header }}
-<div id="account-account" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  {% if success %}
-  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h2>{{ text_my_account }}</h2>
-      <ul class="list-unstyled">
-        <li><a href="{{ edit }}">{{ text_edit }}</a></li>
-        <li><a href="{{ password }}">{{ text_password }}</a></li>
-        <li><a href="{{ address }}">{{ text_address }}</a></li>
-        <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
-      </ul>
-      {% if credit_cards %}
-      <h2>{{ text_credit_card }}</h2>
-      <ul class="list-unstyled">
-        {% for credit_card in credit_cards %}
-        <li><a href="{{ credit_card.href }}">{{ credit_card.name }}</a></li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      <h2>{{ text_my_orders }}</h2>
-      <ul class="list-unstyled">
-        <li><a href="{{ order }}">{{ text_order }}</a></li>
-        <li><a href="{{ download }}">{{ text_download }}</a></li>
-        {% if reward %}
-        <li><a href="{{ reward }}">{{ text_reward }}</a></li>
-        {% endif %}
-        <li><a href="{{ return }}">{{ text_return }}</a></li>
-        <li><a href="{{ transaction }}">{{ text_transaction }}</a></li>
-        <li><a href="{{ recurring }}">{{ text_recurring }}</a></li>
-      </ul>
-      <h2>{{ text_my_affiliate }}</h2>
-      <ul class="list-unstyled">
-        {% if not tracking %}
-        <li><a href="{{ affiliate }}">{{ text_affiliate_add }}</a></li>
-        {% else %}
-        <li><a href="{{ affiliate }}">{{ text_affiliate_edit }}</a></li>
-        <li><a href="{{ tracking }}">{{ text_tracking }}</a></li>
-        {% endif %}
-      </ul>
-      <h2>{{ text_my_newsletter }}</h2>
-      <ul class="list-unstyled">
-        <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
-      </ul>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+<main class="flex-1 bg-background-dark">
+	{{ include('maison/template/account/account_header.twig') }}
+	<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+		{% if success %}
+			<div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800 flex items-center gap-2">
+				<span class="material-symbols-outlined text-[20px]">check_circle</span>
+				{{ success }}
+			</div>
+		{% endif %}
+		<div class="flex flex-col lg:flex-row gap-8">
+			{{ menu }}
+			<div class="flex-1 min-w-0">
+				{{ content_top }}
+				<div class="flex-1 min-w-0">
+					<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+						<div>
+							<h1 class="text-3xl font-serif text-luxury-charcoal font-medium">Личные данные</h1>
+							<p class="text-gray-500 mt-1 text-sm">Управляйте информацией вашего профиля и настройками безопасности</p>
+						</div>
+					</div>
+					<div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+						<div class="p-8">
+							<form action="{{ action }}" method="post" enctype="multipart/form-data" class="space-y-8">
+								<div>
+									<h2 class="text-lg font-serif text-luxury-charcoal font-bold mb-6 pb-2 border-b border-gray-100">{{ text_section_info }}</h2>
+									<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+										<div class="space-y-1">
+											<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="lastname">{{ entry_lastname }}</label>
+											<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50 {% if error_lastname %}border-red-500{% endif %}" id="lastname" name="lastname" type="text" value="{{ lastname }}"/>
+											{% if error_lastname %}
+												<p class="text-red-500 text-xs mt-1">{{ error_lastname }}</p>
+											{% endif %}
+										</div>
+										<div class="space-y-1">
+											<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="firstname">{{ entry_firstname }}</label>
+											<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50 {% if error_firstname %}border-red-500{% endif %}" id="firstname" name="firstname" type="text" value="{{ firstname }}"/>
+											{% if error_firstname %}
+												<p class="text-red-500 text-xs mt-1">{{ error_firstname }}</p>
+											{% endif %}
+										</div>
+										<div class="space-y-1">
+											<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="email">{{ entry_email }}</label>
+											<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50 {% if error_email %}border-red-500{% endif %}" id="email" name="email" type="email" value="{{ email }}"/>
+											{% if error_email %}
+												<p class="text-red-500 text-xs mt-1">{{ error_email }}</p>
+											{% endif %}
+										</div>
+										<div class="space-y-1">
+											<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="telephone">{{ entry_telephone }}</label>
+											<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50 {% if error_telephone %}border-red-500{% endif %}" id="telephone" name="telephone" type="tel" value="{{ telephone }}"/>
+											{% if error_telephone %}
+												<p class="text-red-500 text-xs mt-1">{{ error_telephone }}</p>
+											{% endif %}
+										</div>
+										{% if custom_field_dob %}
+											<div class="space-y-1">
+												<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="custom_field{{ custom_field_dob.custom_field_id }}">{{ custom_field_dob.name }}</label>
+												<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50 text-gray-700" id="custom_field{{ custom_field_dob.custom_field_id }}" name="custom_field[account][{{ custom_field_dob.custom_field_id }}]" type="date" value="{{ dob }}"/>
+											</div>
+										{% endif %}
+										{% if custom_field_gender %}
+											<div class="space-y-1">
+												<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">{{ custom_field_gender.name }}</label>
+												<div class="flex items-center space-x-6">
+													{% for custom_field_value in custom_field_gender.custom_field_value %}
+														<div class="flex items-center">
+															<input class="h-4 w-4 border-gray-300 text-luxury-charcoal focus:ring-primary" id="gender-{{ custom_field_value.custom_field_value_id }}" name="custom_field[account][{{ custom_field_gender.custom_field_id }}]" type="radio" value="{{ custom_field_value.custom_field_value_id }}" {% if gender == custom_field_value.custom_field_value_id %} checked {% endif %}/>
+															<label class="ml-3 block text-sm font-medium text-gray-700" for="gender-{{ custom_field_value.custom_field_value_id }}">{{ custom_field_value.name }}</label>
+														</div>
+													{% endfor %}
+												</div>
+											</div>
+										{% endif %}
+										{% for custom_field in custom_fields %}
+											{% if (custom_field_dob is null or custom_field.custom_field_id != custom_field_dob.custom_field_id) and (custom_field_gender is null or custom_field.custom_field_id != custom_field_gender.custom_field_id) %}
+												{% if custom_field.type == 'text' %}
+													<div class="space-y-1 custom-field" data-sort="{{ custom_field.sort_order }}">
+														<label class="block text-xs font-bold uppercase text-gray-500 tracking-wider" for="custom_field{{ custom_field.custom_field_id }}">{{ custom_field.name }}
+															{% if custom_field.required %}
+																*
+															{% endif %}
+														</label>
+														<input class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3 px-4 bg-gray-50/50" id="custom_field{{ custom_field.custom_field_id }}" name="custom_field[account][{{ custom_field.custom_field_id }}]" type="text" value="{{ account_custom_field[custom_field.custom_field_id] is defined ? account_custom_field[custom_field.custom_field_id] : custom_field.value }}"/>
+													</div>
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+									</div>
+								</div>
+								<div class="pt-2">
+									<h2 class="text-lg font-serif text-luxury-charcoal font-bold mb-6 pb-2 border-b border-gray-100">{{ text_section_security }}</h2>
+									<div class="flex items-center justify-between bg-gray-50 p-6 rounded-md border border-gray-100">
+										<div>
+											<p class="text-sm font-medium text-luxury-charcoal">{{ text_password }}</p>
+											{% if text_password_last_change %}
+												<p class="text-xs text-gray-500 mt-1">{{ text_password_last_change }}</p>
+											{% endif %}
+										</div>
+										<a href="{{ password }}" class="text-sm font-bold text-primary hover:text-luxury-charcoal transition-colors border-b border-primary hover:border-luxury-charcoal pb-0.5">
+											{{ text_password_change }}
+										</a>
+									</div>
+								</div>
+								<div class="pt-6">
+									<button class="w-full md:w-auto px-8 py-4 bg-[#263238] text-white text-sm font-bold uppercase tracking-widest hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl rounded-sm" type="submit">
+										{{ button_save }}
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="mt-8 relative bg-[#263238] rounded-lg p-10 overflow-hidden shadow-card-depth">
+					<div class="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-20 -mt-20 blur-[80px]"></div>
+					<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+						<div>
+							<span class="text-badge-teal text-[10px] font-bold uppercase tracking-widest mb-2 block">Новая коллекция</span>
+							<h3 class="text-2xl font-serif text-white mb-2">Morning in Oslo</h3>
+							<p class="text-luxury-silver text-sm max-w-lg">Минимализм, вдохновленный северной природой. Создайте уют в своем доме с новой коллекцией постельного белья.</p>
+						</div>
+						<a href="{{ home }}" class="bg-white text-luxury-charcoal px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-light transition-colors rounded-sm shadow-lg whitespace-nowrap">
+							Смотреть коллекцию
+						</a>
+					</div>
+				</div>
+				{{ content_bottom }}
+			</div>
+		</div>
+	</div>
+</main>
 {{ footer }}

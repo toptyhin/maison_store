@@ -71,7 +71,10 @@ class ControllerAccountPassword extends Controller {
 		}
 
 		$data['back'] = $this->url->link('account/account', '', true);
+		$data['button_back'] = $this->language->get('button_back');
+		$data['button_continue'] = $this->language->get('button_continue');
 
+		$data['menu'] = $this->load->controller('account/menu');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');

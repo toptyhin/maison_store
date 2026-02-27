@@ -5,6 +5,9 @@
 // Heading
 $_['heading_title']      = 'Бонусные баллы';
 
+// Button
+$_['button_continue']   = 'Продолжить';
+
 // Column
 $_['column_date_added']  = 'Дата добавления';
 $_['column_description'] = 'Описание';

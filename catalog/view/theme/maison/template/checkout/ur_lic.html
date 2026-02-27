@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Maison Textile: Оформление счета для юрлиц</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#546E7A",
+                        "primary-dark": "#37474F",
+                        "primary-light": "#B0BEC5",
+                        "background-dark": "#F5F7FA",
+                        "background-card": "#FFFFFF",
+                        "background-section": "#ECEFF1",
+                        "luxury-charcoal": "#263238",
+                        "luxury-silver": "#CFD8DC",
+                        "luxury-cream": "#FFFFFF",
+                        "midnight-blue": "#F5F7FA",
+                        "soft-gold-bg": "#FFFFFF",
+                        "dark-beige": "#90A4AE",
+                        "badge-gold": "#C1A687",
+                        "badge-teal": "#80CBC4",
+                        "accent-bronze": "#C28257"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
+                        "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
+                        "soft": "0 4px 20px -5px rgba(0,0,0,0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CFD8DC;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #546E7A;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <header
+            class="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
+                <div class="flex items-center gap-6 lg:gap-12">
+                    <a class="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-luxury-charcoal transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        <span class="hidden sm:inline">Назад к выбору оплаты</span>
+                    </a>
+                    <div class="flex items-center gap-3 text-luxury-charcoal">
+                        <div class="size-6 lg:size-8 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg lg:text-2xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison
+                            Textile</h2>
+                    </div>
+                </div>
+                <div>
+                    <button
+                        class="flex items-center gap-2 border border-gray-200 hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white px-4 py-2.5 rounded-full transition-all duration-300 group">
+                        <span class="material-symbols-outlined text-[18px]">call</span>
+                        <span class="text-xs font-bold uppercase tracking-widest hidden sm:inline">Заказать по
+                            телефону</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <h1 class="text-3xl md:text-4xl font-serif font-bold text-luxury-charcoal">Данные для выставления счета
+                </h1>
+                <div class="flex items-center gap-4 text-xs md:text-sm font-medium">
+                    <div class="flex items-center gap-2 text-gray-400">
+                        <span>1. Корзина</span>
+                    </div>
+                    <div class="h-px w-6 bg-gray-300"></div>
+                    <div class="flex items-center gap-2 text-gray-400">
+                        <span>2. Оформление</span>
+                    </div>
+                    <div class="h-px w-6 bg-gray-300"></div>
+                    <div class="flex items-center gap-2 text-luxury-charcoal font-bold">
+                        <span>3. Реквизиты</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+                <div class="lg:col-span-8 flex flex-col gap-8">
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="size-10 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal border border-gray-100">
+                                <span class="material-symbols-outlined">domain</span>
+                            </div>
+                            <h2 class="text-xl font-serif font-medium">Реквизиты организации</h2>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Название
+                                    организации (ООО/ИП)</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder='ООО "Мэйсон Текстиль"' type="text" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="relative">
+                                    <label
+                                        class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">ИНН</label>
+                                    <div class="relative">
+                                        <input
+                                            class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                            placeholder="Введите ИНН" type="text" />
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <span class="material-symbols-outlined text-gray-400 text-lg">search</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-gray-400 mt-1">Данные организации будут загружены
+                                        автоматически</p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">КПП</label>
+                                    <input
+                                        class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                        placeholder="773601001" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Юридический
+                                    адрес</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder="119049, г. Москва, ул. Житная, д. 14" type="text" />
+                            </div>
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="size-10 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal border border-gray-100">
+                                <span class="material-symbols-outlined">account_balance</span>
+                            </div>
+                            <h2 class="text-xl font-serif font-medium">Банковские реквизиты</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">БИК</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder="044525225" type="text" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Название
+                                    банка</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder="ПАО Сбербанк" type="text" />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Расчетный
+                                    счет</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder="40702810938000000000" type="text" />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label
+                                    class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Корреспондентский
+                                    счет</label>
+                                <input
+                                    class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 transition-colors"
+                                    placeholder="30101810400000000225" type="text" />
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="lg:col-span-4 relative">
+                    <div class="sticky top-24 flex flex-col gap-6">
+                        <div
+                            class="bg-white p-6 md:p-8 rounded-lg shadow-card-depth border border-gray-100 relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none">
+                            </div>
+                            <h2 class="text-xl font-serif font-medium mb-6 relative z-10">Ваш заказ</h2>
+                            <div class="flex flex-col gap-4 mb-6 border-b border-gray-100 pb-6 relative z-10">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Товары (3)</span>
+                                    <span class="text-luxury-charcoal font-medium">15 990 ₽</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Доставка</span>
+                                    <span
+                                        class="text-green-600 font-bold uppercase text-xs tracking-wide">Бесплатно</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Скидка</span>
+                                    <span class="text-red-600 font-medium">-3 840 ₽ (-24%)</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">НДС (20%)</span>
+                                    <span class="text-gray-400 text-xs">Включен в стоимость</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-baseline mb-8 relative z-10">
+                                <span class="text-lg font-serif font-medium text-luxury-charcoal">Итого</span>
+                                <span class="text-3xl font-bold text-luxury-charcoal tracking-tight">12 150 ₽</span>
+                            </div>
+                            <button
+                                class="w-full bg-[#263238] text-white border border-transparent py-4 font-bold uppercase text-sm tracking-[0.15em] mb-4 rounded-sm transition-colors hover:bg-primary-dark shadow-lg">
+                                СФОРМИРОВАТЬ СЧЕТ
+                            </button>
+                            <div
+                                class="flex items-start gap-2 text-xs leading-relaxed text-gray-500 bg-gray-50 p-3 rounded border border-gray-100">
+                                <span
+                                    class="material-symbols-outlined text-sm mt-0.5 text-primary">picture_as_pdf</span>
+                                <p>Счет будет доступен для скачивания в формате PDF после подтверждения заказа</p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100 flex flex-col items-center text-center">
+                            <div class="flex flex-col items-center justify-center gap-3 mb-4 w-full">
+                                <div
+                                    class="size-10 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal mx-auto">
+                                    <span class="material-symbols-outlined text-[20px]">support_agent</span>
+                                </div>
+                                <h3 class="font-serif font-medium text-lg text-luxury-charcoal text-center">Отдел по
+                                    работе с юрлицами</h3>
+                            </div>
+                            <div class="flex flex-col items-center justify-center gap-2 w-full text-sm">
+                                <p class="text-gray-500">Пн-Пт с 9:00 до 18:00</p>
+                                <a class="text-luxury-charcoal hover:text-primary-dark transition-colors text-center font-bold"
+                                    href="tel:88005553535">
+                                    8 (800) 555-35-35 (доб. 2)
+                                </a>
+                                <a class="text-primary hover:text-primary-dark transition-colors text-center underline decoration-primary/30"
+                                    href="mailto:b2b@maisontextile.ru">
+                                    b2b@maisontextile.ru
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        
+        <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-white">
+                        <div class="size-6 text-primary-light">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
+                        чистые линии и спокойствие в каждой детали вашего дома.</p>
+                    <div class="flex flex-col gap-3">
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="tel:88005553535">
+                            <span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                        </a>
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="mailto:info@maisontextile.ru">
+                            <span class="material-symbols-outlined text-[20px]">mail</span> info@maisontextile.ru
+                        </a>
+                    </div>
+                </div>
+                <div class="md:pl-8">
+                    <h3 class="font-serif text-white text-lg mb-6">О компании</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">О компании</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Новости</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Контакты</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Покупателям</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Доставка</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Обмен и возврат</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Акции</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Сотрудничество</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Оптовикам</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>© 2024 Maison Textile. Все права защищены.</p>
+                <div class="flex gap-8">
+                    <a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+                    <a class="hover:text-white transition-colors" href="#">Условия использования</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

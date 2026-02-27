@@ -1,0 +1,36 @@
+<form id="maison-guest-form">
+  <input type="hidden" name="maison" value="1"/>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="col-span-1 md:col-span-2">
+      <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2" for="input-payment-firstname">ФИО</label>
+      <input type="text" name="firstname" value="{{ firstname }}" placeholder="Ваше имя" id="input-payment-firstname" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"/>
+      <input type="hidden" name="lastname" id="input-payment-lastname" value="{{ lastname }}"/>
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2" for="input-payment-email">Email</label>
+      <input type="email" name="email" value="{{ email }}" placeholder="example@mail.ru" id="input-payment-email" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"/>
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2" for="input-payment-telephone">Телефон</label>
+      <input type="tel" name="telephone" value="{{ telephone }}" placeholder="+7 (___) ___-__-__" id="input-payment-telephone" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"/>
+    </div>
+  </div>
+  <input type="hidden" name="city" id="input-payment-city" value="{{ city|default('—') }}"/>
+  <input type="hidden" name="address_2" value="{{ address_2 }}"/>
+  <input type="hidden" name="company" value="{{ company }}"/>
+  <input type="hidden" name="postcode" value="{{ postcode }}"/>
+  <select name="country_id" id="input-payment-country" class="hidden">
+    <option value="">{{ text_select }}</option>
+    {% for country in countries %}
+    <option value="{{ country.country_id }}" {% if country.country_id == country_id %}selected{% endif %}>{{ country.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="zone_id" id="input-payment-zone" class="hidden"></select>
+  {% if shipping_required %}
+  <input type="hidden" name="shipping_address" value="1"/>
+  {% endif %}
+</form>
+<div id="maison-guest-address-part" data-form-id="maison-guest-form">
+  <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2" for="input-payment-address-1">Адрес доставки</label>
+  <input type="text" form="maison-guest-form" name="address_1" value="{{ address_1 }}" placeholder="Город, Улица, Дом, Квартира" id="input-payment-address-1" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"/>
+</div>

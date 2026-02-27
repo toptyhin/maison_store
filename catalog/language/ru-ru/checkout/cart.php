@@ -29,6 +29,11 @@ $_['text_trial_description'] 	              	= 'Стоимость: %s; Пери
 $_['text_payment_description'] 	              	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d';
 $_['text_payment_until_canceled_description'] 	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: до отмены';
 
+// Custom
+$_['text_free_shipping_left']                  = 'Добавьте товаров еще на %s, чтобы получить бесплатную доставку';
+$_['text_frequently_bought']                  = 'С этим товаром часто покупают';
+$_['text_back_to_store']                       = 'В магазин';
+
 // Column
 $_['column_image']          					= 'Изображение';
 $_['column_name']           					= 'Название товара';

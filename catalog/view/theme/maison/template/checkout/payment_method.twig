@@ -1,4 +1,4 @@
-{% if error_warning %}
+{# {% if error_warning %}
 <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
 {% endif %}
 {% if payment_methods %}
@@ -23,21 +23,31 @@
   <textarea name="comment" rows="8" class="form-control">{{ comment }}</textarea>
 </p>
 {% if text_agree %}
-<div class="buttons">
-  <div class="pull-right">{{ text_agree }}
-    {% if agree %}
-    <input type="checkbox" name="agree" value="1" checked="checked" />
-    {% else %}
-    <input type="checkbox" name="agree" value="1" />
-    {% endif %}
-    &nbsp;
-    <input type="button" value="{{ button_continue }}" id="button-payment-method" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
+<div class="mt-4">{{ text_agree }}
+  {% if agree %}
+  <input type="checkbox" name="agree" value="1" checked="checked" />
+  {% else %}
+  <input type="checkbox" name="agree" value="1" />
+  {% endif %}
 </div>
-{% else %}
-<div class="buttons">
-  <div class="pull-right">
-    <input type="button" value="{{ button_continue }}" id="button-payment-method" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
-</div>
-{% endif %} 
+{% endif %}  #}
+
+{% if payment_methods %}
+	{% for payment_method in payment_methods %}
+		<label class="relative cursor-pointer group">
+			<input {% if payment_method.code == code or not code %} checked {% endif %} class="peer sr-only" name="payment_method" value="{{ payment_method.code }}" type="radio"/>
+			<div class="custom-radio-border p-5 rounded-md border border-gray-200 bg-white hover:border-gray-300 transition-all flex items-center gap-4">
+				<div class="radio-indicator size-5 rounded-full border border-gray-300 flex items-center justify-center relative after:content-[''] after:size-2.5 after:bg-luxury-charcoal after:rounded-full after:scale-0 after:transition-transform"></div>
+				<div class="flex items-center gap-4 flex-1">
+					<div class="p-2 bg-gray-50 rounded-full text-luxury-charcoal">
+						<span class="material-symbols-outlined">{{ payment_method.icon }}</span>
+					</div>
+					<div>
+						<span class="block text-sm font-bold uppercase tracking-wide text-luxury-charcoal">{{ payment_method.title }}</span>
+						<span class="text-xs text-gray-500">{{ payment_method.terms }}</span>
+					</div>
+				</div>
+			</div>
+		</label>
+	{% endfor %}
+{% endif %}

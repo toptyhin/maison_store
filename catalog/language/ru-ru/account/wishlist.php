@@ -14,6 +14,11 @@ $_['text_success']  = 'Товар <a href="%s">%s</a> был добавлен в
 $_['text_remove']   = 'Закладки успешно обновлены!';
 $_['text_empty']    = 'Ваши закладки пусты.';
 
+// Button
+$_['button_cart']    = 'В корзину';
+$_['button_remove']  = 'Удалить';
+$_['button_continue'] = 'Продолжить покупки';
+
 // Column
 $_['column_image']  = 'Изображение';
 $_['column_name']   = 'Название товара';

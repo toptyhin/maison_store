@@ -38,7 +38,65 @@ class ControllerAccountAccount extends Controller {
 		$data['edit'] = $this->url->link('account/edit', '', true);
 		$data['password'] = $this->url->link('account/password', '', true);
 		$data['address'] = $this->url->link('account/address', '', true);
-		
+		$data['action'] = $this->url->link('account/edit', '', true);
+
+		$this->load->model('account/customer');
+		$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
+
+		$data['firstname'] = $customer_info ? $customer_info['firstname'] : $this->customer->getFirstName();
+		$data['lastname'] = $customer_info ? $customer_info['lastname'] : $this->customer->getLastName();
+		$data['email'] = $customer_info ? $customer_info['email'] : $this->customer->getEmail();
+		$data['telephone'] = $customer_info ? $customer_info['telephone'] : '';
+
+		$data['custom_fields'] = array();
+		$data['account_custom_field'] = array();
+		$this->load->model('account/custom_field');
+		$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
+		foreach ($custom_fields as $custom_field) {
+			if ($custom_field['location'] == 'account') {
+				$data['custom_fields'][] = $custom_field;
+			}
+		}
+		if ($customer_info && !empty($customer_info['custom_field'])) {
+			$data['account_custom_field'] = json_decode($customer_info['custom_field'], true) ?: array();
+		}
+
+		$data['dob'] = '';
+		$data['gender'] = '';
+		$data['custom_field_dob'] = null;
+		$data['custom_field_gender'] = null;
+		foreach ($data['custom_fields'] as $cf) {
+			if ($cf['type'] == 'date') {
+				$data['custom_field_dob'] = $cf;
+				$data['dob'] = isset($data['account_custom_field'][$cf['custom_field_id']]) ? $data['account_custom_field'][$cf['custom_field_id']] : '';
+			}
+			if ($cf['type'] == 'radio' && (stripos($cf['name'], 'пол') !== false || stripos($cf['name'], 'gender') !== false)) {
+				$data['custom_field_gender'] = $cf;
+				$data['gender'] = isset($data['account_custom_field'][$cf['custom_field_id']]) ? $data['account_custom_field'][$cf['custom_field_id']] : '';
+			}
+		}
+
+		$this->load->language('account/edit');
+		$data['entry_firstname'] = $this->language->get('entry_firstname');
+		$data['entry_lastname'] = $this->language->get('entry_lastname');
+		$data['entry_email'] = $this->language->get('entry_email');
+		$data['entry_telephone'] = $this->language->get('entry_telephone');
+		$data['button_save'] = 'Сохранить изменения';
+		$data['text_password'] = 'Пароль';
+		$data['text_password_change'] = 'Сменить пароль';
+		$data['text_password_last_change'] = '';
+		$data['text_section_info'] = 'Основная информация';
+		$data['text_section_security'] = 'Безопасность';
+		$data['entry_dob'] = 'Дата рождения';
+		$data['entry_gender'] = 'Пол';
+		$data['text_gender_male'] = 'Мужской';
+		$data['text_gender_female'] = 'Женский';
+
+		$data['error_firstname'] = '';
+		$data['error_lastname'] = '';
+		$data['error_email'] = '';
+		$data['error_telephone'] = '';
+
 		$data['credit_cards'] = array();
 		
 		$files = glob(DIR_APPLICATION . 'controller/extension/credit_card/*.php');
@@ -86,7 +144,20 @@ class ControllerAccountAccount extends Controller {
 		} else {
 			$data['tracking'] = '';
 		}
+
+		$data['logout'] = $this->url->link('account/logout', '', true);
+		$data['home'] = $this->url->link('common/home');
+		$this->load->language('extension/module/account');
+		$data['text_logout'] = $this->language->get('text_logout');
+
+		if ($this->config->get('total_reward_status')) {
+			$this->load->model('account/reward');
+			$data['reward_total'] = $this->model_account_reward->getTotalPoints();
+		} else {
+			$data['reward_total'] = 0;
+		}
 		
+		$data['menu'] = $this->load->controller('account/menu');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');

@@ -1,60 +1,96 @@
 {{ header }}
-<div id="account-order" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      {% if orders %}
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <td class="text-right">{{ column_order_id }}</td>
-              <td class="text-left">{{ column_customer }}</td>
-              <td class="text-right">{{ column_product }}</td>
-              <td class="text-left">{{ column_status }}</td>
-              <td class="text-right">{{ column_total }}</td>
-              <td class="text-left">{{ column_date_added }}</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-           {% for order in orders %}
-            <tr>
-              <td class="text-right">#{{ order.order_id }}</td>
-              <td class="text-left">{{ order.name }}</td>
-              <td class="text-right">{{ order.products }}</td>
-              <td class="text-left">{{ order.status }}</td>
-              <td class="text-right">{{ order.total }}</td>
-              <td class="text-left">{{ order.date_added }}</td>
-              <td class="text-right"><a href="{{ order.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-info"><i class="fa fa-eye"></i></a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <div class="col-sm-6 text-left">{{ pagination }}</div>
-        <div class="col-sm-6 text-right">{{ results }}</div>
-      </div>
-      {% else %}
-      <p>{{ text_empty }}</p>
-      {% endif %}
-      <div class="buttons clearfix">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
-      </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+<main class="flex-1 bg-background-dark">
+	{{ include('maison/template/account/account_header.twig') }}
+	<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+		<div class="flex flex-col lg:flex-row gap-8">
+			{{ menu }}
+			<div class="flex-1 min-w-0">
+				{{ content_top }}
+				<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+					<div>
+						<h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+					</div>
+				</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div
+                                class="bg-white p-6 rounded-lg shadow-soft border border-gray-100 md:col-span-2 flex flex-col justify-center relative overflow-hidden group min-h-[160px]">
+                                <div
+                                    class="absolute right-0 top-0 w-32 h-32 bg-badge-gold/10 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-500">
+                                </div>
+                                <div class="relative z-10 flex flex-col items-center justify-center h-full text-center">
+                                    <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">Ваш баланс
+                                    </p>
+                                    <div class="flex items-center justify-center gap-4">
+                                        <p class="text-5xl font-serif text-luxury-charcoal">1 250 <span
+                                                class="text-2xl text-gray-400 font-sans">баллов</span></p>
+                                        <div
+                                            class="size-10 rounded-full bg-badge-gold/10 text-badge-gold flex items-center justify-center">
+                                            <span class="material-symbols-outlined">diamond</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>        
+				{% if orders %}
+					<div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+						<div class="p-6 border-b border-gray-100 flex justify-between items-center">
+							<h2 class="text-lg font-serif text-luxury-charcoal font-bold">Последние заказы</h2>
+						</div>
+						<div class="overflow-x-auto">
+							<table class="w-full text-left text-sm text-gray-500">
+								<thead class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+									<tr>
+										<th class="px-6 py-4 font-semibold">{{ column_order_id }}</th>
+										<th class="px-6 py-4 font-semibold">{{ column_date_added }}</th>
+										<th class="px-6 py-4 font-semibold">{{ column_total }}</th>
+										<th class="px-6 py-4 font-semibold">{{ column_status }}</th>
+										<th class="px-6 py-4 font-semibold text-right"></th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-gray-100">
+									{% for order in orders %}
+										<tr class="hover:bg-gray-50/50 transition-colors">
+											<td class="px-6 py-4 font-medium text-luxury-charcoal">#{{ order.order_id }}</td>
+											<td class="px-6 py-4">{{ order.date_added }}</td>
+											<td class="px-6 py-4 font-medium text-luxury-charcoal">{{ order.total }}</td>
+											<td class="px-6 py-4">
+												<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ order.status }}</span>
+											</td>
+											<td class="px-6 py-4 text-right">
+												<a href="{{ order.view }}" class="text-primary hover:text-luxury-charcoal transition-colors text-xs font-bold uppercase tracking-wider border-b border-transparent hover:border-luxury-charcoal" title="{{ button_view }}">
+													{{ button_view }}
+												</a>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+						<div class="text-sm text-gray-500">{{ results }}</div>
+						<div>{{ pagination }}</div>
+					</div>
+				{% else %}
+					<div class="bg-white rounded-lg shadow-soft border border-gray-100 p-12 text-center">
+						<span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">shopping_bag</span>
+						<p class="text-gray-500 mb-6">{{ text_empty }}</p>
+						<a href="{{ continue }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+							{{ button_continue }}
+						</a>
+					</div>
+				{% endif %}
+				{% if orders %}
+					<div class="mt-6">
+						<a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+							<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+							{{ button_continue }}
+						</a>
+					</div>
+				{% endif %}
+				{{ content_bottom }}
+			</div>
+		</div>
+	</div>
+</main>
 {{ footer }}

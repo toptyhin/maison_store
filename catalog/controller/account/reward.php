@@ -76,6 +76,10 @@ class ControllerAccountReward extends Controller {
 		$data['total'] = (int)$this->customer->getRewardPoints();
 
 		$data['continue'] = $this->url->link('account/account', '', true);
+		$data['heading_title'] = $this->language->get('heading_title');
+		$data['button_continue'] = $this->language->get('button_continue');
+
+		$data['menu'] = $this->load->controller('account/menu');
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

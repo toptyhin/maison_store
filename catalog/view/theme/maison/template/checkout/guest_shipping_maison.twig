@@ -1,0 +1,19 @@
+<form id="maison-shipping-form">
+  <input type="hidden" name="maison" value="1"/>
+  <div class="relative group z-30">
+    <input type="text" name="address_1" value="{{ address_1 }}" placeholder="Город, Улица, Дом, Квартира" id="input-shipping-address-1" class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400 peer"/>
+  </div>
+  <input type="hidden" name="firstname" value="{{ firstname }}"/>
+  <input type="hidden" name="lastname" value="{{ lastname }}"/>
+  <input type="hidden" name="company" value="{{ company }}"/>
+  <input type="hidden" name="address_2" value="{{ address_2 }}"/>
+  <input type="hidden" name="city" id="input-shipping-city" value="{{ city|default('—') }}"/>
+  <input type="hidden" name="postcode" value="{{ postcode }}"/>
+  <select name="country_id" id="input-shipping-country" class="hidden">
+    <option value="">{{ text_select }}</option>
+    {% for country in countries %}
+    <option value="{{ country.country_id }}" {% if country.country_id == country_id %}selected{% endif %}>{{ country.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="zone_id" id="input-shipping-zone" class="hidden"></select>
+</form>

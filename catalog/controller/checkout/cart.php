@@ -56,10 +56,16 @@ class ControllerCheckoutCart extends Controller {
 
 			$this->load->model('tool/image');
 			$this->load->model('tool/upload');
+			$this->load->model('catalog/product');
 
 			$data['products'] = array();
 
 			$products = $this->cart->getProducts();
+
+			$items_count = 0;
+
+			$total_discount = 0;
+			$total_original_value = 0;
 
 			foreach ($products as $product) {
 				$product_total = 0;
@@ -74,14 +80,25 @@ class ControllerCheckoutCart extends Controller {
 					$data['error_warning'] = sprintf($this->language->get('error_minimum'), $product['name'], $product['minimum']);
 				}
 
-				if ($product['image']) {
-					$image = $this->model_tool_image->resize($product['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_height'));
+				$image_path = $product['image'];
+				if (!empty($product['option'])) {
+					foreach ($product['option'] as $option) {
+						if (!empty($option['custom_fields']['images'])) {
+							$image_path = $option['custom_fields']['images'];
+							break;
+						}
+					}
+				}
+				if ($image_path) {
+					$image = $this->model_tool_image->resize($image_path, $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_height'));
 				} else {
 					$image = '';
 				}
 
 				$option_data = array();
-
+				$old_price = 0;
+				$discount = 0;
+				$discount_percentage = 0;
 				foreach ($product['option'] as $option) {
 					if ($option['type'] != 'file') {
 						$value = $option['value'];
@@ -99,6 +116,14 @@ class ControllerCheckoutCart extends Controller {
 						'name'  => $option['name'],
 						'value' => (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value)
 					);
+					if (!empty($option['custom_fields']['discounted_price'])) {
+						$discount = $option['price'] - $option['custom_fields']['discounted_price'];
+						$total_discount += $discount * $product['quantity'];
+						$total_original_value += $option['price'] * $product['quantity'];
+						$discount_percentage = $discount / $option['price'] * 100;
+						$discount_percentage = number_format(round($discount_percentage, 0), 0);
+						$old_price = $this->currency->format($option['price'], $this->session->data['currency']);
+					}
 				}
 
 				// Display prices
@@ -134,6 +159,8 @@ class ControllerCheckoutCart extends Controller {
 					}
 				}
 
+				$items_count += $product['quantity'];
+
 				$data['products'][] = array(
 					'cart_id'   => $product['cart_id'],
 					'thumb'     => $image,
@@ -145,10 +172,19 @@ class ControllerCheckoutCart extends Controller {
 					'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
 					'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price'     => $price,
+					'old_price' => $old_price,
+					'discount'  => $discount,
+					'discount_percentage' => $discount_percentage,
 					'total'     => $total,
 					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}
+
+			$data['items_count'] = $items_count;
+
+			$data['total_discount'] = $total_discount;
+			$data['total_original_value'] = $total_original_value;
+			$data['total_discount_text'] = $this->currency->format($total_discount, $this->session->data['currency']);
 
 			// Gift Voucher
 			$data['vouchers'] = array();
@@ -210,16 +246,177 @@ class ControllerCheckoutCart extends Controller {
 
 			$data['totals'] = array();
 
-			foreach ($totals as $total) {
+			$data['sub_total_text'] = '';
+			$data['sub_total_value'] = 0;
+			$data['order_total_text'] = '';
+			$data['order_total_value'] = 0;
+			$data['discount_value'] = 0;
+			$data['discount_text'] = '';
+			$data['shipping_text'] = '';
+			$data['shipping_pending'] = false;
+
+			foreach ($totals as $row) {
 				$data['totals'][] = array(
-					'title' => $total['title'],
-					'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
+					'title' => $row['title'],
+					'text'  => $this->currency->format($row['value'], $this->session->data['currency'])
+				);
+
+				if (!empty($row['code']) && $row['code'] == 'sub_total') {
+					$data['sub_total_text'] = $this->currency->format($row['value'], $this->session->data['currency']);
+					$data['sub_total_value'] = $row['value'];
+				}
+
+				if (!empty($row['code']) && $row['code'] == 'total') {
+					$data['order_total_text'] = $this->currency->format($row['value'], $this->session->data['currency']);
+					$data['order_total_value'] = $row['value'];
+				}
+
+				if (!empty($row['code']) && $row['code'] == 'shipping') {
+					$data['shipping_text'] = $this->currency->format($row['value'], $this->session->data['currency']);
+				}
+
+				if ($row['value'] < 0) {
+					$data['discount_value'] += $row['value'];
+				}
+			}
+
+			if ($data['discount_value']) {
+				$data['discount_text'] = $this->currency->format($data['discount_value'], $this->session->data['currency']);
+			}
+
+			$denominator = $data['total_original_value'] > 0 ? $data['total_original_value'] : $data['sub_total_value'];
+			$data['total_discount_percentage'] = $denominator > 0
+				? $data['total_discount'] / $denominator * 100
+				: 0;
+			$data['total_discount_percentage'] = number_format(round($data['total_discount_percentage'], 0), 0);
+
+			if ($data['shipping_text'] === '') {
+				$data['shipping_pending'] = true;
+			}
+
+			// Free shipping progress (based on free shipping total threshold if configured)
+			$data['free_shipping_left'] = 0;
+			$data['free_shipping_progress'] = 0;
+			$data['free_shipping_left_text'] = '';
+
+			$free_shipping_threshold = (float)$this->config->get('shipping_free_total');
+
+			if ($free_shipping_threshold > 0 && $data['sub_total_value'] > 0 && $data['sub_total_value'] < $free_shipping_threshold) {
+				$data['free_shipping_left'] = $free_shipping_threshold - $data['sub_total_value'];
+
+				$progress = ($data['sub_total_value'] / $free_shipping_threshold) * 100;
+				$data['free_shipping_progress'] = max(0, min(100, round($progress)));
+
+				$data['free_shipping_left_text'] = sprintf(
+					$this->language->get('text_free_shipping_left'),
+					$this->currency->format($data['free_shipping_left'], $this->session->data['currency'])
 				);
 			}
 
+			$data['free_shipping_active'] = $free_shipping_threshold > 0
+				&& $data['sub_total_value'] > 0
+				&& $data['free_shipping_left'] === 0;
+
 			$data['continue'] = $this->url->link('common/home');
 
-			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+			if ($this->config->get('config_theme') == 'maison') {
+				$data['checkout'] = $this->url->link('checkout/maison_checkout', '', true);
+			} else {
+				$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+			}
+
+			// Coupon helpers
+			if (isset($this->session->data['coupon'])) {
+				$data['coupon'] = $this->session->data['coupon'];
+			} else {
+				$data['coupon'] = '';
+			}
+
+			$data['coupon_action'] = $this->url->link('extension/total/coupon/coupon', '', true);
+
+			// Frequently bought (upsell) from upsell module
+			$data['frequently_bought'] = array();
+			$data['text_frequently_bought'] = $this->language->get('text_frequently_bought');
+			$this->load->model('setting/module');
+			$upsell_modules = $this->model_setting_module->getModulesByCode('upsell');
+			foreach ($upsell_modules as $mod) {
+				$setting = json_decode($mod['setting'], true);
+				if (empty($setting['status']) || empty($setting['product'])) {
+					continue;
+				}
+				$limit = !empty($setting['limit']) ? (int)$setting['limit'] : 5;
+				$products = array_slice($setting['product'], 0, $limit);
+				foreach ($products as $item) {
+					$product_id = is_array($item) ? (int)($item['product_id'] ?? 0) : (int)$item;
+					if (!$product_id) {
+						continue;
+					}
+					$option = is_array($item) && !empty($item['option']) ? $item['option'] : array();
+					$product_info = $this->model_catalog_product->getProduct($product_id);
+					if (!$product_info) {
+						continue;
+					}
+					$price = (float)$product_info['price'];
+					if (!empty($option)) {
+						$product_options = $this->model_catalog_product->getProductOptions($product_id);
+						foreach ($product_options as $po) {
+							foreach ($po['product_option_value'] as $pov) {
+								if (isset($option[$po['product_option_id']]) && $option[$po['product_option_id']] == $pov['product_option_value_id']) {
+									if ($pov['price_prefix'] == '+') {
+										$price += (float)$pov['price'];
+									} elseif ($pov['price_prefix'] == '-') {
+										$price -= (float)$pov['price'];
+									} elseif ($pov['price_prefix'] == '=') {
+										$price = (float)$pov['price'];
+									}
+									break;
+								}
+							}
+						}
+					}
+					$image_path = $product_info['image'];
+					if (!empty($option)) {
+						$product_options = $this->model_catalog_product->getProductOptions($product_id);
+						foreach ($product_options as $po) {
+							foreach ($po['product_option_value'] as $pov) {
+								if (isset($option[$po['product_option_id']]) && $option[$po['product_option_id']] == $pov['product_option_value_id']) {
+									if (!empty($pov['custom_fields']['images'])) {
+										$image_path = $pov['custom_fields']['images'];
+									}
+									break;
+								}
+							}
+						}
+					}
+					if ($image_path) {
+						$thumb = $this->model_tool_image->resize($image_path, $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
+					} else {
+						$thumb = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
+					}
+					if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+						$price_formatted = $this->currency->format($this->tax->calculate($price, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					} else {
+						$price_formatted = false;
+					}
+					$add_option = '';
+					if (!empty($option)) {
+						$parts = array();
+						foreach ($option as $po_id => $pov_id) {
+							$parts[] = 'option[' . (int)$po_id . ']=' . (int)$pov_id;
+						}
+						$add_option = implode('&', $parts);
+					}
+					$data['frequently_bought'][] = array(
+						'product_id'  => $product_id,
+						'thumb'       => $thumb,
+						'href'        => $this->url->link('product/product', 'product_id=' . $product_id),
+						'name'        => $product_info['name'],
+						'price'       => $price_formatted,
+						'add_option'  => $add_option
+					);
+				}
+				break;
+			}
 
 			$this->load->model('setting/extension');
 
@@ -318,8 +515,6 @@ class ControllerCheckoutCart extends Controller {
 					$json['error']['recurring'] = $this->language->get('error_recurring_required');
 				}
 			}
-
-			$this->log->write($json);
 
 			if (!$json) {
 				$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);

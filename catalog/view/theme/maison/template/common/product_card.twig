@@ -8,8 +8,10 @@
                                     class="absolute top-4 left-4 bg-badge-gold text-white backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm">
                                     ЭКСКЛЮЗИВ</div>
                                 <div class="absolute top-4 right-4 z-20">
-                                    <button
-                                        class="bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart">
+                                    <button type="button"
+                                        class="product-favorite-btn bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart"
+                                        data-product-id="{{ product.product_id }}"
+                                        title="Добавить в избранное">
                                         <span
                                             class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1">favorite</span>
                                     </button>

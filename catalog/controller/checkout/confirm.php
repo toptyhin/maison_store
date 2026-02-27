@@ -27,10 +27,6 @@ class ControllerCheckoutConfirm extends Controller {
 			$redirect = $this->url->link('checkout/checkout', '', true);
 		}
 
-		// Validate if payment method has been set.
-		if (!isset($this->session->data['payment_method'])) {
-			$redirect = $this->url->link('checkout/checkout', '', true);
-		}
 
 		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
@@ -51,10 +47,11 @@ class ControllerCheckoutConfirm extends Controller {
 
 			if ($product['minimum'] > $product_total) {
 				$redirect = $this->url->link('checkout/cart');
-
 				break;
 			}
 		}
+
+
 
 		if (!$redirect) {
 			$order_data = array();
@@ -260,7 +257,19 @@ class ControllerCheckoutConfirm extends Controller {
 				}
 			}
 
-			$order_data['comment'] = $this->session->data['comment'];
+			$order_data['comment'] = isset($this->session->data['comment']) ? $this->session->data['comment'] : '';
+			if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] === 'bank_transfer' && !empty($this->session->data['ur_lic'])) {
+				$ur = $this->session->data['ur_lic'];
+				$order_data['comment'] .= "\n\n--- Реквизиты для счёта ---\n";
+				if (!empty($ur['company'])) $order_data['comment'] .= "Организация: " . $ur['company'] . "\n";
+				if (!empty($ur['inn'])) $order_data['comment'] .= "ИНН: " . $ur['inn'] . "\n";
+				if (!empty($ur['kpp'])) $order_data['comment'] .= "КПП: " . $ur['kpp'] . "\n";
+				if (!empty($ur['address'])) $order_data['comment'] .= "Юр. адрес: " . $ur['address'] . "\n";
+				if (!empty($ur['bank'])) $order_data['comment'] .= "Банк: " . $ur['bank'] . "\n";
+				if (!empty($ur['bik'])) $order_data['comment'] .= "БИК: " . $ur['bik'] . "\n";
+				if (!empty($ur['rs'])) $order_data['comment'] .= "Р/с: " . $ur['rs'] . "\n";
+				if (!empty($ur['ks'])) $order_data['comment'] .= "К/с: " . $ur['ks'] . "\n";
+			}
 			$order_data['total'] = $total_data['total'];
 
 			if (isset($this->request->cookie['tracking'])) {
@@ -321,6 +330,8 @@ class ControllerCheckoutConfirm extends Controller {
 			} else {
 				$order_data['accept_language'] = '';
 			}
+
+			$this->log->write($order_data);
 
 			$this->load->model('checkout/order');
 

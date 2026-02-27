@@ -6,6 +6,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 	public function index() {
 		$this->load->language('checkout/checkout');
 
+
 		if (isset($this->session->data['payment_address'])) {
 			// Totals
 			$totals = array();
@@ -61,11 +62,26 @@ class ControllerCheckoutPaymentMethod extends Controller {
 								$method_data[$result['code']] = $method;
 							}
 						} else {
+							$this->log->write($method);
+							if ($result['code'] == 'cod') {
+								$method['terms'] = 'Картой или наличными';
+								$method['icon'] = 'payments';
+							}
+							if ($result['code'] == 'card_payment') {
+								$method['terms'] = 'Apple Pay, Google Pay, Visa, Mastercard';
+								$method['icon'] = 'credit_card';
+							}
+							if ($result['code'] == 'bank_transfer') {
+								$method['terms'] = 'Для юридических лиц';
+								$method['icon'] = 'account_balance_wallet';
+							}
 							$method_data[$result['code']] = $method;
 						}
 					}
 				}
 			}
+
+			
 
 			$sort_order = array();
 
@@ -124,7 +140,9 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$data['agree'] = '';
 		}
 
-		$this->response->setOutput($this->load->view('checkout/payment_method', $data));
+		$this->log->write($data);
+
+		return $this->load->view('checkout/payment_method', $data);
 	}
 
 	public function save() {
@@ -167,20 +185,20 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$json['error']['warning'] = $this->language->get('error_payment');
 		}
 
-		if ($this->config->get('config_checkout_id')) {
-			$this->load->model('catalog/information');
+		// if ($this->config->get('config_checkout_id')) {
+		// 	$this->load->model('catalog/information');
 
-			$information_info = $this->model_catalog_information->getInformation($this->config->get('config_checkout_id'));
+		// 	$information_info = $this->model_catalog_information->getInformation($this->config->get('config_checkout_id'));
 
-			if ($information_info && !isset($this->request->post['agree'])) {
-				$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
-			}
-		}
+		// 	if ($information_info && !isset($this->request->post['agree'])) {
+		// 		$json['error']['warning'] = sprintf($this->language->get('error_agree'), $information_info['title']);
+		// 	}
+		// }
 
 		if (!$json) {
 			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
 
-			$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+			$this->session->data['comment'] = isset($this->request->post['comment']) ? strip_tags($this->request->post['comment']) : '';
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

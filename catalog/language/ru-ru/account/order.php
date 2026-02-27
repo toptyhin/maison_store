@@ -22,6 +22,10 @@ $_['text_success']          = 'Товары из заказа <a href="%s">%s</a
 $_['text_empty']            = 'Вы еще не совершали покупок!';
 $_['text_error']            = 'Запрошенный заказ не найден!';
 
+// Button
+$_['button_view']          = 'Просмотр';
+$_['button_continue']     = 'Продолжить';
+
 // Column
 $_['column_order_id']       = '№ Заказа';
 $_['column_product']        = 'Количество Товаров';

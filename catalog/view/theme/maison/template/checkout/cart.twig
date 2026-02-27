@@ -1,119 +1,418 @@
 {{ header }}
-<div id="checkout-cart" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  {% if attention %}
-  <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ attention }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  {% if success %}
-  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  {% if error_warning %}
-  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}
-        {% if weight %}
-        &nbsp;({{ weight }})
-        {% endif %} </h1>
-      <form action="{{ action }}" method="post" enctype="multipart/form-data">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <td class="text-center">{{ column_image }}</td>
-                <td class="text-left">{{ column_name }}</td>
-                <td class="text-left">{{ column_model }}</td>
-                <td class="text-left">{{ column_quantity }}</td>
-                <td class="text-right">{{ column_price }}</td>
-                <td class="text-right">{{ column_total }}</td>
-              </tr>
-            </thead>
-            <tbody>
-            
-            {% for product in products %}
-            <tr>
-              <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
-              <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
-                {% if product.option %}
-                {% for option in product.option %} <br />
-                <small>{{ option.name }}: {{ option.value }}</small> {% endfor %}
+
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark">
+{{ include('maison/template/checkout/checkout_header.twig') }}
+
+
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12">
+        {% if attention %}
+            <div class="mb-4 rounded-md border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900 flex items-start gap-2">
+                <span class="material-symbols-outlined text-[18px] mt-0.5">info</span>
+                <div class="flex-1">{{ attention }}</div>
+            </div>
+        {% endif %}
+
+        {% if success %}
+            <div class="mb-4 rounded-md border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 flex items-start gap-2">
+                <span class="material-symbols-outlined text-[18px] mt-0.5">check_circle</span>
+                <div class="flex-1">{{ success }}</div>
+            </div>
+        {% endif %}
+
+        {% if error_warning %}
+            <div class="mb-4 rounded-md border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900 flex items-start gap-2">
+                <span class="material-symbols-outlined text-[18px] mt-0.5">error</span>
+                <div class="flex-1">{{ error_warning }}</div>
+            </div>
+        {% endif %}
+
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-luxury-charcoal mb-8">{{ heading_title }}</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            <div class="lg:col-span-8 flex flex-col gap-8">
+                <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                    <div class="flex items-baseline justify-between mb-6 pb-4 border-b border-gray-100">
+                        <h2 class="text-xl font-serif font-medium">{{ heading_title }}</h2>
+                        {% if items_count %}
+                            <span class="text-gray-400 text-sm">{{ items_count }} {{ text_items_short is defined ? text_items_short : 'товара' }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if products %}
+                        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="cart-form" class="flex flex-col gap-8">
+                            {% for product in products %}
+                                {% if not loop.first %}
+                                    <div class="h-px bg-gray-100"></div>
+                                {% endif %}
+                                <div class="flex flex-col sm:flex-row gap-6 items-start">
+                                    <div class="w-full sm:w-32 aspect-square rounded-sm overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                        {% if product.thumb %}
+                                            <a href="{{ product.href }}">
+                                                <img src="{{ product.thumb }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-1 w-full">
+                                        <div class="flex flex-col md:flex-row justify-between gap-4">
+                                            <div>
+                                                <a href="{{ product.href }}" class="block text-lg font-serif font-medium text-luxury-charcoal mb-2 hover:text-primary transition-colors">
+                                                    {{ product.name }}
+                                                </a>
+                                                {% if product.option %}
+                                                    {% for option in product.option %}
+                                                        <p class="text-xs uppercase tracking-widest text-gray-500">
+                                                            {{ option.name }}: {{ option.value }}
+                                                        </p>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if product.reward %}
+                                                    <p class="mt-1 text-xs text-gray-400">{{ product.reward }}</p>
+                                                {% endif %}
+                                                {% if product.recurring %}
+                                                    <p class="mt-1 text-xs text-gray-400">
+                                                        <span class="inline-flex items-center rounded-sm bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-gray-700">
+                                                            {{ text_recurring_item }}
+                                                        </span>
+                                                        <span class="ml-1 text-xs text-gray-500">{{ product.recurring }}</span>
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-left md:text-right flex flex-row md:flex-col items-center md:items-end gap-3 md:gap-1">
+                                                {% if product.price %}
+                                                    <span class="text-xl font-bold text-luxury-charcoal">{{ product.price }}</span>
+                                                {% endif %}
+                                                {% if product.old_price %}
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-red-600 line-through decoration-red-600">{{ product.old_price }}</span>
+                                                    <span class="bg-red-50 text-red-600 text-xs font-bold px-1.5 py-0.5 rounded-sm">{{ product.discount_percentage }}%</span>
+                                                </div>                    
+                                                {% endif %}
+                                                {% if product.total and product.total != product.price %}
+                                                    <span class="text-sm text-gray-500">{{ product.total }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between mt-6">
+                                            <div class="flex items-center border border-gray-200 rounded-sm">
+                                                <button type="button"
+                                                        class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+                                                        onclick="updateCartQuantity('{{ product.cart_id }}', -1)">
+                                                    &minus;
+                                                </button>
+                                                <input type="text"
+                                                       name="quantity[{{ product.cart_id }}]"
+                                                       value="{{ product.quantity }}"
+                                                       class="w-10 text-center text-sm font-medium border-x border-gray-200 focus:outline-none focus:ring-0"
+                                                />
+                                                <button type="button"
+                                                        class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+                                                        onclick="updateCartQuantity('{{ product.cart_id }}', 1)">
+                                                    +
+                                                </button>
+                                            </div>
+                                            <button type="button"
+                                                    class="cart-remove-btn flex items-center gap-1.5 text-gray-400 hover:text-red-400 transition-colors text-xs font-bold uppercase tracking-widest disabled:opacity-50 disabled:pointer-events-none"
+                                                    data-cart-id="{{ product.cart_id }}"
+                                                    onclick="removeFromCart(this, '{{ product.cart_id }}');">
+                                                <span class="material-symbols-outlined text-[18px] cart-remove-icon">delete</span>
+                                                <span class="cart-remove-text hidden sm:inline">{{ button_remove }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </form>
+                    {% else %}
+                        <p class="text-sm text-gray-500">{{ text_empty }}</p>
+                    {% endif %}
+                </section>
+
+                {% if frequently_bought is defined and frequently_bought %}
+                    <section>
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-serif font-medium text-luxury-charcoal">
+                                {{ text_frequently_bought is defined ? text_frequently_bought : 'С этим товаром часто покупают' }}
+                            </h2>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 overflow-x-auto pb-4 -mx-2 px-2 scroll-smooth">
+                            {% for item in frequently_bought %}
+                                <div class="group cursor-pointer min-w-[140px]">
+                                    <div class="aspect-[3/4] bg-[#F5F7FA] mb-3 overflow-hidden relative rounded-sm">
+                                        {% if item.thumb %}
+                                            <a href="{{ item.href }}">
+                                                <img src="{{ item.thumb }}" alt="{{ item.name }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 mix-blend-multiply" />
+                                            </a>
+                                        {% endif %}
+                                        <button type="button"
+                                                class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-colors"
+                                                data-product-id="{{ item.product_id }}"
+                                                data-add-option="{{ item.add_option }}"
+                                                onclick="addUpsellToCart(this.dataset.productId, 1, this.dataset.addOption || '');">
+                                            <span class="material-symbols-outlined text-[16px] block">add</span>
+                                        </button>
+                                    </div>
+                                    <a href="{{ item.href }}" class="block">
+                                        <h4 class="font-serif text-sm font-medium text-luxury-charcoal leading-tight mb-1 group-hover:text-primary transition-colors">
+                                            {{ item.name }}
+                                        </h4>
+                                    </a>
+                                    {% if item.price %}
+                                        <p class="text-xs text-gray-500">{{ item.price }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
                 {% endif %}
-                {% if product.reward %} <br />
-                <small>{{ product.reward }}</small> {% endif %}
-                {% if product.recurring %} <br />
-                <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small> {% endif %}</td>
-              <td class="text-left">{{ product.model }}</td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="submit" data-toggle="tooltip" title="{{ button_update }}" class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ product.price }}</td>
-              <td class="text-right">{{ product.total }}</td>
-            </tr>
-            {% endfor %}
-            {% for voucher in vouchers %}
-            <tr>
-              <td></td>
-              <td class="text-left">{{ voucher.description }}</td>
-              <td class="text-left"></td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="" value="1" size="1" disabled="disabled" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="voucher.remove('{{ voucher.key }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ voucher.amount }}</td>
-              <td class="text-right">{{ voucher.amount }}</td>
-            </tr>
-            {% endfor %}
-              </tbody>
-            
-          </table>
+            </div>
+
+            <div class="lg:col-span-4 relative">
+                <div class="sticky top-24 flex flex-col gap-6">
+                    <section class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">Промокод</label>
+                        <div id="cart-coupon-container" class="flex flex-col gap-3">
+                            <div class="flex flex-col gap-3">
+                                <input class="w-full rounded-sm border-gray-200 bg-gray-50 py-3 px-3 text-sm focus:border-luxury-charcoal focus:ring-0 placeholder:text-gray-400"
+                                       placeholder="Введите код"
+                                       type="text"
+                                       id="cart-coupon-input"
+                                       value="{{ coupon is defined ? coupon : '' }}"
+                                />
+                                <button type="button"
+                                        class="w-full bg-luxury-charcoal text-white border border-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors rounded-sm shadow-sm"
+                                        onclick="applyCartCoupon();">
+                                    Применить
+                                </button>
+                            </div>
+                            <div id="cart-coupon-message" class="text-xs text-red-600 hidden"></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-4 mt-2 border-t border-gray-50">
+                            <button class="flex items-center gap-1.5 text-xs text-gray-400 hover:text-luxury-charcoal transition-colors group" type="button">
+                                <span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">mail</span>
+                                <span>Отправить на почту</span>
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs text-gray-400 hover:text-luxury-charcoal transition-colors group" type="button">
+                                <span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">ios_share</span>
+                                <span>Поделиться</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="bg-white p-6 md:p-8 rounded-lg shadow-card-depth border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none"></div>
+
+                        {% if free_shipping_left_text %}
+                            <div class="relative z-10 mb-6 bg-gray-50/50 p-3 rounded-md border border-gray-100">
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Доставка</span>
+                                    <span class="text-xs font-medium text-luxury-charcoal">{{ free_shipping_left_text }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2 overflow-hidden">
+                                    <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ free_shipping_progress }}%"></div>
+                                </div>
+                                <p class="text-[10px] leading-snug text-gray-400">{{ free_shipping_left_text }}</p>
+                            </div>
+                        {% endif %}
+
+                        <h2 class="text-xl font-serif font-medium mb-6 relative z-10">Ваш заказ</h2>
+
+                        <div class="flex flex-col gap-4 mb-6 border-b border-gray-100 pb-6 relative z-10">
+                            {% if items_count and sub_total_text %}
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">{{ items_count }} {{ text_items_short is defined ? text_items_short : 'товара' }} на сумму</span>
+                                    <span class="text-luxury-charcoal font-medium">{{ sub_total_text }}</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500">Доставка</span>
+                                {% if free_shipping_active %}
+                                    <span class="text-green-600 font-medium">Бесплатная доставка</span>
+                                {% else %}
+                                    {% if shipping_pending %}
+                                        <span class="text-gray-400 text-xs tracking-wide">Рассчитается далее</span>
+                                    {% else %}
+                                        <span class="text-luxury-charcoal font-medium">{{ shipping_text }}</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            {% if total_discount_text %}
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Ваша скидка</span>
+                                    <span class="text-red-600 font-medium">- {{ total_discount_text }} ({{ total_discount_percentage }}%)</span>
+                                    {# <span class="text-xs text-gray-400">({{ total_discount_percentage }}%)</span> #}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex justify-between items-baseline mb-8 relative z-10">
+                            <span class="text-lg font-serif font-medium text-luxury-charcoal">Итого к оплате</span>
+                            <span class="text-3xl font-bold text-luxury-charcoal tracking-tight">
+                                {{ order_total_text ? order_total_text : (totals and totals|last ? totals|last.text : '') }}
+                            </span>
+                        </div>
+
+                        <a href="{{ checkout }}" class="w-full inline-flex justify-center items-center bg-luxury-charcoal text-white border border-transparent py-4 font-bold uppercase text-sm tracking-[0.15em] mb-6 rounded-sm transition-colors hover:bg-primary-dark shadow-sm">
+                            ПЕРЕЙТИ К ОФОРМЛЕНИЮ
+                        </a>
+
+                        <div class="grid grid-cols-3 gap-2 mb-6 pt-6 border-t border-gray-100">
+                            <div class="flex flex-col items-center gap-1.5 text-center group">
+                                <span class="material-symbols-outlined text-luxury-charcoal text-[22px] group-hover:scale-110 transition-transform">assignment_return</span>
+                                <span class="text-[9px] leading-tight text-gray-500 font-medium tracking-wide uppercase">Бесплатный<br/>возврат</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1.5 text-center group">
+                                <span class="material-symbols-outlined text-luxury-charcoal text-[22px] group-hover:scale-110 transition-transform">verified</span>
+                                <span class="text-[9px] leading-tight text-gray-500 font-medium tracking-wide uppercase">Гарантия<br/>качества</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1.5 text-center group">
+                                <span class="material-symbols-outlined text-luxury-charcoal text-[22px] group-hover:scale-110 transition-transform">lock</span>
+                                <span class="text-[9px] leading-tight text-gray-500 font-medium tracking-wide uppercase">Безопасная<br/>оплата</span>
+                            </div>
+                        </div>
+
+                        <div class="text-[10px] leading-relaxed text-gray-400 text-center">
+                            Нажимая кнопку, вы соглашаетесь с
+                            <a class="underline hover:text-luxury-charcoal" href="#">политикой обработки данных</a>
+                            и
+                            <a class="underline hover:text-luxury-charcoal" href="#">условиями продажи</a>.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </form>
-      {% if modules %}
-      <h2>{{ text_next }}</h2>
-      <p>{{ text_next_choice }}</p>
-      <div class="panel-group" id="accordion"> {% for module in modules %}
-        {{ module }}
-        {% endfor %} </div>
-      {% endif %} <br />
-      <div class="row">
-        <div class="col-sm-4 col-sm-offset-8">
-          <table class="table table-bordered">
-            {% for total in totals %}
-            <tr>
-              <td class="text-right"><strong>{{ total.title }}:</strong></td>
-              <td class="text-right">{{ total.text }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-      </div>
-      <div class="buttons clearfix">
-        <div class="pull-left"><a href="{{ continue }}" class="btn btn-default">{{ button_shopping }}</a></div>
-        <div class="pull-right"><a href="{{ checkout }}" class="btn btn-primary">{{ button_checkout }}</a></div>
-      </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+    </main>
 </div>
-{{ footer }} 
+
+{{ footer }}
+
+<script>
+    var cartPageUrl = '{{ base }}index.php?route=checkout/cart';
+    var cartRemoveUrl = '{{ base }}index.php?route=checkout/cart/remove';
+    var cartAddUrl = '{{ base }}index.php?route=checkout/cart/add';
+
+    function addUpsellToCart(productId, quantity, addOption) {
+        var body = 'product_id=' + productId + '&quantity=' + (quantity || 1);
+        if (addOption) {
+            body += '&' + addOption;
+        }
+        fetch(cartAddUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: body
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (json) {
+                if (json.redirect) {
+                    location = json.redirect;
+                } else if (json.success) {
+                    location = cartPageUrl;
+                } else if (json.error && json.error.option) {
+                    var msg = Object.values(json.error.option).join(' ');
+                    alert(msg || 'Выберите опцию товара на странице товара.');
+                } else if (json.error) {
+                    alert(json.error);
+                }
+            })
+            .catch(function () { alert('Ошибка добавления в корзину.'); });
+    }
+
+    function removeFromCart(btn, cartId) {
+        if (!btn || !cartId) return;
+        btn.disabled = true;
+        var icon = btn.querySelector('.cart-remove-icon');
+        if (icon) {
+            icon.textContent = 'hourglass_empty';
+            icon.classList.add('animate-pulse');
+        }
+
+        fetch(cartRemoveUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: 'key=' + encodeURIComponent(cartId)
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (json) {
+                if (json.success) {
+                    window.location.href = cartPageUrl;
+                } else {
+                    btn.disabled = false;
+                    if (icon) {
+                        icon.textContent = 'delete';
+                        icon.classList.remove('animate-pulse');
+                    }
+                    alert(json.error || 'Не удалось удалить товар.');
+                }
+            })
+            .catch(function () {
+                btn.disabled = false;
+                if (icon) {
+                    icon.textContent = 'delete';
+                    icon.classList.remove('animate-pulse');
+                }
+                alert('Ошибка соединения. Попробуйте еще раз.');
+            });
+    }
+
+    function updateCartQuantity(cartId, delta) {
+        var form = document.getElementById('cart-form');
+        if (!form) return;
+
+        var input = form.querySelector('input[name="quantity[' + cartId + ']"]');
+        if (!input) return;
+
+        var current = parseInt(input.value, 10);
+        if (isNaN(current)) current = 1;
+
+        var next = current + delta;
+        if (next < 1) {
+            next = 1;
+        }
+
+        input.value = next;
+        form.submit();
+    }
+
+    function applyCartCoupon() {
+        var input = document.getElementById('cart-coupon-input');
+        var message = document.getElementById('cart-coupon-message');
+        if (!input || !message) return;
+
+        var code = input.value.trim();
+        if (!code) {
+            message.textContent = 'Введите промокод';
+            message.classList.remove('hidden');
+            message.classList.add('text-red-600');
+            return;
+        }
+
+        message.classList.add('hidden');
+        message.textContent = '';
+
+        fetch('{{ coupon_action }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: 'coupon=' + encodeURIComponent(code)
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (json) {
+                if (json.error) {
+                    message.textContent = json.error;
+                    message.classList.remove('hidden');
+                    message.classList.add('text-red-600');
+                } else if (json.redirect) {
+                    window.location.href = json.redirect;
+                }
+            })
+            .catch(function () {
+                message.textContent = 'Ошибка применения промокода. Попробуйте еще раз.';
+                message.classList.remove('hidden');
+                message.classList.add('text-red-600');
+            });
+    }
+</script>

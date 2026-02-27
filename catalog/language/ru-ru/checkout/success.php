@@ -6,6 +6,10 @@
 $_['heading_title'] 		 = 'Ваш заказ #%s сформирован!';
 $_['heading_title_customer'] = 'Ваш заказ #%s сформирован!';
 
+// Button
+$_['button_continue']      = 'Перейти в каталог';
+$_['button_print']         = 'Печатать чек';
+
 // Text
 $_['text_basket']          = 'Корзина покупок';
 $_['text_checkout']        = 'Оформление заказа';

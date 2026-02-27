@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Maison Textile: Личный кабинет покупателя</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#546E7A",
+                        "primary-dark": "#37474F",
+                        "primary-light": "#B0BEC5",
+                        "background-dark": "#F5F7FA",
+                        "background-card": "#FFFFFF",
+                        "background-section": "#ECEFF1",
+                        "luxury-charcoal": "#263238",
+                        "luxury-silver": "#CFD8DC",
+                        "luxury-cream": "#FFFFFF",
+                        "midnight-blue": "#F5F7FA",
+                        "soft-gold-bg": "#FFFFFF",
+                        "dark-beige": "#90A4AE",
+                        "badge-gold": "#C1A687",
+                        "badge-teal": "#80CBC4",
+                        "discount-red": "#E53935"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                    boxShadow: {
+                        "gold-glow": "0 0 15px rgba(84, 110, 122, 0.2)",
+                        "card-depth": "0 10px 30px -10px rgba(0, 0, 0, 0.05)",
+                        "soft": "0 4px 20px -5px rgba(0,0,0,0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CFD8DC;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #546E7A;
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-dark font-display text-luxury-charcoal antialiased selection:bg-primary-light selection:text-luxury-charcoal flex flex-col min-h-screen">
+    <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden mobile-menu-closed"
+        id="app-root">
+        <div class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm pointer-events-none opacity-0 transition-opacity duration-300"
+            id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+        <div class="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm z-[70] bg-[#263238] shadow-2xl flex flex-col h-full transform -translate-x-full transition-transform duration-300"
+            id="mobile-menu-drawer">
+            <div class="flex items-center justify-between p-6 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <div class="size-6 text-primary-light">
+                        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                stroke="currentColor" stroke-width="2"></path>
+                            <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-serif font-bold tracking-wide text-white">Maison</span>
+                </div>
+                <button class="text-white/80 p-2 hover:bg-white/10 rounded-full transition-colors"
+                    onclick="toggleMobileMenu()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-6 flex-1 overflow-y-auto">
+                <nav class="flex flex-col gap-5 text-white">
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors"
+                        href="#">Главная</a>
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors"
+                        href="#">Каталог</a>
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors"
+                        href="#">Inspiration</a>
+                    <a class="text-lg font-bold tracking-wide uppercase hover:text-primary-light transition-colors"
+                        href="#">Контакты</a>
+                </nav>
+            </div>
+        </div>
+        <header
+            class="fixed top-0 left-0 right-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-24">
+                <div class="flex items-center gap-4 lg:gap-12">
+                    <button
+                        class="lg:hidden flex items-center justify-center p-2 text-luxury-charcoal hover:bg-gray-100 rounded-full transition-colors -ml-2"
+                        onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-[28px]">menu</span>
+                    </button>
+                    <div class="flex items-center gap-3 text-luxury-charcoal cursor-pointer group">
+                        <div class="size-8 text-primary group-hover:text-primary-dark transition-all">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison
+                            Textile</h2>
+                    </div>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-6">
+                    <div class="hidden md:flex items-center gap-2 mr-4">
+                        <span
+                            class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">MT</span>
+                        <div class="flex flex-col text-right">
+                            <span class="text-xs font-bold text-luxury-charcoal">Александр</span>
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider">Покупатель</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 lg:gap-4">
+                        <button
+                            class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100 relative">
+                            <span class="material-symbols-outlined text-[24px]">favorite_border</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-center rounded-full size-10 text-luxury-charcoal hover:text-primary transition-colors hover:bg-gray-100 relative">
+                            <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                            <span class="absolute top-2 right-2 size-2 bg-discount-red rounded-full"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 mt-24 bg-background-dark">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <aside class="w-full lg:w-64 flex-shrink-0">
+                        <nav class="bg-white rounded-lg shadow-soft p-6 sticky top-28">
+                            <div class="flex flex-col gap-1">
+                                <a class="flex items-center gap-3 px-4 py-3 bg-[#263238] text-white rounded-md transition-colors font-medium text-sm shadow-md"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">local_mall</span>
+                                    Мои заказы
+                                </a>
+                                <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">favorite</span>
+                                    Избранное
+                                </a>
+                                <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">loyalty</span>
+                                    Бонусная программа
+                                </a>
+                                <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">person</span>
+                                    Личные данные
+                                </a>
+                                <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">location_on</span>
+                                    Мои адреса
+                                </a>
+                                <div class="h-px bg-gray-100 my-2"></div>
+                                <a class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-md transition-colors font-medium text-sm"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                                    Выход
+                                </a>
+                            </div>
+                        </nav>
+                    </aside>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <div>
+                                <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">Здравствуйте,
+                                    Александр!</h1>
+                                <p class="text-gray-500 mt-1 text-sm">Рады видеть вас снова.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div
+                                class="bg-white p-6 rounded-lg shadow-soft border border-gray-100 md:col-span-2 flex flex-col justify-center relative overflow-hidden group min-h-[160px]">
+                                <div
+                                    class="absolute right-0 top-0 w-32 h-32 bg-badge-gold/10 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-500">
+                                </div>
+                                <div class="relative z-10 flex flex-col items-center justify-center h-full text-center">
+                                    <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">Ваш баланс
+                                    </p>
+                                    <div class="flex items-center justify-center gap-4">
+                                        <p class="text-5xl font-serif text-luxury-charcoal">1 250 <span
+                                                class="text-2xl text-gray-400 font-sans">баллов</span></p>
+                                        <div
+                                            class="size-10 rounded-full bg-badge-gold/10 text-badge-gold flex items-center justify-center">
+                                            <span class="material-symbols-outlined">diamond</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                                <h2 class="text-lg font-serif text-luxury-charcoal font-bold">Последние заказы</h2>
+                                <a class="text-primary text-xs font-bold uppercase tracking-widest hover:text-luxury-charcoal transition-colors"
+                                    href="#">Все заказы</a>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-500">
+                                    <thead class="bg-gray-50 text-xs uppercase text-gray-400 font-bold tracking-wider">
+                                        <tr>
+                                            <th class="px-6 py-4 font-semibold">Заказ #</th>
+                                            <th class="px-6 py-4 font-semibold">Дата</th>
+                                            <th class="px-6 py-4 font-semibold">Сумма</th>
+                                            <th class="px-6 py-4 font-semibold">Статус</th>
+                                            <th class="px-6 py-4 font-semibold text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">MT-8291</td>
+                                            <td class="px-6 py-4">12 Окт 2023</td>
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">12 450 ₽</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    В пути
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <a class="text-primary hover:text-luxury-charcoal transition-colors text-xs font-bold uppercase tracking-wider border-b border-transparent hover:border-luxury-charcoal"
+                                                    href="#">
+                                                    Подробнее
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">MT-7740</td>
+                                            <td class="px-6 py-4">28 Сен 2023</td>
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">8 990 ₽</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Доставлен
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <a class="text-primary hover:text-luxury-charcoal transition-colors text-xs font-bold uppercase tracking-wider border-b border-transparent hover:border-luxury-charcoal"
+                                                    href="#">
+                                                    Подробнее
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">MT-7512</td>
+                                            <td class="px-6 py-4">15 Авг 2023</td>
+                                            <td class="px-6 py-4 font-medium text-luxury-charcoal">24 500 ₽</td>
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Доставлен
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <a class="text-primary hover:text-luxury-charcoal transition-colors text-xs font-bold uppercase tracking-wider border-b border-transparent hover:border-luxury-charcoal"
+                                                    href="#">
+                                                    Подробнее
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-8 relative bg-[#263238] rounded-lg p-10 overflow-hidden shadow-card-depth">
+                            <div
+                                class="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-20 -mt-20 blur-[80px]">
+                            </div>
+                            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div>
+                                    <span
+                                        class="text-badge-teal text-[10px] font-bold uppercase tracking-widest mb-2 block">Новая
+                                        коллекция</span>
+                                    <h3 class="text-2xl font-serif text-white mb-2">Morning in Oslo</h3>
+                                    <p class="text-luxury-silver text-sm max-w-lg">Минимализм, вдохновленный северной
+                                        природой. Создайте уют в своем доме с новой коллекцией постельного белья.</p>
+                                </div>
+                                <button
+                                    class="bg-white text-luxury-charcoal px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-light transition-colors rounded-sm shadow-lg whitespace-nowrap">
+                                    Смотреть коллекцию
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10 mt-auto">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-white">
+                        <div class="size-6 text-primary-light">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
+                                    stroke="currentColor" stroke-width="2"></path>
+                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-serif font-bold tracking-wide">Maison Textile</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
+                        чистые линии и спокойствие в каждой детали вашего дома.</p>
+                    <div class="flex flex-col gap-3">
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="tel:88005553535">
+                            <span class="material-symbols-outlined text-[20px]">call</span> 8 (800) 555-35-35
+                        </a>
+                        <a class="text-white hover:text-primary-light transition-colors flex items-center gap-3 font-display text-base"
+                            href="mailto:hello@maisontextile.ru">
+                            <span class="material-symbols-outlined text-[20px]">mail</span> hello@maisontextile.ru
+                        </a>
+                    </div>
+                </div>
+                <div class="md:pl-8">
+                    <h3 class="font-serif text-white text-lg mb-6">Покупателям</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Каталог</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Акции</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Блог</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Магазины</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Информация</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Доставка и оплата</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Возврат товара</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Таблица размеров</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Уход за изделиями</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-serif text-white text-lg mb-6">Помощь</h3>
+                    <ul class="flex flex-col gap-3 text-sm text-gray-400">
+                        <li><a class="hover:text-white transition-colors" href="#">Частые вопросы</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Связаться с нами</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>© 2024 Maison Textile. Все права защищены.</p>
+                <div class="flex gap-8">
+                    <a class="hover:text-white transition-colors" href="#">Политика конфиденциальности</a>
+                    <a class="hover:text-white transition-colors" href="#">Условия использования</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        // Mobile Menu Toggle Logic
+        const appRoot = document.getElementById('app-root');
+        const overlay = document.getElementById('mobile-menu-overlay');
+        const drawer = document.getElementById('mobile-menu-drawer');
+        function toggleMobileMenu() {
+            const isOpen = !drawer.classList.contains('-translate-x-full');
+            if (isOpen) {
+                // Close
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                document.body.style.overflow = '';
+            } else {
+                // Open
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100', 'pointer-events-auto');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

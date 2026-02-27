@@ -1,0 +1,176 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}
+              <div class="text-danger">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-product"><span data-toggle="tooltip" title="{{ help_product }}">{{ entry_product }}</span></label>
+            <div class="col-sm-10">
+              <input type="text" name="product_name" value="" placeholder="{{ entry_product }}" id="input-product" class="form-control" />
+              <div id="upsell-product" class="well well-sm" style="min-height: 150px; max-height: 400px; overflow: auto;">
+                {% for product in products %}
+                <div class="upsell-product-row" data-product-id="{{ product.product_id }}" id="upsell-product{{ product.product_id }}">
+                  <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-12">
+                      <i class="fa fa-minus-circle upsell-remove" style="cursor:pointer; margin-right: 5px;"></i>
+                      <strong>{{ product.name }}</strong>
+                      <input type="hidden" name="product[{{ loop.index0 }}][product_id]" value="{{ product.product_id }}" />
+                      {% for po in product.product_options %}
+                        {% if po.type == 'select' or po.type == 'radio' or po.type == 'checkbox' or po.type == 'image' %}
+                        <div class="form-group" style="margin: 8px 0 0 20px;">
+                          <label class="control-label" style="min-width: 120px;">{{ po.name }}:</label>
+                          <select name="product[{{ loop.parent.loop.index0 }}][option][{{ po.product_option_id }}]" class="form-control upsell-option-select" style="display: inline-block; width: auto; min-width: 150px;">
+                            <option value="">{{ text_select_option }}</option>
+                            {% for pov in po.product_option_value %}
+                            <option value="{{ pov.product_option_value_id }}" {% if attribute(product.option, po.product_option_id) is defined and attribute(product.option, po.product_option_id) == pov.product_option_value_id %}selected{% endif %}>
+                              {{ pov.name }}{% if pov.price %}{% if pov.price_prefix == '+' %} +{% elseif pov.price_prefix == '-' %} -{% endif %} {{ pov.price }}{% endif %}
+                            </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-limit">{{ entry_limit }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="limit" value="{{ limit }}" placeholder="{{ entry_limit }}" id="input-limit" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+var upsell_product_row = {{ products|length }};
+
+$('input[name=\'product_name\']').autocomplete({
+  source: function(request, response) {
+    $.ajax({
+      url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['product_id'],
+            option: item['option'] || []
+          };
+        }));
+      }
+    });
+  },
+  select: function(item) {
+    $('input[name=\'product_name\']').val('');
+    if ($('#upsell-product' + item['value']).length) {
+      return;
+    }
+    $.ajax({
+      url: 'index.php?route=extension/module/upsell/productOptions&user_token={{ user_token }}&product_id=' + item['value'],
+      dataType: 'json',
+      success: function(options) {
+        var html = '<div class="upsell-product-row" data-product-id="' + item['value'] + '" id="upsell-product' + item['value'] + '">';
+        html += '  <div class="row" style="margin-bottom: 10px;">';
+        html += '    <div class="col-sm-12">';
+        html += '      <i class="fa fa-minus-circle upsell-remove" style="cursor:pointer; margin-right: 5px;"></i>';
+        html += '      <strong>' + item['label'] + '</strong>';
+        html += '      <input type="hidden" name="product[' + upsell_product_row + '][product_id]" value="' + item['value'] + '" />';
+        for (var i = 0; i < options.length; i++) {
+          var po = options[i];
+          html += '      <div class="form-group" style="margin: 8px 0 0 20px;">';
+          html += '        <label class="control-label" style="min-width: 120px;">' + po.name + ':</label>';
+          html += '        <select name="product[' + upsell_product_row + '][option][' + po.product_option_id + ']" class="form-control upsell-option-select" style="display: inline-block; width: auto; min-width: 150px;">';
+          html += '          <option value="">{{ text_select_option }}</option>';
+          for (var j = 0; j < po.product_option_value.length; j++) {
+            var pov = po.product_option_value[j];
+            var priceStr = '';
+            if (pov.price) {
+              priceStr = (pov.price_prefix === '+' ? ' +' : (pov.price_prefix === '-' ? ' -' : '')) + ' ' + pov.price;
+            }
+            html += '          <option value="' + pov.product_option_value_id + '">' + pov.name + priceStr + '</option>';
+          }
+          html += '        </select>';
+          html += '      </div>';
+        }
+        html += '    </div>';
+        html += '  </div>';
+        html += '</div>';
+        $('#upsell-product').append(html);
+        upsell_product_row++;
+      }
+    });
+  }
+});
+
+$('#upsell-product').delegate('.upsell-remove', 'click', function() {
+  $(this).closest('.upsell-product-row').remove();
+  upsellReorderProducts();
+});
+
+function upsellReorderProducts() {
+  $('#upsell-product .upsell-product-row').each(function(idx) {
+    $(this).find('input[name*="[product_id]"]').attr('name', 'product[' + idx + '][product_id]');
+    $(this).find('select.upsell-option-select').each(function() {
+      var m = $(this).attr('name').match(/\[option\]\[(\d+)\]/);
+      if (m) {
+        $(this).attr('name', 'product[' + idx + '][option][' + m[1] + ']');
+      }
+    });
+  });
+  upsell_product_row = $('#upsell-product .upsell-product-row').length;
+}
+//--></script>
+{{ footer }}

@@ -1,25 +1,86 @@
 {{ header }}
-<div id="common-success" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      {{ text_message }}
-      <div class="buttons">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+<div id="common-success" class="bg-background-dark font-display text-luxury-charcoal antialiased min-h-screen">
+  {{ include('maison/template/checkout/checkout_header.twig') }}
+  {{ content_top }}
+  <div class="w-full max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-lg shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden mb-12 relative">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[80px] pointer-events-none"></div>
+        <div class="p-8 md:p-12 flex flex-col items-center text-center relative z-10">
+          <div class="size-24 bg-green-50 rounded-full flex items-center justify-center text-[#3C8F32] mb-8 shadow-sm ring-8 ring-green-50/50">
+            <span class="material-symbols-outlined text-[48px]">check_circle</span>
+          </div>
+          <h1 class="text-3xl md:text-5xl font-serif font-medium text-luxury-charcoal mb-4 tracking-tight">
+            {{ heading_title|default('Спасибо!') }}
+          </h1>
+          {% if order_id %}
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm font-medium text-gray-500 mb-8 bg-gray-50 px-6 py-3 rounded-full border border-gray-100">
+            <span class="tracking-wide">Номер заказа: <span class="text-luxury-charcoal font-bold">#{{ order_id }}</span></span>
+            {% if order_status %}
+            <span class="hidden sm:inline text-gray-300">|</span>
+            <div class="flex items-center gap-1.5">
+              <span class="size-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span class="text-blue-600 font-bold uppercase text-xs tracking-wider">{{ order_status }}</span>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+          <div class="text-gray-500 leading-relaxed max-w-xl mx-auto mb-10 text-base md:text-lg [&_p]:my-2 [&_a]:text-luxury-charcoal [&_a]:font-semibold [&_a]:underline [&_a]:decoration-gray-300 [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+            {{ text_message|raw }}
+          </div>
+          {% if order_id and (shipping_address or delivery_time) %}
+          <div class="w-full max-w-2xl bg-white border border-gray-100 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] rounded-lg p-6 mb-10 text-left relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-luxury-charcoal"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-4 relative z-10">
+              {% if delivery_time %}
+              <div class="flex items-start gap-4">
+                <div class="bg-gray-50 p-3 rounded-full text-luxury-charcoal shrink-0 border border-gray-100">
+                  <span class="material-symbols-outlined text-[24px]">local_shipping</span>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1.5">Срок доставки</h4>
+                  <p class="text-luxury-charcoal font-medium text-lg font-serif">{{ delivery_time }}</p>
+                </div>
+              </div>
+              {% endif %}
+              {% if shipping_address %}
+              <div class="flex items-start gap-4">
+                <div class="bg-gray-50 p-3 rounded-full text-luxury-charcoal shrink-0 border border-gray-100">
+                  <span class="material-symbols-outlined text-[24px]">location_on</span>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1.5">Адрес доставки</h4>
+                  <p class="text-luxury-charcoal font-medium text-lg font-serif">{{ shipping_address }}</p>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <a class="group w-full sm:w-auto bg-[#263238] text-white border border-[#263238] px-10 py-4 rounded-sm text-xs font-bold uppercase tracking-[0.15em] hover:bg-primary-dark hover:border-primary-dark transition-all shadow-lg hover:shadow-xl text-center flex items-center justify-center gap-2"
+              href="{{ continue }}">
+              {{ button_continue|default('Продолжить') }}
+              <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+            {% if order_id %}
+            <button type="button" onclick="window.print()"
+              class="w-full sm:w-auto bg-white text-luxury-charcoal border border-gray-200 px-10 py-4 rounded-sm text-xs font-bold uppercase tracking-[0.15em] hover:border-luxury-charcoal hover:bg-gray-50 transition-all text-center flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">print</span>
+              {{ button_print|default('Печатать чек') }}
+            </button>
+            {% endif %}
+          </div>
+        </div>
+        <div class="h-1.5 w-full bg-[repeating-linear-gradient(45deg,#F5F7FA,#F5F7FA_10px,#FFFFFF_10px,#FFFFFF_20px)] border-t border-gray-100"></div>
       </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+      <div class="mt-20">
+        <div class="flex items-center justify-between mb-10">
+          <h2 class="text-2xl md:text-3xl font-serif font-medium text-luxury-charcoal">Вам также может понравиться</h2>
+        </div>
+        {{ content_bottom }}
+      </div>
+    </div>
+  </div>
 </div>
 {{ footer }}

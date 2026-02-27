@@ -1,59 +1,71 @@
 {{ header }}
-<div id="account-reward" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      <p>{{ text_total }} <b>{{ total }}</b>.</p>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <td class="text-left">{{ column_date_added }}</td>
-              <td class="text-left">{{ column_description }}</td>
-              <td class="text-right">{{ column_points }}</td>
-            </tr>
-          </thead>
-          <tbody>
-          
-          {% if rewards %}
-          {% for reward in rewards %}
-          <tr>
-            <td class="text-left">{{ reward.date_added }}</td>
-            <td class="text-left">{% if reward.order_id %} <a href="{{ reward.href }}">{{ reward.description }}</a> {% else %}
-              {{ reward.description }}
-              {% endif %}</td>
-            <td class="text-right">{{ reward.points }}</td>
-          </tr>
-          {% endfor %}
-          {% else %}
-          <tr>
-            <td class="text-center" colspan="3">{{ text_empty }}</td>
-          </tr>
-          {% endif %}
-            </tbody>
-          
-        </table>
+<main class="flex-1 bg-background-dark">
+{{ include('maison/template/account/account_header.twig') }}
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <div class="flex flex-col lg:flex-row gap-8">
+      {{ menu }}
+      <div class="flex-1 min-w-0">
+        {{ content_top }}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif text-luxury-charcoal font-medium">{{ heading_title }}</h1>
+            <p class="text-gray-500 mt-1 text-sm">{{ text_total }} <span class="font-bold text-luxury-charcoal">{{ total|number_format(0, '.', ' ') }}</span></p>
+          </div>
+        </div>
+        {% if rewards %}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
+          <div class="overflow-x-auto">
+            <div class="min-w-[480px]">
+              {% for reward in rewards %}
+              {% if not loop.first %}
+              <div class="border-t border-gray-100"></div>
+              {% endif %}
+              <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 p-6 items-start sm:items-center">
+                <div class="flex-1 w-full min-w-0 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_date_added }}</span>
+                    <span class="text-luxury-charcoal">{{ reward.date_added }}</span>
+                  </div>
+                  <div class="sm:col-span-2">
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_description }}</span>
+                    {% if reward.order_id %}
+                    <a href="{{ reward.href }}" class="text-primary hover:text-luxury-charcoal transition-colors">{{ reward.description }}</a>
+                    {% else %}
+                    <span class="text-luxury-charcoal">{{ reward.description }}</span>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <span class="text-gray-500 block text-xs uppercase tracking-widest mb-0.5">{{ column_points }}</span>
+                    <span class="font-medium text-luxury-charcoal">{{ reward.points|number_format(0, '.', ' ') }}</span>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+          <div class="text-sm text-gray-500">{{ results }}</div>
+          <div>{{ pagination }}</div>
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow-soft border border-gray-100 p-12 text-center">
+          <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">loyalty</span>
+          <p class="text-gray-500 mb-6">{{ text_empty }}</p>
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-primary-dark transition-colors">
+            {{ button_continue }}
+          </a>
+        </div>
+        {% endif %}
+        <div class="mt-6">
+          <a href="{{ continue }}" class="inline-flex items-center gap-2 text-primary hover:text-luxury-charcoal transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            {{ button_continue }}
+          </a>
+        </div>
+        {{ content_bottom }}
       </div>
-      <div class="row">
-        <div class="col-sm-6 text-left">{{ pagination }}</div>
-        <div class="col-sm-6 text-right">{{ results }}</div>
-      </div>
-      <div class="buttons clearfix">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
-      </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+    </div>
+  </div>
+</main>
 {{ footer }}

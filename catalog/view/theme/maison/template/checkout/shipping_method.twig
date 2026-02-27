@@ -1,33 +1,52 @@
 {% if error_warning %}
-<div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+	<div class="alert alert-warning alert-dismissible mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+		<i class="fa fa-exclamation-circle"></i>
+		{{ error_warning }}
+	</div>
 {% endif %}
 {% if shipping_methods %}
-<p>{{ text_shipping_method }}</p>
-{% for shipping_method in shipping_methods %}
-<p><strong>{{ shipping_method.title }}</strong></p>
-{% if not shipping_method.error %}
-{% for quote in shipping_method.quote %}
-<div class="radio">
-  <label> {% if quote.code == code or not code %}
-    {% set code = quote.code %}
-    <input type="radio" name="shipping_method" value="{{ quote.code }}" checked="checked" />
-    {% else %}
-    <input type="radio" name="shipping_method" value="{{ quote.code }}" />
-    {% endif %}
-    {{ quote.title }} - {{ quote.text }}</label>
-</div>
-{% endfor %}
-{% else %}
-<div class="alert alert-danger alert-dismissible">{{ shipping_method.error }}</div>
+	<div class="space-y-8">
+		<div>
+			<div class="grid grid-cols-2 gap-4">
+				{% set checked_set = false %}
+				{% for name, shipping_method in shipping_methods %}
+					{% set carrier_color = 'text-luxury-charcoal' %}
+					{% set title_lower = shipping_method.title|lower %}
+					{% if 'cdek' in title_lower or 'сдэк' in title_lower %}
+						{% set carrier_color = 'text-[#3C8F32]' %}
+					{% elseif 'ozon' in title_lower %}
+						{% set carrier_color = 'text-[#005BFF]' %}
+					{% endif %}
+					<label class="cursor-pointer group relative">
+						<input {% if provider == name %}checked{% endif %} class="peer sr-only maison-carrier-radio" name="shipping_carrier" value="{{ name }}" type="radio"/>
+						<div class="h-16 flex items-center justify-center border border-gray-200 rounded-md bg-white peer-checked:bg-gray-50 peer-checked:border-luxury-charcoal hover:border-gray-300 transition-all">
+							<div class="flex items-center gap-2">
+								<span class="font-display font-black text-xl italic {{ carrier_color }}">{{ shipping_method.title }}</span>
+							</div>
+							<div class="absolute top-0 right-0 size-3 bg-luxury-charcoal rounded-bl-md opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+						</div>
+					</label>
+
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="mb-8">
+			<h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Способ получения</h3>
+			<div class="flex p-1 bg-gray-100 rounded-md max-w-md">
+				<label class="flex-1 cursor-pointer">
+					<input type="radio" name="delivery_type" value="pickup_point" class="peer sr-only" {% if method == 'pickup_point' %}checked{% endif %}/>
+					<div class="peer-checked:bg-luxury-charcoal peer-checked:text-white peer-checked:shadow-sm text-gray-500 py-2.5 px-4 rounded-sm text-sm font-bold uppercase tracking-widest transition-all text-center">
+						Пункт выдачи
+					</div>
+				</label>
+				<label class="flex-1 cursor-pointer">
+					<input type="radio" name="delivery_type" value="courier" class="peer sr-only" {% if method == 'courier' %}checked{% endif %}/>
+					<div class="peer-checked:bg-luxury-charcoal peer-checked:text-white peer-checked:shadow-sm text-gray-500 py-2.5 px-4 rounded-sm text-sm font-bold uppercase tracking-widest transition-all text-center">
+						Курьером
+					</div>
+				</label>
+			</div>
+		</div>
+	</div>
 {% endif %}
-{% endfor %}
-{% endif %}
-<p><strong>{{ text_comments }}</strong></p>
-<p>
-  <textarea name="comment" rows="8" class="form-control">{{ comment }}</textarea>
-</p>
-<div class="buttons">
-  <div class="pull-right">
-    <input type="button" value="{{ button_continue }}" id="button-shipping-method" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
-</div>

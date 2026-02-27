@@ -1,25 +1,23 @@
 {{ header }}
-<div id="error-not-found" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      <p>{{ text_error }}</p>
-      <div class="buttons clearfix">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+
+<main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12 min-h-screen">
+	<nav class="max-w-7xl mx-auto px-6 lg:px-12 py-6 text-xs uppercase tracking-wider text-gray-500 flex flex-wrap gap-2 items-center">
+		{% for breadcrumb in breadcrumbs %}
+			<a class="hover:text-primary transition-colors" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+			{% if not loop.last %}
+				<span class="text-gray-300">/</span>
+			{% endif %}
+		{% endfor %}
+	</nav>
+  <div class="flex-1 flex flex-col items-center justify-center mt-12">
+    <div class="w-full max-w-2xl flex flex-col-reverse lg:flex-row gap-4 items-center lg:items-start">
+      <div class="flex-1 text-center lg:text-left">
+        <h1 class="text-3xl lg:text-4xl font-serif font-medium text-luxury-charcoal mb-4">{{ heading_title }}</h1>
+        <p class="text-lg text-gray-600 mb-6">{{ text_error }}</p>
+        <a href="{{ continue }}" class="w-full bg-luxury-charcoal text-white border border-transparent px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors rounded-sm shadow-sm">{{ button_continue }}</a>
       </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+    </div>
+  </div>
+</main>
+
 {{ footer }}

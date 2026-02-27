@@ -67,6 +67,31 @@ class ControllerCheckoutSuccess extends Controller {
 		}
 
 		$data['continue'] = $this->url->link('common/home');
+		$data['button_continue'] = $this->language->get('button_continue');
+		$data['button_print'] = $this->language->get('button_print');
+
+		$data['order_id'] = null;
+		$data['order_status'] = null;
+		$data['order_email'] = null;
+		$data['shipping_address'] = null;
+		$data['delivery_time'] = null;
+
+		if (!empty($this->session->data['last_order_id'])) {
+			$this->load->model('checkout/order');
+			$order_info = $this->model_checkout_order->getOrder($this->session->data['last_order_id']);
+			if ($order_info) {
+				$data['order_id'] = $order_info['order_id'];
+				$data['order_status'] = $order_info['order_status'];
+				$data['order_email'] = $order_info['email'];
+				$data['delivery_time'] = '2-4 рабочих дня';
+				$addr_parts = array_filter([
+					$order_info['shipping_city'] ? 'г. ' . $order_info['shipping_city'] : '',
+					$order_info['shipping_address_1'],
+					$order_info['shipping_address_2']
+				]);
+				$data['shipping_address'] = implode(', ', $addr_parts) ?: null;
+			}
+		}
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

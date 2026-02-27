@@ -1,0 +1,39 @@
+      <aside class="w-full lg:w-64 flex-shrink-0">
+        <nav class="bg-white rounded-lg shadow-soft p-6 sticky top-28">
+          <div class="flex flex-col gap-1">
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'order' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'order' ? 'shadow-md' : '' }}" href="{{ order }}">
+              <span class="material-symbols-outlined text-[20px]">local_mall</span>
+              {{ text_order }}
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'wishlist' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'wishlist' ? 'shadow-md' : '' }}" href="{{ wishlist }}">
+              <span class="material-symbols-outlined text-[20px]">favorite</span>
+              {{ text_wishlist }}
+            </a>
+            {% if reward %}
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'reward' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'reward' ? 'shadow-md' : '' }}" href="{{ reward }}">
+              <span class="material-symbols-outlined text-[20px]">loyalty</span>
+              {{ text_reward }}
+            </a>
+            {% endif %}
+            <a class="flex items-center gap-3 px-4 py-3 {{ (menu_active is not defined or menu_active == 'account') ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ (menu_active is not defined or menu_active == 'account') ? 'shadow-md' : '' }}" href="{{ account }}">
+              <span class="material-symbols-outlined text-[20px]">person</span>
+              {{ text_edit }}
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ menu_active is defined and menu_active == 'address' ? 'bg-[#263238] text-white' : 'text-luxury-charcoal hover:bg-gray-50 hover:text-primary' }} rounded-md transition-colors font-medium text-sm {{ menu_active is defined and menu_active == 'address' ? 'shadow-md' : '' }}" href="{{ address }}">
+              <span class="material-symbols-outlined text-[20px]">location_on</span>
+              {{ text_address }}
+            </a>
+            {% for credit_card in credit_cards %}
+            <a class="flex items-center gap-3 px-4 py-3 text-luxury-charcoal hover:bg-gray-50 hover:text-primary rounded-md transition-colors font-medium text-sm" href="{{ credit_card.href }}">
+              <span class="material-symbols-outlined text-[20px]">credit_card</span>
+              {{ credit_card.name }}
+            </a>
+            {% endfor %}
+            <div class="h-px bg-gray-100 my-2"></div>
+            <a class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-md transition-colors font-medium text-sm" href="{{ logout }}">
+              <span class="material-symbols-outlined text-[20px]">logout</span>
+              {{ text_logout }}
+            </a>
+          </div>
+        </nav>
+      </aside>
