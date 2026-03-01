@@ -101,9 +101,9 @@ function toggleMobileMenu() {
 
     function showPopup(text) {
         var overlay = document.createElement('div');
-        overlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50';
+        overlay.className = 'popup-overlay-anim fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50';
         var box = document.createElement('div');
-        box.className = 'bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative';
+        box.className = 'popup-box-anim bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative';
         var p = document.createElement('p');
         p.className = 'text-luxury-charcoal text-sm leading-relaxed';
         p.innerHTML = text;
@@ -118,6 +118,13 @@ function toggleMobileMenu() {
             if (e.target === overlay || e.target === btn) overlay.remove();
         });
         document.body.appendChild(overlay);
+        void overlay.offsetHeight;
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                overlay.classList.add('popup-show');
+                box.classList.add('popup-show');
+            });
+        });
     }
 
     function initProductFavorites() {

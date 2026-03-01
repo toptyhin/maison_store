@@ -23,7 +23,10 @@
 				<div class="flex-1 relative bg-white rounded-sm overflow-hidden shadow-soft aspect-[3/4] lg:aspect-auto lg:h-[700px] border border-gray-100 group">
 					<img alt="{{ heading_title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" id="main-product-image" src="{{ thumb }}"/>
 					<div class="absolute top-4 right-4 z-10">
-						<button class="bg-white p-3 rounded-full text-luxury-charcoal hover:text-primary shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md">
+						<button type="button"
+							class="product-favorite-btn bg-white p-3 rounded-full text-luxury-charcoal hover:text-primary shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md"
+							data-product-id="{{ product_id }}"
+							title="Добавить в избранное">
 							<span class="material-symbols-outlined">favorite_border</span>
 						</button>
 					</div>
@@ -64,23 +67,29 @@
 							{% if option_image and first_ov %}
 								{% set disp_price = first_ov.discounted_price ? first_ov.discounted_price : first_ov.price %}
 								{% set disp_old = first_ov.discounted_price ? first_ov.price : '' %}
+								{% set disp_discount = first_ov.discount_percent %}
 								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ disp_price }}</span>
 								<span class="text-xl text-red-500 line-through mb-1 font-medium relative {{ disp_old ? '' : 'hidden' }}" id="product-old-price">{{ disp_old }}</span>
-								<span id="product-price-badge" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1 {{ disp_old ? '' : 'hidden' }}">-15%</span>
+								<span id="product-price-badge" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1 {{ disp_old and disp_discount ? '' : 'hidden' }}">-{{ disp_discount|default(0) }}%</span>
 							{% elseif special %}
 								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ special }}</span>
 								<span class="text-xl text-red-500 line-through mb-1 font-medium relative" id="product-old-price">{{ price}}</span>
-								<span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1">-15%</span>
+								<span id="product-price-badge" class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-sm uppercase tracking-wider ml-1 {{ discount_percent ? '' : 'hidden' }}">-{{ discount_percent|default(0) }}%</span>
 							{% else %}
 								<span class="text-4xl font-display font-medium text-luxury-charcoal" id="product-price">{{ price }}</span>
 								<span class="text-xl text-red-500 line-through mb-1 font-medium relative hidden" id="product-old-price"></span>
 							{% endif %}
 						</div>
+						{% if show_wholesale_block and wholesale_price %}
 						<div class="flex items-center gap-2 text-sm mt-1">
 							<span class="text-gray-500">Для оптовиков:</span>
-							<span class="font-bold text-luxury-charcoal">от 26 600 ₽</span>
-							<span class="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">-40%</span>
+							<span class="font-bold text-luxury-charcoal">от {{ wholesale_price }}</span>
+							{% if wholesale_discount_percent %}
+							<span
+								class="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">-{{ wholesale_discount_percent }}%</span>
+							{% endif %}
 						</div>
+						{% endif %}
 					</div>
 					{% if products %}
 						{# <input type="hidden" name="option[{{ option_image.product_option_id }}]" value="{{ first_ov ? first_ov.product_option_value_id : '' }}" id="input-option-{{ option_image.product_option_id }}"/> #}
@@ -100,7 +109,7 @@
 																									{% if ov.option_image_thumb %}
 																									{% set option_code = ov.custom_fields.code|default(model) %}
 																									{% set option_stock = ov.quantity > 0 ? 'В наличии' : (ov.custom_fields.stock_status|default('Нет в наличии')) %}
-																									<div class="group cursor-pointer min-w-[60px] option-swatch {% if loop.first %}selected{% endif %}" data-product-option-value-id="{{ ov.product_option_value_id }}" data-product-option-id="{{ option_image.product_option_id }}" data-price="{{ ov.discounted_price ? ov.discounted_price : ov.price }}" data-old-price="{{ ov.discounted_price ? ov.price : '' }}" data-popup="{{ ov.option_image_popup }}" data-code="{{ option_code }}" data-stock="{{ option_stock }}" onclick="selectProductOption(this)">
+																									<div class="group cursor-pointer min-w-[60px] option-swatch {% if loop.first %}selected{% endif %}" data-product-option-value-id="{{ ov.product_option_value_id }}" data-product-option-id="{{ option_image.product_option_id }}" data-price="{{ ov.discounted_price ? ov.discounted_price : ov.price }}" data-old-price="{{ ov.discounted_price ? ov.price : '' }}" data-discount-percent="{{ ov.discount_percent|default('') }}" data-popup="{{ ov.option_image_popup }}" data-code="{{ option_code }}" data-stock="{{ option_stock }}" onclick="selectProductOption(this)">
 																										<div class="w-14 h-14 overflow-hidden border border-gray-200 group-hover:border-luxury-charcoal transition-colors mb-2 rounded-sm {% if loop.first %}ring-1 ring-offset-2 ring-luxury-charcoal{% endif %}">
 																											<img alt="{{ ov.name }}" class="w-full h-full object-cover" src="{{ ov.option_image_thumb }}"/>
 																										</div>
@@ -124,6 +133,7 @@
 												{% if loop.first %} checked {% endif %} 
 												data-price="{{ ov.discounted_price ? ov.discounted_price : ov.price }}" 
 												data-old-price="{{ ov.discounted_price ? ov.price : '' }}" 
+												data-discount-percent="{{ ov.discount_percent|default('') }}" 
 												data-popup="{{ ov.option_image_popup }}" 
 												data-sheet-options="{{ ov.sheet_options|default([])|json_encode|e('html_attr') }}" 
 												data-stock="{{ ov.stock_status ? 'В наличии' : 'Нет в наличии' }}" 
@@ -518,7 +528,7 @@ function initDescription() {
 	}
 }
 
-function updateProductPrice(price, oldPrice) {
+function updateProductPrice(price, oldPrice, discountPercent) {
 	const priceEl = document.getElementById(ELEMENT_IDS.PRODUCT_PRICE);
 	const oldPriceEl = document.getElementById(ELEMENT_IDS.PRODUCT_OLD_PRICE);
 	const badge = document.getElementById(ELEMENT_IDS.PRODUCT_PRICE_BADGE);
@@ -531,17 +541,16 @@ function updateProductPrice(price, oldPrice) {
 		if (oldPrice) {
 			oldPriceEl.textContent = oldPrice;
 			oldPriceEl.classList.remove(CSS_CLASSES.HIDDEN);
-			if (badge)
+			if (badge) {
 				badge.classList.remove(CSS_CLASSES.HIDDEN);
-
-
+				badge.textContent = '-' + (discountPercent || 0) + '%';
+			}
 		} else {
 			oldPriceEl.textContent = '';
 			oldPriceEl.classList.add(CSS_CLASSES.HIDDEN);
-			if (badge)
+			if (badge) {
 				badge.classList.add(CSS_CLASSES.HIDDEN);
-
-
+			}
 		}
 	}
 }
@@ -597,11 +606,12 @@ function selectSizeOption(input) {
 
 	const price = input.dataset.price;
 	const oldPrice = input.dataset.oldPrice;
+	const discountPercent = input.dataset.discountPercent || '';
 	const popup = input.dataset.popup;
 	const stock = input.dataset.stock;
 	const code = input.dataset.code;
 
-	updateProductPrice(price, oldPrice);
+	updateProductPrice(price, oldPrice, discountPercent);
 
 	if (popup)
 		changeMainImage(popup);
@@ -728,13 +738,14 @@ function selectProductOption(el) {
 
 	const price = el.dataset.price;
 	const oldPrice = el.dataset.oldPrice;
+	const discountPercent = el.dataset.discountPercent || '';
 	const popup = el.dataset.popup;
 	const optId = el.dataset.productOptionId;
 	const valId = el.dataset.productOptionValueId;
 	const code = el.dataset.code;
 	const stock = el.dataset.stock;
 
-	updateProductPrice(price, oldPrice);
+	updateProductPrice(price, oldPrice, discountPercent);
 
 	if (popup)
 		changeMainImage(popup);

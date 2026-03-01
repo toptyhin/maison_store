@@ -497,6 +497,41 @@ class ModelCatalogProduct extends Model {
 		return $query->rows;
 	}
 
+	/**
+	 * Get effective product price for a specific customer group from product_option_value_prices.
+	 * Fallback: for group 1, use product_option_value.price when product_option_value_prices has no rows.
+	 */
+	public function getProductPriceForCustomerGroup($product_id, $customer_group_id) {
+		$cg = (int)$customer_group_id;
+		$query = $this->db->query("SELECT MIN(IF(povp.special_price > 0, povp.special_price, povp.price)) AS min_price
+			FROM " . DB_PREFIX . "product_option_value pov
+			INNER JOIN " . DB_PREFIX . "product_option_value_prices povp ON pov.product_option_value_id = povp.product_option_value_id AND povp.customer_group_id = '" . $cg . "'
+			INNER JOIN " . DB_PREFIX . "product p ON pov.product_id = p.product_id
+			LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id)
+			WHERE pov.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+
+		if ($query->num_rows && $query->row['min_price'] !== null && (float)$query->row['min_price'] >= 0) {
+			return (float)$query->row['min_price'];
+		}
+
+		if ($cg === 1) {
+			$fallback = $this->db->query("SELECT p.price AS product_price, MIN(
+				CASE WHEN pov.price_prefix = '=' THEN pov.price
+					WHEN pov.price_prefix = '+' THEN p.price + pov.price
+					ELSE p.price - pov.price
+				END
+			) AS min_price FROM " . DB_PREFIX . "product_option_value pov
+			INNER JOIN " . DB_PREFIX . "product p ON pov.product_id = p.product_id
+			LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id)
+			WHERE pov.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'
+			GROUP BY p.product_id, p.price");
+			if ($fallback->num_rows && $fallback->row['min_price'] !== null && (float)$fallback->row['min_price'] > 0) {
+				return (float)$fallback->row['min_price'];
+			}
+		}
+		return 0;
+	}
+
 	public function getProductImages($product_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "' ORDER BY sort_order ASC");
 

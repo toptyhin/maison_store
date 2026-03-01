@@ -517,3 +517,21 @@ body.page-loaded {
 	transform: scale(1);
 	opacity: 1;
 }
+
+/* Wishlist popup appearance animation */
+.popup-overlay-anim {
+	opacity: 0;
+	transition: opacity 0.35s ease-out;
+}
+.popup-overlay-anim.popup-show {
+	opacity: 1;
+}
+.popup-box-anim {
+	opacity: 0;
+	transform: scale(0.95);
+	transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+.popup-box-anim.popup-show {
+	opacity: 1;
+	transform: scale(1);
+}

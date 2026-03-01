@@ -1,4 +1,14 @@
-                        <div class="flex flex-col gap-5 group">
+                        <div class="flex flex-col gap-5 group relative">
+                            <a href="{{ product.href }}" class="absolute inset-0 z-10" aria-label="Перейти к {{ product.name }}"></a>
+                            <div class="absolute top-4 right-4 z-20">
+                                <button type="button"
+                                    class="product-favorite-btn bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart"
+                                    data-product-id="{{ product.product_id }}"
+                                    title="Добавить в избранное">
+                                    <span
+                                        class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1">favorite</span>
+                                </button>
+                            </div>
                             <div
                                 class="relative aspect-[3/4] overflow-hidden rounded-sm bg-white shadow-soft border border-gray-200 group-hover:border-primary/30 transition-colors duration-500">
                                 <img alt="{{ product.name }}"
@@ -7,22 +17,12 @@
                                 <div
                                     class="absolute top-4 left-4 bg-badge-gold text-white backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-sm">
                                     ЭКСКЛЮЗИВ</div>
-                                <div class="absolute top-4 right-4 z-20">
-                                    <button type="button"
-                                        class="product-favorite-btn bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart"
-                                        data-product-id="{{ product.product_id }}"
-                                        title="Добавить в избранное">
-                                        <span
-                                            class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1">favorite</span>
-                                    </button>
-                                </div>
                                 <div
                                     class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                    <a 
-                                        href="{{ product.href }}"
+                                    <span
                                         class="w-full bg-[#263238] block text-center text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-widest hover:bg-[#455A64] hover:border-[#455A64] transition-all duration-300 shadow-lg">
                                         Подробнее
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
                             <div class="flex flex-col gap-2 p-2">
@@ -42,7 +42,7 @@
                                 {% endif %}
 								{% if product.price %}
 									{% if not product.special %}
-										<p class="font-bold text-luxury-charcoal mt-1 text-lg">{{ product.price }}</p>
+										<p class="font-bold text-luxury-charcoal mt-1 text-lg">От {{ product.price }}</p>
 									{% else %}
 										<div class="flex items-center gap-3 mt-1">
 											<p class="font-bold text-luxury-charcoal text-lg">{{ product.special }}</p>
