@@ -56,14 +56,24 @@ class ControllerExtensionModuleFeaturedProduct extends Controller {
 						$price = false;
 					}
 
-					if ((float)$product['special']) {
+					if (!is_null($product['special']) && (float)$product['special'] >= 0) {
 						$special = $this->currency->format($this->tax->calculate($product['special'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						$tax_price = (float)$product['special'];
 					} else {
 						$special = false;
+						$tax_price = (float)$product['price'];
+					}
+
+					if (!is_null($product['min_option_price']) && (float)$product['min_option_price'] >= 0) {
+						$min_option_price = $this->currency->format($this->tax->calculate($product['min_option_price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						$tax_price = (float)$product['min_option_price'];
+					} else {
+						$min_option_price = false;
+						$tax_price = (float)$product['price'];
 					}
 
 					if ($this->config->get('config_tax')) {
-						$tax = $this->currency->format((float)$product['special'] ? $product['special'] : $product['price'], $this->session->data['currency']);
+						$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 					} else {
 						$tax = false;
 					}
@@ -79,8 +89,8 @@ class ControllerExtensionModuleFeaturedProduct extends Controller {
 						'thumb'       => $image,
 						'name'        => $product['name'],
 						'description' => utf8_substr(strip_tags(html_entity_decode($product['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-						'price'       => $price,
-						'special'     => $special,
+						'price'       => $min_option_price ? $min_option_price : $price,
+						'special'     => $min_option_price ? false : $special,
 						'tax'         => $tax,
 						'rating'      => $rating,
 						'href'        => $this->url->link('product/product', 'product_id=' . $product['product_id'])

@@ -32,7 +32,15 @@ class ControllerExtensionModuleBestSeller extends Controller {
 					$special = false;
 					$tax_price = (float)$result['price'];
 				}
-	
+
+				if (!is_null($result['min_option_price']) && (float)$result['min_option_price'] >= 0) {
+					$min_option_price = $this->currency->format($this->tax->calculate($result['min_option_price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					$tax_price = (float)$result['min_option_price'];
+				} else {
+					$min_option_price = false;
+					$tax_price = (float)$result['price'];
+				}
+
 				if ($this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
@@ -50,8 +58,8 @@ class ControllerExtensionModuleBestSeller extends Controller {
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-					'price'       => $price,
-					'special'     => $special,
+					'price'       => $min_option_price ? $min_option_price : $price,
+					'special'     => $min_option_price ? false : $special,
 					'tax'         => $tax,
 					'rating'      => $rating,
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
