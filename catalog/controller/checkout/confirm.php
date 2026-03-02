@@ -331,7 +331,6 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['accept_language'] = '';
 			}
 
-			$this->log->write($order_data);
 
 			$this->load->model('checkout/order');
 

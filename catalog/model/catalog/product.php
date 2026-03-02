@@ -453,6 +453,7 @@ class ModelCatalogProduct extends Model {
 				$special_price = false;
 
 				$group_price_query = $this->db->query("SELECT price, special_price FROM " . DB_PREFIX . "product_option_value_prices WHERE product_option_value_id = '" . (int)$product_option_value['product_option_value_id'] . "' AND customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "'");
+				
 				if ($group_price_query->num_rows) {
 					$price        = $group_price_query->row['price'];
 					$price_prefix = '=';
@@ -530,6 +531,59 @@ class ModelCatalogProduct extends Model {
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * Get prices per option for base (group 1) and wholesale (customer_group_id).
+	 * Returns [product_option_value_id => ['base' => X, 'wholesale' => Y], ...]
+	 */
+	public function getProductPricesByOptionForGroups($product_id, $customer_group_id) {
+		$cg = (int)$customer_group_id;
+		$pid = (int)$product_id;
+		$store_id = (int)$this->config->get('config_store_id');
+
+		$query = $this->db->query("SELECT pov.product_option_value_id, p.price AS product_price, pov.price AS pov_price, pov.price_prefix,
+			povp1.price AS base_price, povp1.special_price AS base_special,
+			povp2.price AS wholesale_price, povp2.special_price AS wholesale_special
+			FROM " . DB_PREFIX . "product_option_value pov
+			INNER JOIN " . DB_PREFIX . "product p ON pov.product_id = p.product_id
+			LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id)
+			LEFT JOIN " . DB_PREFIX . "product_option_value_prices povp1 ON pov.product_option_value_id = povp1.product_option_value_id AND povp1.customer_group_id = 1
+			LEFT JOIN " . DB_PREFIX . "product_option_value_prices povp2 ON pov.product_option_value_id = povp2.product_option_value_id AND povp2.customer_group_id = '" . $cg . "'
+			WHERE pov.product_id = '" . $pid . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . $store_id . "'");
+
+		$result = array();
+		foreach ($query->rows as $row) {
+			$base = null;
+			if ($row['base_price'] !== null || $row['base_special'] !== null) {
+				$b = ($row['base_special'] !== null && (float)$row['base_special'] > 0)
+					? (float)$row['base_special'] : (float)$row['base_price'];
+				if ($b >= 0) $base = $b;
+			}
+			if ($base === null) {
+				$p = (float)$row['product_price'];
+				$pv = (float)$row['pov_price'];
+				$prefix = $row['price_prefix'];
+				if ($prefix === '=') $base = $pv;
+				elseif ($prefix === '+') $base = $p + $pv;
+				else $base = $p - $pv;
+			}
+
+			$wholesale = null;
+			if ($row['wholesale_price'] !== null || $row['wholesale_special'] !== null) {
+				$w = ($row['wholesale_special'] !== null && (float)$row['wholesale_special'] > 0)
+					? (float)$row['wholesale_special'] : (float)$row['wholesale_price'];
+				if ($w >= 0) $wholesale = $w;
+			}
+
+			if ($base > 0 && $wholesale !== null) {
+				$result[(int)$row['product_option_value_id']] = array(
+					'base'     => $base,
+					'wholesale' => $wholesale
+				);
+			}
+		}
+		return $result;
 	}
 
 	public function getProductImages($product_id) {

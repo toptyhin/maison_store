@@ -52,7 +52,6 @@ class ControllerAccountOrder extends Controller {
 
 		$results = $this->model_account_order->getOrders(($page - 1) * 10, 10);
 
-		$this->log->write($results);
 
 		foreach ($results as $result) {
 			$product_total = $this->model_account_order->getTotalOrderProductsByOrderId($result['order_id']);

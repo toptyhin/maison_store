@@ -62,7 +62,6 @@ class ControllerCheckoutPaymentMethod extends Controller {
 								$method_data[$result['code']] = $method;
 							}
 						} else {
-							$this->log->write($method);
 							if ($result['code'] == 'cod') {
 								$method['terms'] = 'Картой или наличными';
 								$method['icon'] = 'payments';
@@ -140,7 +139,6 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$data['agree'] = '';
 		}
 
-		$this->log->write($data);
 
 		return $this->load->view('checkout/payment_method', $data);
 	}

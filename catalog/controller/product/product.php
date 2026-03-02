@@ -361,12 +361,23 @@ class ControllerProductProduct extends Controller {
 			$data['wholesale_price'] = false;
 			$data['wholesale_discount_percent'] = false;
 			if ($data['show_wholesale_block'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
-				$base_price = $this->model_catalog_product->getProductPriceForCustomerGroup($this->request->get['product_id'], 1);
-				$wholesale_price_raw = $this->model_catalog_product->getProductPriceForCustomerGroup($this->request->get['product_id'], $customer_group_id);
-				if ($base_price > 0) {
-					$data['wholesale_price'] = $this->currency->format($this->tax->calculate($wholesale_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-					if ($wholesale_price_raw < $base_price) {
-						$data['wholesale_discount_percent'] = (int)round((($base_price - $wholesale_price_raw) / $base_price) * 100);
+				$prices_by_option = $this->model_catalog_product->getProductPricesByOptionForGroups($this->request->get['product_id'], $customer_group_id);
+				
+				if (!empty($prices_by_option)) {
+					$min_wholesale = null;
+					$min_option_data = null;
+					foreach ($prices_by_option as $opt_data) {
+						if ($min_wholesale === null || $opt_data['wholesale'] < $min_wholesale) {
+							$min_wholesale = $opt_data['wholesale'];
+							$min_option_data = $opt_data;
+						}
+					}
+					if ($min_wholesale !== null) {
+						$data['wholesale_price'] = $this->currency->format($this->tax->calculate($min_wholesale, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						$base = $min_option_data['base'];
+						if ($base > 0 && $min_wholesale < $base) {
+							$data['wholesale_discount_percent'] = (int)round((($base - $min_wholesale) / $base) * 100);
+						}
 					}
 				}
 			}
@@ -410,15 +421,18 @@ class ControllerProductProduct extends Controller {
 				$discounted_price = false;
 				$discounted_price_raw = null; 
 				$discount_percent = false;
-				if (!empty($option_value['special_price']) && (float)$option_value['special_price'] > 0 && (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))) {
-					$discounted_price_raw = (float)$option_value['special_price'];
-					$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
-					if ($price_raw > 0 && $discounted_price_raw < $price_raw) {
-						$discount_percent = (int)round((($price_raw - $discounted_price_raw) / $price_raw) * 100);
-					}
+
+				if (!empty($option_value['special_price']) 
+					&& (float)$option_value['special_price'] > 0 
+					&& (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))
+					&& $price_raw > 0) {
+						$discounted_price_raw = (float)$option_value['special_price'];
+						$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
+						if ($price_raw > 0 && $discounted_price_raw < $price_raw) {
+							$discount_percent = (int)round((($price_raw - $discounted_price_raw) / $price_raw) * 100);
+						}
 				}
 
-				$this->log->write('discount_percent: ' . $discount_percent);
 						$option_image_thumb = '';
 						$option_image_popup = '';
 						if (!empty($option_value['custom_fields']['images'])) {

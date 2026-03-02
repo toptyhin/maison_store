@@ -15,7 +15,6 @@ class ControllerExtensionModuleSlideshow extends Controller {
 		$results = $this->model_design_banner->getBanner($setting['banner_id']);
 
 		foreach ($results as $result) {
-			$this->log->write($result['image']);
 			if (is_file(DIR_IMAGE . $result['image'])) {
 				$data['banners'][] = array(
 					'title' => $result['title'],
