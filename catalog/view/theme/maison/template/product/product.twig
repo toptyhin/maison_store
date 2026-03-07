@@ -15,13 +15,13 @@
 				<div class="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-visible w-full lg:w-24 shrink-0 no-scrollbar py-1 px-1 lg:py-0 lg:px-0">
 
 					{% for image in images %}
-						<button class="relative w-20 lg:w-full aspect-[3/4] rounded-sm overflow-hidden border-2 border-primary cursor-pointer transition-all hover:opacity-90 focus:outline-none" onclick="changeMainImage('{{ image.thumb }}')">
+						<button class="relative w-20 lg:w-full aspect-[3/4] rounded-sm overflow-hidden border-2 border-primary cursor-pointer transition-all hover:opacity-90 focus:outline-none" onclick="changeMainImage('{{ image.thumb }}'); setGalleryIndex({{ loop.index }});" data-gallery-index="{{ loop.index }}">
 							<img alt="{{ product.name }}" class="w-full h-full object-cover" src="{{ image.thumb }}"/>
 						</button>
 					{% endfor %}
 				</div>
 				<div class="flex-1 relative bg-white rounded-sm overflow-hidden shadow-soft aspect-[3/4] lg:aspect-auto lg:h-[700px] border border-gray-100 group">
-					<img alt="{{ heading_title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" id="main-product-image" src="{{ thumb }}"/>
+					<img alt="{{ heading_title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" id="main-product-image" src="{{ thumb }}" data-gallery-index="0" onclick="openProductGallery()"/>
 					<div class="absolute top-4 right-4 z-10">
 						<button type="button"
 							class="product-favorite-btn bg-white p-3 rounded-full text-luxury-charcoal hover:text-primary shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md"
@@ -31,6 +31,28 @@
 						</button>
 					</div>
 				</div>
+			</div>
+			{# Данные галереи для лайтбокса: главное изображение + доп. изображения (popup) #}
+			<script type="application/json" id="product-gallery-data">{{ { urls: [popup]|merge(images|column('popup')|default([])) }|json_encode|raw }}</script>
+			<div aria-modal="true" class="fixed inset-0 z-[110] hidden modal-fade-in" id="modal-product-gallery" role="dialog">
+				<div class="fixed inset-0 bg-luxury-charcoal/90 backdrop-blur-sm" onclick="closeProductGallery()"></div>
+				<div class="fixed inset-0 z-10 flex items-center justify-center p-4 pointer-events-none">
+					<div class="relative w-full max-w-5xl max-h-[90vh] flex items-center justify-center pointer-events-auto">
+						<button type="button" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-12 h-12 rounded-full bg-white/90 hover:bg-white text-luxury-charcoal shadow-lg flex items-center justify-center z-20 transition-opacity disabled:opacity-40 disabled:pointer-events-none" id="gallery-prev" onclick="galleryPrev()" aria-label="Предыдущее фото">
+							<span class="material-symbols-outlined">chevron_left</span>
+						</button>
+						<img id="gallery-main-img" alt="{{ heading_title }}" class="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-sm shadow-2xl" src="" />
+						<button type="button" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-12 h-12 rounded-full bg-white/90 hover:bg-white text-luxury-charcoal shadow-lg flex items-center justify-center z-20 transition-opacity disabled:opacity-40 disabled:pointer-events-none" id="gallery-next" onclick="galleryNext()" aria-label="Следующее фото">
+							<span class="material-symbols-outlined">chevron_right</span>
+						</button>
+					</div>
+				</div>
+				<div class="fixed top-4 right-4 z-20 pointer-events-auto">
+					<button type="button" class="w-12 h-12 rounded-full bg-white/90 hover:bg-white text-luxury-charcoal shadow-lg flex items-center justify-center transition-colors" onclick="closeProductGallery()" aria-label="Закрыть">
+						<span class="material-symbols-outlined">close</span>
+					</button>
+				</div>
+				<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2 pointer-events-auto flex-wrap justify-center max-w-full px-4" id="gallery-dots"></div>
 			</div>
 			<div class="lg:col-span-5 flex flex-col h-full">
 				<div class="mb-6">
@@ -345,9 +367,11 @@
 							{{ reviews }}</span>
 					</div>
 				</div>
+				{% if review_status and review_guest %}
 				<button class="px-8 py-3 bg-white border border-gray-300 text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white transition-all shadow-sm rounded-sm" onclick="toggleModal('modal-review')">
 					Написать отзыв
 				</button>
+				{% endif %}
 			</div>
 			<div id="reviews-list" class="flex flex-col gap-6"></div>
 			<div class="mt-10 text-center">
@@ -360,42 +384,55 @@
 
 	{{ content_bottom }}
 
-        {# Модалка: товар добавлен в корзину #}
-        <div aria-labelledby="modal-cart-added-title" aria-modal="true" class="fixed inset-0 z-[100] hidden modal-fade-in" id="modal-cart-added" role="dialog">
-            <div class="fixed inset-0 bg-luxury-charcoal/70 backdrop-blur-sm transition-opacity" onclick="toggleModal('modal-cart-added')"></div>
+        <div aria-labelledby="modal-cart-added-title" aria-modal="true" class="fixed inset-0 z-[100] hidden modal-fade-in"
+            id="modal-cart-added" role="dialog">
+            <div class="fixed inset-0 bg-luxury-charcoal/70 backdrop-blur-sm transition-opacity"
+                onclick="toggleModal('modal-cart-added')"></div>
             <div class="fixed inset-0 z-10 overflow-y-auto">
                 <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                    <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-200">
-                        <button class="absolute top-4 right-4 text-gray-400 hover:text-luxury-charcoal transition-colors" onclick="toggleModal('modal-cart-added')">
-                            <span class="material-symbols-outlined">close</span>
+                    <div
+                        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-[600px] border border-gray-200">
+                        <button
+                            class="absolute top-4 right-4 text-gray-400 hover:text-luxury-charcoal transition-colors z-20"
+                            onclick="toggleModal('modal-cart-added')">
+                            <span class="material-symbols-outlined text-3xl">close</span>
                         </button>
-                        <div class="px-8 py-10">
-                            <div class="flex justify-center mb-6">
-                                <div class="size-16 flex items-center justify-center rounded-full bg-green-50 text-green-600">
-                                    <span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        <div class="p-10 flex flex-col items-center">
+                            <div class="mb-6 rounded-full bg-green-50 p-4 shadow-sm">
+                                <div
+                                    class="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
+                                    <span class="material-symbols-outlined text-3xl font-bold">check</span>
                                 </div>
                             </div>
-                            <h3 class="text-2xl font-serif font-medium text-luxury-charcoal mb-2 text-center" id="modal-cart-added-title">Товар добавлен в корзину</h3>
-                            <div id="modal-cart-added-content" class="flex items-center gap-4 p-4 bg-gray-50 rounded-sm mb-6">
-                                <img id="modal-cart-added-thumb" src="{{ thumb }}" alt="{{ heading_title }}" class="w-20 h-24 object-cover rounded-sm border border-gray-200"/>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-luxury-charcoal line-clamp-2" id="modal-cart-added-name">{{ heading_title }}</p>
-                                    <p class="text-xs text-gray-500 mt-1" id="modal-cart-added-total"></p>
+                            <h3 class="text-3xl font-serif font-medium text-luxury-charcoal mb-8 text-center">Товар
+                                добавлен в корзину</h3>
+                            <div class="w-full bg-gray-50 rounded-lg p-6 mb-8 flex gap-6 items-center">
+                                <div
+                                    class="w-24 h-24 shrink-0 bg-white rounded-md overflow-hidden border border-gray-200 shadow-sm">
+                                    <img alt="Комплект Северное Небо" class="w-full h-full object-cover" src="{{ thumb }}" />
+                                </div>
+                                <div class="flex flex-col gap-1 w-full">
+                                    <h4 class="font-medium text-luxury-charcoal text-lg" id="modal-added-to-cart-name">{{ heading_title }}</h4>
+                                    <p class="text-sm text-gray-500" id="modal-cart-added-total">В корзине: —</p>
                                 </div>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button class="flex-1 px-6 py-3 border border-gray-300 text-luxury-charcoal font-bold uppercase text-xs tracking-widest hover:border-luxury-charcoal hover:bg-gray-50 transition-all rounded-sm" type="button" onclick="toggleModal('modal-cart-added')">
+                            <div class="flex w-full gap-4">
+                                <button
+                                    class="flex-1 bg-white text-[#263238] border border-[#263238] py-4 font-bold uppercase text-xs tracking-[0.15em] hover:bg-gray-50 transition-all shadow-sm"
+                                    onclick="toggleModal('modal-cart-added')">
                                     Продолжить покупки
                                 </button>
-                                <a href="{{ cart|default('index.php?route=checkout/cart') }}" class="flex-1 px-6 py-3 bg-[#263238] text-white font-bold uppercase text-xs tracking-widest hover:bg-[#37474F] transition-all shadow-lg rounded-sm text-center">
+                                <a href="{{ cart|default('index.php?route=checkout/cart') }}"
+                                    class="flex-1 bg-[#263238] text-white text-center border border-[#263238] py-4 font-bold uppercase text-xs tracking-[0.15em] hover:bg-[#37474F] transition-all shadow-lg">
                                     Перейти в корзину
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
-        </div>
+        </div>		
 
         <div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[100] hidden modal-fade-in" id="modal-one-click"
             role="dialog">
@@ -444,6 +481,80 @@
             </div>
         </div>
 
+        <div aria-labelledby="modal-title-review" aria-modal="true" class="fixed inset-0 z-[100] hidden modal-fade-in"
+            id="modal-review" role="dialog">
+            <div class="fixed inset-0 bg-luxury-charcoal/70 backdrop-blur-sm transition-opacity"
+                onclick="toggleModal('modal-review')"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200">
+                        <button
+                            class="absolute top-4 right-4 text-gray-400 hover:text-luxury-charcoal transition-colors"
+                            onclick="toggleModal('modal-review')">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                        <div class="px-8 py-10">
+                            <h3 class="text-2xl font-serif font-medium text-luxury-charcoal mb-6 text-center"
+                                id="modal-title-review">Написать отзыв</h3>
+                            <form id="form-review" class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-2"
+                                        for="review-name">Ваше имя</label>
+                                    <input
+                                        class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3"
+                                        id="review-name" name="name" placeholder="Представьтесь" type="text"
+                                        value="{{ customer_name|default('') }}"
+                                        {{ customer_name ? 'readonly' : '' }} />
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-2">Оценка</label>
+                                    <input type="hidden" name="rating" id="review-rating" value="5" />
+                                    <div id="review-stars" class="flex gap-2 text-gray-300 cursor-pointer" aria-label="Выберите оценку от 1 до 5">
+                                        <span class="review-star material-symbols-outlined text-2xl text-amber-400" data-rating="1">star</span>
+                                        <span class="review-star material-symbols-outlined text-2xl text-amber-400" data-rating="2">star</span>
+                                        <span class="review-star material-symbols-outlined text-2xl text-amber-400" data-rating="3">star</span>
+                                        <span class="review-star material-symbols-outlined text-2xl text-amber-400" data-rating="4">star</span>
+                                        <span class="review-star material-symbols-outlined text-2xl text-amber-400" data-rating="5">star</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-2"
+                                        for="review-text">Текст отзыва</label>
+                                    <textarea
+                                        class="block w-full rounded-sm border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-3"
+                                        id="review-text" name="text" placeholder="Расскажите о ваших впечатлениях (от 25 до 1000 символов)..."
+                                        rows="4"></textarea>
+                                    <p id="review-text-error" class="text-red-600 text-xs mt-1 hidden"></p>
+                                </div>
+                                {% if captcha %}
+                                <div id="review-captcha-wrap">
+                                    {{ captcha }}
+                                </div>
+                                <p id="review-captcha-error" class="text-red-600 text-xs mt-1 hidden"></p>
+                                {% endif %}
+                                {% if text_agree %}
+                                <div class="flex items-start gap-2">
+                                    <input type="checkbox" name="agree" id="review-agree" value="1" class="mt-1 rounded border-gray-300" />
+                                    <label for="review-agree" class="text-sm text-gray-600">{{ text_agree|raw }}</label>
+                                </div>
+                                <p id="review-agree-error" class="text-red-600 text-xs hidden"></p>
+                                {% endif %}
+                                <p id="review-form-error" class="text-red-600 text-sm hidden"></p>
+                                <button
+                                    type="submit"
+                                    id="review-submit-btn"
+                                    class="w-full bg-[#263238] text-white border border-[#263238] py-4 font-bold uppercase text-xs tracking-[0.15em] hover:bg-[#37474F] transition-all shadow-lg mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                    Отправить отзыв
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 </main>
 <script>
@@ -476,10 +587,112 @@ const ELEMENT_IDS = {
 };
 const DESCRIPTION_MAX_LENGTH = 250;
 const REVIEW_URL = 'index.php?route=product/product/review&product_id={{ product_id }}';
+const REVIEW_WRITE_URL = 'index.php?route=product/product/write&product_id={{ product_id }}';
 
 function changeMainImage(src) {
 	const el = document.getElementById(ELEMENT_IDS.MAIN_IMAGE);
 	if (el && src) el.src = src;
+}
+
+var productGalleryUrls = [];
+var currentGalleryIndex = 0;
+
+function getProductGalleryData() {
+	var el = document.getElementById('product-gallery-data');
+	if (!el || !el.textContent) return [];
+	try {
+		var data = JSON.parse(el.textContent);
+		return (data.urls || []).filter(Boolean);
+	} catch (e) { return []; }
+}
+
+function setGalleryIndex(index) {
+	if (!productGalleryUrls.length) productGalleryUrls = getProductGalleryData();
+	currentGalleryIndex = productGalleryUrls.length ? Math.max(0, Math.min(index, productGalleryUrls.length - 1)) : 0;
+	var mainImg = document.getElementById(ELEMENT_IDS.MAIN_IMAGE);
+	if (mainImg) mainImg.dataset.galleryIndex = String(currentGalleryIndex);
+}
+
+function openProductGallery(initialIndex) {
+	productGalleryUrls = getProductGalleryData();
+	if (!productGalleryUrls.length) return;
+	currentGalleryIndex = typeof initialIndex === 'number' ? Math.max(0, Math.min(initialIndex, productGalleryUrls.length - 1)) : (function() {
+		var mainImg = document.getElementById(ELEMENT_IDS.MAIN_IMAGE);
+		if (mainImg && mainImg.src) {
+			var src = mainImg.src;
+			var idx = productGalleryUrls.findIndex(function(u) { return u === src || src.indexOf(u) !== -1 || (u && src.endsWith(u)); });
+			return idx >= 0 ? idx : 0;
+		}
+		return parseInt(document.getElementById(ELEMENT_IDS.MAIN_IMAGE).dataset.galleryIndex, 10) || 0;
+	})();
+	var modal = document.getElementById('modal-product-gallery');
+	var imgEl = document.getElementById('gallery-main-img');
+	if (!modal || !imgEl) return;
+	imgEl.src = productGalleryUrls[currentGalleryIndex];
+	modal.classList.remove('hidden');
+	document.body.style.overflow = 'hidden';
+	requestAnimationFrame(function() { requestAnimationFrame(function() { modal.classList.add('modal-show'); }); });
+	renderGalleryDots();
+	updateGalleryArrows();
+	document.addEventListener('keydown', onGalleryKeydown);
+}
+
+function closeProductGallery() {
+	var modal = document.getElementById('modal-product-gallery');
+	if (!modal) return;
+	modal.classList.remove('modal-show');
+	setTimeout(function() {
+		modal.classList.add('hidden');
+		document.body.style.overflow = '';
+	}, 300);
+	document.removeEventListener('keydown', onGalleryKeydown);
+}
+
+function onGalleryKeydown(e) {
+	if (e.key === 'Escape') closeProductGallery();
+	if (e.key === 'ArrowLeft') galleryPrev();
+	if (e.key === 'ArrowRight') galleryNext();
+}
+
+function galleryPrev() {
+	productGalleryUrls = getProductGalleryData();
+	if (!productGalleryUrls.length) return;
+	currentGalleryIndex = currentGalleryIndex <= 0 ? productGalleryUrls.length - 1 : currentGalleryIndex - 1;
+	var imgEl = document.getElementById('gallery-main-img');
+	if (imgEl) imgEl.src = productGalleryUrls[currentGalleryIndex];
+	renderGalleryDots();
+	updateGalleryArrows();
+}
+
+function galleryNext() {
+	productGalleryUrls = getProductGalleryData();
+	if (!productGalleryUrls.length) return;
+	currentGalleryIndex = currentGalleryIndex >= productGalleryUrls.length - 1 ? 0 : currentGalleryIndex + 1;
+	var imgEl = document.getElementById('gallery-main-img');
+	if (imgEl) imgEl.src = productGalleryUrls[currentGalleryIndex];
+	renderGalleryDots();
+	updateGalleryArrows();
+}
+
+function renderGalleryDots() {
+	var container = document.getElementById('gallery-dots');
+	if (!container) return;
+	container.innerHTML = '';
+	for (var i = 0; i < productGalleryUrls.length; i++) {
+		var btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'w-2 h-2 rounded-full transition-colors ' + (i === currentGalleryIndex ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80');
+		btn.setAttribute('aria-label', 'Фото ' + (i + 1));
+		btn.onclick = (function(idx) { return function() { currentGalleryIndex = idx; var imgEl = document.getElementById('gallery-main-img'); if (imgEl) imgEl.src = productGalleryUrls[currentGalleryIndex]; renderGalleryDots(); updateGalleryArrows(); }; })(i);
+		container.appendChild(btn);
+	}
+}
+
+function updateGalleryArrows() {
+	var prevBtn = document.getElementById('gallery-prev');
+	var nextBtn = document.getElementById('gallery-next');
+	if (prevBtn) prevBtn.disabled = productGalleryUrls.length <= 1;
+	if (nextBtn) nextBtn.disabled = productGalleryUrls.length <= 1;
 }
 
 function toggleDescription(event) {
@@ -885,6 +1098,142 @@ function showCartAddedModal(cartTotal) {
 	toggleModal('modal-cart-added');
 }
 
+function showResultPopup(message, isSuccess) {
+	if (!message) return;
+	var overlay = document.createElement('div');
+	overlay.className = 'popup-overlay-anim fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50';
+	var box = document.createElement('div');
+	box.className = 'popup-box-anim bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative';
+	var isErr = isSuccess === false;
+	box.classList.add(isErr ? 'border-l-4 border-red-500' : 'border-l-4 border-green-500');
+	var icon = document.createElement('span');
+	icon.className = 'material-symbols-outlined text-4xl block mb-3 ' + (isErr ? 'text-red-500' : 'text-green-500');
+	icon.style.fontVariationSettings = "'FILL' 1";
+	icon.textContent = isErr ? 'error' : 'check_circle';
+	var p = document.createElement('p');
+	p.className = 'text-luxury-charcoal text-sm leading-relaxed';
+	p.textContent = message;
+	var btn = document.createElement('button');
+	btn.type = 'button';
+	btn.className = 'mt-4 w-full py-2.5 bg-[#263238] text-white text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-[#37474F] transition-colors';
+	btn.textContent = 'Закрыть';
+	box.appendChild(icon);
+	box.appendChild(p);
+	box.appendChild(btn);
+	overlay.appendChild(box);
+	function close() {
+		overlay.classList.remove('popup-show');
+		box.classList.remove('popup-show');
+		setTimeout(function() { overlay.remove(); }, 200);
+	}
+	overlay.addEventListener('click', function(e) {
+		if (e.target === overlay || e.target === btn) close();
+	});
+	document.body.appendChild(overlay);
+	void overlay.offsetHeight;
+	requestAnimationFrame(function() {
+		requestAnimationFrame(function() {
+			overlay.classList.add('popup-show');
+			box.classList.add('popup-show');
+		});
+	});
+}
+
+function initReviewStars() {
+	var container = document.getElementById('review-stars');
+	var input = document.getElementById('review-rating');
+	if (!container || !input) return;
+	var stars = container.querySelectorAll('.review-star');
+	function setRating(value) {
+		var n = parseInt(value, 10);
+		if (n < 1 || n > 5) return;
+		input.value = String(n);
+		stars.forEach(function(star, i) {
+			var r = parseInt(star.getAttribute('data-rating'), 10);
+			star.style.fontVariationSettings = r <= n ? "'FILL' 1" : "'FILL' 0";
+			star.classList.toggle('text-amber-400', r <= n);
+			star.classList.toggle('text-gray-300', r > n);
+		});
+	}
+	stars.forEach(function(star) {
+		star.addEventListener('click', function() { setRating(star.getAttribute('data-rating')); });
+	});
+	setRating(input.value);
+}
+
+function handleReviewSubmit(e) {
+	e.preventDefault();
+	var form = document.getElementById('form-review');
+	var submitBtn = document.getElementById('review-submit-btn');
+	var formError = document.getElementById('review-form-error');
+	var textError = document.getElementById('review-text-error');
+	var name = (form.querySelector('[name="name"]') || {}).value || '';
+	var text = (form.querySelector('[name="text"]') || {}).value || '';
+	var rating = parseInt((form.querySelector('[name="rating"]') || {}).value, 10) || 0;
+	function showError(el, msg) {
+		if (el) { el.textContent = msg || ''; el.classList.remove('hidden'); }
+	}
+	function hideErrors() {
+		[formError, textError].forEach(function(el) { if (el) { el.textContent = ''; el.classList.add('hidden'); } });
+		var agreeErr = document.getElementById('review-agree-error');
+		var capErr = document.getElementById('review-captcha-error');
+		if (agreeErr) { agreeErr.textContent = ''; agreeErr.classList.add('hidden'); }
+		if (capErr) { capErr.textContent = ''; capErr.classList.add('hidden'); }
+	}
+	hideErrors();
+	if (name.length < 3 || name.length > 25) {
+		showError(formError, 'Имя должно содержать от 3 до 25 символов!');
+		return;
+	}
+	if (text.length < 25 || text.length > 1000) {
+		showError(textError, 'Текст отзыва должен содержать от 25 до 1000 символов!');
+		return;
+	}
+	if (!rating || rating < 1 || rating > 5) {
+		showError(formError, 'Пожалуйста, выберите оценку!');
+		return;
+	}
+	var agreeEl = form.querySelector('[name="agree"]');
+	if (agreeEl && !agreeEl.checked) {
+		var agreeErr = document.getElementById('review-agree-error');
+		showError(agreeErr || formError, 'Необходимо согласие на обработку персональных данных');
+		return;
+	}
+	if (submitBtn) { submitBtn.disabled = true; }
+	var formData = new FormData(form);
+	var body = new URLSearchParams();
+	formData.forEach(function(v, k) { body.append(k, v); });
+	fetch(REVIEW_WRITE_URL, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+		body: body.toString()
+	}).then(function(res) { return res.json(); }).then(function(json) {
+		if (submitBtn) submitBtn.disabled = false;
+		if (json.error) {
+			showResultPopup(json.error, false);
+			return;
+		}
+		if (json.success) {
+			toggleModal('modal-review');
+			form.reset();
+			document.getElementById('review-rating').value = '5';
+			initReviewStars();
+			showResultPopup(json.success, true);
+			var reviewsList = document.getElementById(ELEMENT_IDS.REVIEWS_LIST);
+			if (reviewsList) {
+				fetch(REVIEW_URL).then(function(r) { return r.text(); }).then(function(html) {
+					reviewsList.innerHTML = html;
+					var loadMore = document.getElementById(ELEMENT_IDS.LOAD_MORE_REVIEWS);
+					if (loadMore) loadMore.classList.toggle(CSS_CLASSES.HIDDEN, html.indexOf('Нет отзывов') !== -1);
+				}).catch(function() {});
+			}
+		}
+	}).catch(function() {
+		if (submitBtn) submitBtn.disabled = false;
+		showResultPopup('Ошибка отправки. Попробуйте позже.', false);
+	});
+}
+
 function toggleModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -909,6 +1258,11 @@ function toggleModal(modalId) {
         }, 300);
     }
 }
+
+// Делегирование клика: галерея открывается даже если блок изображений подменён после загрузки (кэш, Turbo и т.д.)
+document.addEventListener('click', function (e) {
+	if (e.target && e.target.id === ELEMENT_IDS.MAIN_IMAGE) openProductGallery();
+});
 
 let isLoaded = false;
 document.addEventListener('DOMContentLoaded', function () {
@@ -960,6 +1314,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 		observer.observe(reviewsList);
 	}
+
+	initReviewStars();
+	var formReview = document.getElementById('form-review');
+	if (formReview) formReview.addEventListener('submit', handleReviewSubmit);
 });
 
 
