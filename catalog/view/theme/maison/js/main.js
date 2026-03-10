@@ -151,14 +151,22 @@ function toggleMobileMenu() {
             try {
                 var json = JSON.parse(xhr.responseText);
                 if (json.success) {
-                    btn.classList.add('text-discount-red');
-                    btn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
                     var totalEl = document.getElementById('wishlist-total');
                     if (totalEl && json.total) {
                         var span = totalEl.querySelector('span');
                         if (span) span.textContent = json.total;
                         totalEl.setAttribute('title', json.total);
                     }
+                    if (json.removed) {
+                        btn.classList.remove('text-discount-red');
+                        var icon = btn.querySelector('.material-symbols-outlined');
+                        if (icon) icon.style.fontVariationSettings = '';
+                    } else {
+                        btn.classList.add('text-discount-red');
+                        var icon = btn.querySelector('.material-symbols-outlined');
+                        if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+                    }
+                    showPopup(json.success);
                 } else if (json.success === false && json.text) {
                     showPopup(json.text);
                 }

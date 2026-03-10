@@ -129,6 +129,13 @@ class ControllerProductSpecial extends Controller {
 				$rating = false;
 			}
 
+			$price_before = (float)$result['price'];
+			$price_after = (float)(isset($result['special']) ? $result['special'] : $result['price']);
+			$discount_percent = false;
+			if ($special && $price_before > 0 && $price_after < $price_before) {
+				$discount_percent = (int)round(($price_before - $price_after) / $price_before * 100);
+			}
+
 			$data['products'][] = array(
 				'product_id'  => $result['product_id'],
 				'thumb'       => $image,
@@ -136,6 +143,7 @@ class ControllerProductSpecial extends Controller {
 				'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 				'price'       => $price,
 				'special'     => $special,
+				'discount_percent' => $discount_percent,
 				'tax'         => $tax,
 				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 				'rating'      => $result['rating'],

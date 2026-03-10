@@ -44,11 +44,13 @@
 									{% if not product.special %}
 										<p class="font-bold text-luxury-charcoal mt-1 text-lg">От {{ product.price }}</p>
 									{% else %}
-										<div class="flex items-center gap-3 mt-1">
+										<div class="flex flex-wrap items-center gap-2 mt-1">
+											<p class="text-discount-red line-through decoration-2 text-sm">{{ product.price }}</p>
 											<p class="font-bold text-luxury-charcoal text-lg">{{ product.special }}</p>
-											<p class="text-discount-red line-through text-sm">{{ product.price }}</p>
+											{% if product.discount_percent %}
 											<span
-												class="bg-badge-pink-bg text-badge-pink-text px-2 py-0.5 rounded-lg text-sm font-bold">-20%</span>
+												class="bg-badge-pink-bg text-badge-pink-text px-2 py-0.5 rounded-lg text-sm font-bold">-{{ product.discount_percent }}%</span>
+											{% endif %}
 										</div>								
 									{% endif %}
 								{% endif %}

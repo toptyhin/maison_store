@@ -221,6 +221,8 @@ class ControllerProductCategory extends Controller {
 					$special = false;
 					$tax_price = (float)$result['price'];
 				}
+
+				$this->log->write($result['min_option_price_before_discount'] . ' ' . $result['min_option_price']);
 				
 				if (!is_null($result['min_option_price']) && (float)$result['min_option_price'] >= 0) {
 					$min_option_price = $this->currency->format($this->tax->calculate($result['min_option_price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -228,6 +230,12 @@ class ControllerProductCategory extends Controller {
 				} else {
 					$min_option_price = false;
 					$tax_price = (float)$result['price'];
+				}
+
+				if (!is_null($result['min_option_price_before_discount']) && (float)$result['min_option_price_before_discount'] >= 0) {
+					$min_option_price_before_discount = $this->currency->format($this->tax->calculate($result['min_option_price_before_discount'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$min_option_price_before_discount = false;
 				}
 
 				if ($this->config->get('config_tax')) {
@@ -242,13 +250,35 @@ class ControllerProductCategory extends Controller {
 					$rating = false;
 				}
 
+				if ($min_option_price_before_discount && $min_option_price) {
+					$display_price = $min_option_price_before_discount;
+					$display_special = ((float)$result['min_option_price_before_discount'] > (float)$result['min_option_price']) ? $min_option_price : false;
+					$price_before = (float)$result['min_option_price_before_discount'];
+					$price_after = (float)$result['min_option_price'];
+				} elseif ($min_option_price) {
+					$display_price = $min_option_price;
+					$display_special = false;
+					$price_before = $price_after = 0;
+				} else {
+					$display_price = $price;
+					$display_special = $special;
+					$price_before = (float)$result['price'];
+					$price_after = (float)(isset($result['special']) ? $result['special'] : $result['price']);
+				}
+
+				$discount_percent = false;
+				if ($display_special && $price_before > 0 && $price_after < $price_before) {
+					$discount_percent = (int)round(($price_before - $price_after) / $price_before * 100);
+				}
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-					'price'       => $min_option_price ? $min_option_price : $price,
-					'special'     => $min_option_price ? false : $special,
+					'price'       => $display_price,
+					'special'     => $display_special,
+					'discount_percent' => $discount_percent,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],

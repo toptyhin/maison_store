@@ -358,28 +358,11 @@ class ControllerProductProduct extends Controller {
 
 			$customer_group_id = $this->customer->isLogged() ? (int)$this->customer->getGroupId() : (int)$this->config->get('config_customer_group_id');
 			$data['show_wholesale_block'] = ($customer_group_id > 1);
-			$data['wholesale_price'] = false;
-			$data['wholesale_discount_percent'] = false;
+
+			// Оптовые цены по опциям для текущей группы покупателей (используются при формировании $data['options'])
+			$wholesale_prices_by_option = array();
 			if ($data['show_wholesale_block'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
-				$prices_by_option = $this->model_catalog_product->getProductPricesByOptionForGroups($this->request->get['product_id'], $customer_group_id);
-				
-				if (!empty($prices_by_option)) {
-					$min_wholesale = null;
-					$min_option_data = null;
-					foreach ($prices_by_option as $opt_data) {
-						if ($min_wholesale === null || $opt_data['wholesale'] < $min_wholesale) {
-							$min_wholesale = $opt_data['wholesale'];
-							$min_option_data = $opt_data;
-						}
-					}
-					if ($min_wholesale !== null) {
-						$data['wholesale_price'] = $this->currency->format($this->tax->calculate($min_wholesale, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-						$base = $min_option_data['base'];
-						if ($base > 0 && $min_wholesale < $base) {
-							$data['wholesale_discount_percent'] = (int)round((($base - $min_wholesale) / $base) * 100);
-						}
-					}
-				}
+				$wholesale_prices_by_option = $this->model_catalog_product->getProductPricesByOptionForGroups($this->request->get['product_id'], $customer_group_id);
 			}
 
 			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
@@ -398,7 +381,7 @@ class ControllerProductProduct extends Controller {
 			foreach ($this->model_catalog_product->getProductOptions($this->request->get['product_id']) as $option) {
 				$product_option_value_data = array();
 
-					foreach ($option['product_option_value'] as $option_value) {
+				foreach ($option['product_option_value'] as $option_value) {
 					if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
 						$price = false;
 						$price_raw = $product_info['price'];
@@ -417,21 +400,69 @@ class ControllerProductProduct extends Controller {
 							$price = $data['price'];
 						}
 
+						$discounted_price = false;
+						$discounted_price_raw = null; 
+						$discount_percent = false;
 
-				$discounted_price = false;
-				$discounted_price_raw = null; 
-				$discount_percent = false;
-
-				if (!empty($option_value['special_price']) 
-					&& (float)$option_value['special_price'] > 0 
-					&& (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))
-					&& $price_raw > 0) {
-						$discounted_price_raw = (float)$option_value['special_price'];
-						$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
-						if ($price_raw > 0 && $discounted_price_raw < $price_raw) {
-							$discount_percent = (int)round((($price_raw - $discounted_price_raw) / $price_raw) * 100);
+						if (!empty($option_value['special_price']) 
+							&& (float)$option_value['special_price'] > 0 
+							&& (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price'))
+							&& $price_raw > 0) {
+								$discounted_price_raw = (float)$option_value['special_price'];
+								$discounted_price = $this->currency->format($this->tax->calculate($discounted_price_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
+								if ($price_raw > 0 && $discounted_price_raw < $price_raw) {
+									$discount_percent = (int)round((($price_raw - $discounted_price_raw) / $price_raw) * 100);
+								}
 						}
-				}
+
+						// Оптовые цены для текущей опции (только для оптовых групп)
+						$wholesale_price = false;
+						$wholesale_discount_percent = false;
+						if (!empty($wholesale_prices_by_option) && isset($wholesale_prices_by_option[$option_value['product_option_value_id']])) {
+							$opt_wholesale = $wholesale_prices_by_option[$option_value['product_option_value_id']];
+							$base_price_for_wholesale = isset($opt_wholesale['base']) ? (float)$opt_wholesale['base'] : 0.0;
+							$wholesale_raw = isset($opt_wholesale['wholesale']) ? (float)$opt_wholesale['wholesale'] : null;
+
+							if ($wholesale_raw !== null && $wholesale_raw >= 0) {
+								$wholesale_price = $this->currency->format(
+									$this->tax->calculate($wholesale_raw, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false),
+									$this->session->data['currency']
+								);
+
+								if ($base_price_for_wholesale > 0 && $wholesale_raw < $base_price_for_wholesale) {
+									$wholesale_discount_percent = (int)round((($base_price_for_wholesale - $wholesale_raw) / $base_price_for_wholesale) * 100);
+								}
+							}
+						}
+
+						// Для отображения в блоке id="product-price" всегда используем розничные цены (group 1):
+						// product-price = розничная после скидки, product-old-price = розничная до скидки, badge = % скидки
+						if (!empty($wholesale_prices_by_option) && isset($wholesale_prices_by_option[$option_value['product_option_value_id']])) {
+							$opt_wholesale = $wholesale_prices_by_option[$option_value['product_option_value_id']];
+							$base_retail = isset($opt_wholesale['base']) ? (float)$opt_wholesale['base'] : 0.0;
+							$base_regular = isset($opt_wholesale['base_regular']) ? (float)$opt_wholesale['base_regular'] : $base_retail;
+							if ($base_retail >= 0) {
+								// Цена до скидки (розничная базовая)
+								$price_raw = $base_regular;
+								$price = $this->currency->format(
+									$this->tax->calculate($base_regular, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false),
+									$this->session->data['currency']
+								);
+								// Цена после скидки и % — только если есть скидка
+								if ($base_regular > 0 && $base_retail < $base_regular) {
+									$discounted_price_raw = $base_retail;
+									$discounted_price = $this->currency->format(
+										$this->tax->calculate($base_retail, $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false),
+										$this->session->data['currency']
+									);
+									$discount_percent = (int)round((($base_regular - $base_retail) / $base_regular) * 100);
+								} else {
+									$discounted_price = false;
+									$discounted_price_raw = null;
+									$discount_percent = false;
+								}
+							}
+						}
 
 						$option_image_thumb = '';
 						$option_image_popup = '';
@@ -444,23 +475,25 @@ class ControllerProductProduct extends Controller {
 						}
 
 						$product_option_value_data[] = array(
-							'product_option_value_id' => $option_value['product_option_value_id'],
-							'option_value_id'         => $option_value['option_value_id'],
-							'name'                    => $option_value['name'],
-							'image'                   => $this->model_tool_image->resize($option_value['image'], 50, 50),
-							'option_image_thumb'      => $option_image_thumb,
-							'option_image_popup'      => $option_image_popup,
-							'price'                   => $price,
-							'price_raw'               => $price_raw,
-							'discounted_price'        => $discounted_price,
-							'discounted_price_raw'    => $discounted_price_raw,
-							'discount_percent'        => $discount_percent,
-							'stock_status'            => $option_value['quantity'] > 0,
-							'points'                  => isset($option_value['points']) ? $option_value['points'] : 0,
-							'points_prefix'           => isset($option_value['points_prefix']) ? $option_value['points_prefix'] : '+',
-							'weight'                  => isset($option_value['weight']) ? $option_value['weight'] : 0,
-							'weight_prefix'           => isset($option_value['weight_prefix']) ? $option_value['weight_prefix'] : '+',
-							'custom_fields'           => isset($option_value['custom_fields']) ? $option_value['custom_fields'] : array()
+							'product_option_value_id'      => $option_value['product_option_value_id'],
+							'option_value_id'              => $option_value['option_value_id'],
+							'name'                         => $option_value['name'],
+							'image'                        => $this->model_tool_image->resize($option_value['image'], 50, 50),
+							'option_image_thumb'           => $option_image_thumb,
+							'option_image_popup'           => $option_image_popup,
+							'price'                        => $price,
+							'price_raw'                    => $price_raw,
+							'discounted_price'             => $discounted_price,
+							'discounted_price_raw'         => $discounted_price_raw,
+							'discount_percent'             => $discount_percent,
+							'wholesale_price'              => $wholesale_price,
+							'wholesale_discount_percent'   => $wholesale_discount_percent,
+							'stock_status'                 => $option_value['quantity'] > 0,
+							'points'                       => isset($option_value['points']) ? $option_value['points'] : 0,
+							'points_prefix'                => isset($option_value['points_prefix']) ? $option_value['points_prefix'] : '+',
+							'weight'                       => isset($option_value['weight']) ? $option_value['weight'] : 0,
+							'weight_prefix'                => isset($option_value['weight_prefix']) ? $option_value['weight_prefix'] : '+',
+							'custom_fields'                => isset($option_value['custom_fields']) ? $option_value['custom_fields'] : array()
 						);
 					}
 				}
@@ -829,7 +862,7 @@ class ControllerProductProduct extends Controller {
 				$json['error'] = $this->language->get('error_name');
 			}
 
-			if ((utf8_strlen($this->request->post['text']) < 25) || (utf8_strlen($this->request->post['text']) > 1000)) {
+			if ((utf8_strlen($this->request->post['text']) < 4) || (utf8_strlen($this->request->post['text']) > 1000)) {
 				$json['error'] = $this->language->get('error_text');
 			}
 

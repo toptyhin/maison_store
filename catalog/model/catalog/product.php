@@ -8,7 +8,14 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getProduct($product_id) {
-		$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, p.noindex AS noindex, m.name AS manufacturer, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (SELECT MIN(IF(povp.special_price > 0, povp.special_price, povp.price)) FROM " . DB_PREFIX . "product_option_value pov INNER JOIN " . DB_PREFIX . "product_option_value_prices povp ON pov.product_option_value_id = povp.product_option_value_id AND povp.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' WHERE pov.product_id = p.product_id) AS min_option_price, (SELECT points FROM " . DB_PREFIX . "product_reward pr WHERE pr.product_id = p.product_id AND pr.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "') AS reward, (SELECT ss.name FROM " . DB_PREFIX . "stock_status ss WHERE ss.stock_status_id = p.stock_status_id AND ss.language_id = '" . (int)$this->config->get('config_language_id') . "') AS stock_status, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT COUNT(*) AS total FROM " . DB_PREFIX . "review r2 WHERE r2.product_id = p.product_id AND r2.status = '1' GROUP BY r2.product_id) AS reviews, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+		$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, p.noindex AS noindex, m.name AS manufacturer, 
+		(SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, 
+		(SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, 
+		(SELECT MIN(IF(povp.special_price > 0, povp.special_price, povp.price)) FROM " . DB_PREFIX . "product_option_value pov INNER JOIN " . DB_PREFIX . "product_option_value_prices povp ON pov.product_option_value_id = povp.product_option_value_id AND povp.customer_group_id = '1' WHERE pov.product_id = p.product_id) AS min_option_price, 
+		(SELECT povp.price FROM " . DB_PREFIX . "product_option_value pov INNER JOIN " . DB_PREFIX . "product_option_value_prices povp ON pov.product_option_value_id = povp.product_option_value_id AND povp.customer_group_id = '1' WHERE pov.product_id = p.product_id ORDER BY IF(povp.special_price > 0, povp.special_price, povp.price) ASC, (povp.special_price > 0) DESC LIMIT 1) AS min_option_price_before_discount, 
+		(SELECT points FROM " . DB_PREFIX . "product_reward pr WHERE pr.product_id = p.product_id AND pr.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "') AS reward, (SELECT ss.name FROM " . DB_PREFIX . "stock_status ss WHERE ss.stock_status_id = p.stock_status_id AND ss.language_id = '" . (int)$this->config->get('config_language_id') . "') AS stock_status, 
+		(SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, 
+		(SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT COUNT(*) AS total FROM " . DB_PREFIX . "review r2 WHERE r2.product_id = p.product_id AND r2.status = '1' GROUP BY r2.product_id) AS reviews, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
 
 		if ($query->num_rows) {
 			return array(
@@ -37,6 +44,7 @@ class ModelCatalogProduct extends Model {
 				'price'            => ($query->row['discount'] ? $query->row['discount'] : $query->row['price']),
 			'special'          => $query->row['special'],
 			'min_option_price' => $query->row['min_option_price'],
+			'min_option_price_before_discount' => $query->row['min_option_price_before_discount'],
 			'reward'           => $query->row['reward'],
 				'points'           => $query->row['points'],
 				'tax_class_id'     => $query->row['tax_class_id'],
@@ -87,7 +95,15 @@ class ModelCatalogProduct extends Model {
 			INNER JOIN " . DB_PREFIX . "product_option_value_prices povp
 				ON pov.product_option_value_id = povp.product_option_value_id
 				AND povp.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "'
-			WHERE pov.product_id = p.product_id) AS min_option_price";
+			WHERE pov.product_id = p.product_id) AS min_option_price,
+		(SELECT povp.price
+			FROM " . DB_PREFIX . "product_option_value pov
+			INNER JOIN " . DB_PREFIX . "product_option_value_prices povp
+				ON pov.product_option_value_id = povp.product_option_value_id
+				AND povp.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "'
+			WHERE pov.product_id = p.product_id
+			ORDER BY IF(povp.special_price > 0, povp.special_price, povp.price) ASC, (povp.special_price > 0) DESC
+			LIMIT 1) AS min_option_price_before_discount";
 
 		// Add manufacturer purchase count for Top Bands sorting
 		if (!empty($data['filter_top_brands'])) {
@@ -554,8 +570,10 @@ class ModelCatalogProduct extends Model {
 
 		$result = array();
 		foreach ($query->rows as $row) {
+			$base_regular = null;
 			$base = null;
 			if ($row['base_price'] !== null || $row['base_special'] !== null) {
+				$base_regular = (float)$row['base_price'];
 				$b = ($row['base_special'] !== null && (float)$row['base_special'] > 0)
 					? (float)$row['base_special'] : (float)$row['base_price'];
 				if ($b >= 0) $base = $b;
@@ -564,9 +582,19 @@ class ModelCatalogProduct extends Model {
 				$p = (float)$row['product_price'];
 				$pv = (float)$row['pov_price'];
 				$prefix = $row['price_prefix'];
-				if ($prefix === '=') $base = $pv;
-				elseif ($prefix === '+') $base = $p + $pv;
-				else $base = $p - $pv;
+				if ($prefix === '=') {
+					$base = $pv;
+					$base_regular = $pv;
+				} elseif ($prefix === '+') {
+					$base = $p + $pv;
+					$base_regular = $p + $pv;
+				} else {
+					$base = $p - $pv;
+					$base_regular = $p - $pv;
+				}
+			}
+			if ($base_regular === null || (float)$base_regular <= 0) {
+				$base_regular = $base;
 			}
 
 			$wholesale = null;
@@ -578,8 +606,9 @@ class ModelCatalogProduct extends Model {
 
 			if ($base > 0 && $wholesale !== null) {
 				$result[(int)$row['product_option_value_id']] = array(
-					'base'     => $base,
-					'wholesale' => $wholesale
+					'base'         => $base,
+					'base_regular' => $base_regular,
+					'wholesale'    => $wholesale
 				);
 			}
 		}
