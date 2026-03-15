@@ -24,10 +24,10 @@
 					<img alt="{{ heading_title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in" id="main-product-image" src="{{ thumb }}" data-gallery-index="0" onclick="openProductGallery()"/>
 					<div class="absolute top-4 right-4 z-10">
 						<button type="button"
-							class="product-favorite-btn bg-white p-3 rounded-full text-luxury-charcoal hover:text-primary shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md"
+							class="product-favorite-btn bg-white p-3 rounded-full {% if in_wishlist|default(false) %}text-primary{% else %}text-luxury-charcoal hover:text-primary{% endif %} shadow-soft transition-colors flex items-center justify-center group-hover:shadow-md"
 							data-product-id="{{ product_id }}"
-							title="Добавить в избранное">
-							<span class="material-symbols-outlined">favorite_border</span>
+							title="{% if in_wishlist|default(false) %}Удалить из избранного{% else %}Добавить в избранное{% endif %}">
+							<span class="material-symbols-outlined" {% if in_wishlist|default(false) %}style="font-variation-settings: 'FILL' 1"{% endif %}>{% if in_wishlist|default(false) %}favorite{% else %}favorite_border{% endif %}</span>
 						</button>
 					</div>
 				</div>

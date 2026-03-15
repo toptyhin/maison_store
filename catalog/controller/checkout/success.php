@@ -75,6 +75,7 @@ class ControllerCheckoutSuccess extends Controller {
 		$data['order_email'] = null;
 		$data['shipping_address'] = null;
 		$data['delivery_time'] = null;
+		$data['success_related_products'] = array();
 
 		if (!empty($this->session->data['last_order_id'])) {
 			$this->load->model('checkout/order');
@@ -90,13 +91,108 @@ class ControllerCheckoutSuccess extends Controller {
 					$order_info['shipping_address_2']
 				]);
 				$data['shipping_address'] = implode(', ', $addr_parts) ?: null;
+
+				// Товары заказа → related_products для блока «Вам также может понравиться»
+				$data['success_related_products'] = array();
+				$order_products = $this->model_checkout_order->getOrderProducts($order_info['order_id']);
+				$order_product_ids = array();
+				foreach ($order_products as $op) {
+					$order_product_ids[(int)$op['product_id']] = true;
+				}
+				$related_ids = array();
+				$this->load->model('catalog/product');
+				foreach ($order_products as $op) {
+					$related = $this->model_catalog_product->getProductRelated($op['product_id']);
+					foreach ($related as $related_product) {
+						$rid = (int)$related_product['product_id'];
+						if (!isset($order_product_ids[$rid]) && !isset($related_ids[$rid])) {
+							$related_ids[$rid] = true;
+						}
+					}
+				}
+				$related_ids = array_keys($related_ids);
+				$related_ids = array_slice($related_ids, 0, 8);
+
+				$wishlist_ids = $this->registry->get('wishlist_product_ids');
+				if (!is_array($wishlist_ids)) {
+					$wishlist_ids = array();
+				}
+				$this->load->model('tool/image');
+				$image_w = (int)$this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width') ?: 300;
+				$image_h = (int)$this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height') ?: 400;
+				foreach ($related_ids as $product_id) {
+					$result = $this->model_catalog_product->getProduct($product_id);
+					if (!$result) {
+						continue;
+					}
+					if ($result['image']) {
+						$image = $this->model_tool_image->resize($result['image'], $image_w, $image_h);
+					} else {
+						$image = $this->model_tool_image->resize('placeholder.png', $image_w, $image_h);
+					}
+					if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+						$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					} else {
+						$price = false;
+					}
+					if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						$tax_price = (float)$result['special'];
+					} else {
+						$special = false;
+						$tax_price = (float)$result['price'];
+					}
+					if (!is_null($result['min_option_price']) && (float)$result['min_option_price'] >= 0) {
+						$min_option_price = $this->currency->format($this->tax->calculate($result['min_option_price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+						$tax_price = (float)$result['min_option_price'];
+					} else {
+						$min_option_price = false;
+						$tax_price = (float)$result['price'];
+					}
+					if (!is_null($result['min_option_price_before_discount']) && (float)$result['min_option_price_before_discount'] >= 0) {
+						$min_option_price_before_discount = $this->currency->format($this->tax->calculate($result['min_option_price_before_discount'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					} else {
+						$min_option_price_before_discount = false;
+					}
+					if ($min_option_price_before_discount && $min_option_price) {
+						$display_price = $min_option_price_before_discount;
+						$display_special = ((float)$result['min_option_price_before_discount'] > (float)$result['min_option_price']) ? $min_option_price : false;
+						$price_before = (float)$result['min_option_price_before_discount'];
+						$price_after = (float)$result['min_option_price'];
+					} elseif ($min_option_price) {
+						$display_price = $min_option_price;
+						$display_special = false;
+						$price_before = $price_after = 0;
+					} else {
+						$display_price = $price;
+						$display_special = $special;
+						$price_before = (float)$result['price'];
+						$price_after = (float)(isset($result['special']) ? $result['special'] : $result['price']);
+					}
+					$discount_percent = false;
+					if ($display_special && $price_before > 0 && $price_after < $price_before) {
+						$discount_percent = (int)round(($price_before - $price_after) / $price_before * 100);
+					}
+					$data['success_related_products'][] = array(
+						'product_id'       => $result['product_id'],
+						'thumb'            => $image,
+						'name'             => $result['name'],
+						'price'            => $display_price,
+						'special'          => $display_special,
+						'discount_percent' => $discount_percent,
+						'rating'           => $this->config->get('config_review_status') ? (int)$result['rating'] : false,
+						'reviews'          => isset($result['reviews']) ? $result['reviews'] : 0,
+						'in_wishlist'      => in_array((int)$result['product_id'], $wishlist_ids, true),
+						'href'             => $this->url->link('product/product', 'product_id=' . $result['product_id'])
+					);
+				}
 			}
 		}
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['content_bottom'] = !empty($data['success_related_products']) ? '' : $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 

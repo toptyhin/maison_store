@@ -96,6 +96,11 @@ class ControllerProductSpecial extends Controller {
 		$data['product_total'] = $product_total;
 		$data['product_shown'] = count($results);
 
+		$wishlist_ids = $this->registry->get('wishlist_product_ids');
+		if (!is_array($wishlist_ids)) {
+			$wishlist_ids = array();
+		}
+
 		foreach ($results as $result) {
 			if ($result['image']) {
 				$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -147,6 +152,7 @@ class ControllerProductSpecial extends Controller {
 				'tax'         => $tax,
 				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 				'rating'      => $result['rating'],
+				'in_wishlist' => in_array((int)$result['product_id'], $wishlist_ids, true),
 				'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
 			);
 		}

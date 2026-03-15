@@ -21,6 +21,11 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 		// Количество товаров для отображения (по умолчанию 4)
 		$limit = isset($setting['limit']) ? (int)$setting['limit'] : 4;
 
+		$wishlist_ids = $this->registry->get('wishlist_product_ids');
+		if (!is_array($wishlist_ids)) {
+			$wishlist_ids = array();
+		}
+
 		// Получаем просмотренные товары из сессии
 		if (isset($this->session->data['recently_viewed']) && is_array($this->session->data['recently_viewed'])) {
 			$recently_viewed_ids = $this->session->data['recently_viewed'];
@@ -111,6 +116,7 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 						'tax'         => $tax,
 						'rating'      => $rating,
 						'reviews'     => isset($product_info['reviews']) ? $product_info['reviews'] : 0,
+						'in_wishlist' => in_array((int)$product_id, $wishlist_ids, true),
 						'href'        => $this->url->link('product/product', 'product_id=' . $product_id)
 					);
 				}

@@ -190,10 +190,12 @@ class ControllerCheckoutShippingMethod extends Controller {
 			}
 			array_multisort($sort_order, SORT_ASC, $totals);
 			$json['sub_total_text'] = '';
+			$json['sub_total_before_discount_text'] = '';
 			$json['shipping_text'] = '';
 			$json['order_total_text'] = '';
 			$json['discount_text'] = '';
 			$discount_value = 0;
+			$json['sub_total_before_discount_text'] = $this->currency->format($this->cart->getSubTotalBeforeDiscounts(), $this->session->data['currency']);
 			foreach ($totals as $row) {
 				if (!empty($row['code']) && $row['code'] == 'sub_total') {
 					$json['sub_total_text'] = $this->currency->format($row['value'], $this->session->data['currency']);

@@ -9,6 +9,11 @@ class ControllerExtensionModuleFeatured extends Controller {
 
 		$data['products'] = array();
 
+		$wishlist_ids = $this->registry->get('wishlist_product_ids');
+		if (!is_array($wishlist_ids)) {
+			$wishlist_ids = array();
+		}
+
 		if (!$setting['limit']) {
 			$setting['limit'] = 4;
 		}
@@ -61,6 +66,7 @@ class ControllerExtensionModuleFeatured extends Controller {
 						'special'     => $special,
 						'tax'         => $tax,
 						'rating'      => $rating,
+						'in_wishlist' => in_array((int)$product_info['product_id'], $wishlist_ids, true),
 						'href'        => $this->url->link('product/product', 'product_id=' . $product_info['product_id'])
 					);
 				}

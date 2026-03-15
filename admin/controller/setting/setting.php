@@ -1032,7 +1032,7 @@ class ControllerSettingSetting extends Controller {
 				} else {
 					$data['config_product_delivery_info'] = "";
 				}
-				$this->log->write($data['config_product_delivery_info'] . "---12121-----------------------------");
+
 				// Product page return info
 				if (isset($this->request->post['config_product_return_info'])) {
 					$data['config_product_return_info'] = $this->request->post['config_product_return_info'];

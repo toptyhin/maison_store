@@ -77,6 +77,8 @@ class ControllerCheckoutCart extends Controller {
 			$data['totals'] = array();
 			$data['sub_total_text'] = '';
 			$data['sub_total_value'] = 0;
+			$data['sub_total_before_discount_text'] = '';
+			$data['sub_total_before_discount_value'] = 0;
 			$data['order_total_text'] = '';
 			$data['order_total_value'] = 0;
 			$data['discount_value'] = 0;
@@ -139,6 +141,7 @@ class ControllerCheckoutCart extends Controller {
 		$items_count = 0;
 		$total_discount = 0;
 		$total_original_value = 0;
+
 
 		foreach ($products as $product) {
 			$product_total = 0;
@@ -291,6 +294,8 @@ class ControllerCheckoutCart extends Controller {
 		$data['totals'] = array();
 		$data['sub_total_text'] = '';
 		$data['sub_total_value'] = 0;
+		$data['sub_total_before_discount_text'] = '';
+		$data['sub_total_before_discount_value'] = 0;
 		$data['order_total_text'] = '';
 		$data['order_total_value'] = 0;
 		$data['discount_value'] = 0;
@@ -318,6 +323,10 @@ class ControllerCheckoutCart extends Controller {
 				$data['discount_value'] += $row['value'];
 			}
 		}
+
+		$sub_total_before_discount_value = $this->cart->getSubTotalBeforeDiscounts();
+		$data['sub_total_before_discount_value'] = $sub_total_before_discount_value;
+		$data['sub_total_before_discount_text'] = $this->currency->format($sub_total_before_discount_value, $this->session->data['currency']);
 
 		if ($data['discount_value']) {
 			$data['discount_text'] = $this->currency->format($data['discount_value'], $this->session->data['currency']);

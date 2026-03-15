@@ -102,6 +102,7 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 
 		$data['totals'] = array();
 		$data['sub_total_text'] = '';
+		$data['sub_total_before_discount_text'] = $this->currency->format($this->cart->getSubTotalBeforeDiscounts(), $this->session->data['currency']);
 		$data['order_total_text'] = '';
 		$data['shipping_text'] = '';
 		$data['discount_text'] = '';
@@ -851,6 +852,8 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 		$order_data['user_agent'] = isset($this->request->server['HTTP_USER_AGENT']) ? $this->request->server['HTTP_USER_AGENT'] : '';
 		$order_data['accept_language'] = isset($this->request->server['HTTP_ACCEPT_LANGUAGE']) ? $this->request->server['HTTP_ACCEPT_LANGUAGE'] : '';
 
+
+	
 		$this->load->model('checkout/order');
 		$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
 

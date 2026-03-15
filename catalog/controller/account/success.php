@@ -32,11 +32,7 @@ class ControllerAccountSuccess extends Controller {
 			$data['text_message'] = sprintf($this->language->get('text_approval'), $this->config->get('config_name'), $this->url->link('information/contact'));
 		}
 
-		if ($this->cart->hasProducts()) {
-			$data['continue'] = $this->url->link('checkout/cart');
-		} else {
-			$data['continue'] = $this->url->link('account/account', '', true);
-		}
+		$data['continue'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -45,6 +41,6 @@ class ControllerAccountSuccess extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$this->response->setOutput($this->load->view('account/success', $data));
 	}
 }

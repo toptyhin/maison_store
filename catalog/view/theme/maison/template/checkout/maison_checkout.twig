@@ -175,7 +175,7 @@
                         <span class="material-symbols-outlined text-luxury-charcoal">loyalty</span>
                         Бонусная программа
                     </h2>
-                    <p class="text-sm text-gray-500">Доступно баллов будет рассчитано после ввода данных</p>
+                    <p class="text-sm text-gray-500">Количество баллов будет рассчитано после ввода данных</p>
                 </section>
             </div>
 
@@ -197,7 +197,7 @@
                         <div id="maison-order-summary" class="flex flex-col gap-4 mb-6 border-b border-gray-100 pb-6 relative z-10">
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-gray-500">{{ items_count }} {{ items_count == 1 ? 'товар' : (items_count < 5 ? 'товара' : 'товаров') }} на сумму</span>
-                                <span id="maison-order-sub-total" class="text-luxury-charcoal font-medium">{{ sub_total_text }}</span>
+                                <span id="maison-order-sub-total" class="text-luxury-charcoal font-medium">{{ sub_total_before_discount_text|default(sub_total_text) }}</span>
                             </div>
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-gray-500">Доставка</span>
@@ -231,8 +231,13 @@
                     </div>
                     <div class="bg-white rounded-lg p-6 md:p-8 shadow-soft border border-gray-100 flex flex-col items-center text-center">
                         <div class="flex flex-col items-center justify-center gap-3 mb-6 w-full">
-                            <div class="size-12 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal mx-auto">
-                                <span class="material-symbols-outlined text-[24px]">help</span>
+                            <div class="flex items-center justify-center gap-3">
+                                {# <div class="size-12 rounded-full bg-gray-50 flex items-center justify-center text-luxury-charcoal">
+                                    <span class="material-symbols-outlined text-[24px]">help</span>
+                                </div> #}
+                                <a href="#" class="size-12 rounded-full bg-gray-50 flex items-center justify-center p-2 hover:bg-gray-100 transition-colors" title="Max"><img src="{{ base }}catalog/view/theme/maison/image/max.png" alt="Max" class="w-full h-full object-contain" /></a>
+                                <a href="#" class="size-12 rounded-full bg-gray-50 flex items-center justify-center p-2 hover:bg-gray-100 transition-colors" title="Telegram"><img src="{{ base }}catalog/view/theme/maison/image/telegram.png" alt="Telegram" class="w-full h-full object-contain" /></a>
+                                <a href="#" class="size-12 rounded-full bg-gray-50 flex items-center justify-center p-2 hover:bg-gray-100 transition-colors" title="WhatsApp"><img src="{{ base }}catalog/view/theme/maison/image/whatsapp.png" alt="WhatsApp" class="w-full h-full object-contain" /></a>
                             </div>
                             <h3 class="font-serif font-medium text-xl text-luxury-charcoal text-center">Нужна помощь?</h3>
                         </div>
@@ -671,7 +676,7 @@
                 const totalEl = document.getElementById('maison-order-total');
                 const discountRow = document.getElementById('maison-order-discount-row');
                 const discountEl = document.getElementById('maison-order-discount');
-                if (subEl && json.sub_total_text) subEl.textContent = json.sub_total_text;
+                if (subEl) subEl.textContent = (json.sub_total_before_discount_text || json.sub_total_text) || '';
                 if (shipEl) {
                     shipEl.textContent = json.shipping_text || '—';
                     shipEl.classList.toggle('text-green-600', json.shipping_text === 'Бесплатно');

@@ -213,7 +213,7 @@
                             {% if items_count and sub_total_text %}
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-gray-500">{{ items_count }} {{ text_items_short is defined ? text_items_short : 'товара' }} на сумму</span>
-                                    <span class="text-luxury-charcoal font-medium">{{ sub_total_text }}</span>
+                                    <span class="text-luxury-charcoal font-medium">{{ sub_total_before_discount_text|default(sub_total_text) }}</span>
                                 </div>
                             {% endif %}
 
@@ -238,9 +238,9 @@
                             {% endif %}
                         </div>
 
-                        <div class="flex justify-between items-baseline mb-8 relative z-10">
-                            <span class="text-lg font-serif font-medium text-luxury-charcoal">Итого к оплате</span>
-                            <span class="text-3xl font-bold text-luxury-charcoal tracking-tight">
+                        <div class="flex justify-between items-center mb-8 relative z-10">
+                            <span class="w-1/3 text-sm font-serif font-medium text-luxury-charcoal break-words">Итого к оплате по товару</span>
+                            <span class="w-2/3 text-3xl font-bold text-luxury-charcoal tracking-tight text-right whitespace-nowrap">
                                 {{ order_total_text ? order_total_text : (totals and totals|last ? totals|last.text : '') }}
                             </span>
                         </div>

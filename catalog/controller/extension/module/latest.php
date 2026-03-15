@@ -11,6 +11,11 @@ class ControllerExtensionModuleLatest extends Controller {
 
 		$results = $this->model_catalog_product->getLatestProducts($setting['limit']);
 
+		$wishlist_ids = $this->registry->get('wishlist_product_ids');
+		if (!is_array($wishlist_ids)) {
+			$wishlist_ids = array();
+		}
+
 		if ($results) {
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -90,6 +95,7 @@ class ControllerExtensionModuleLatest extends Controller {
 					'discount_percent' => $discount_percent,
 					'tax'         => $tax,
 					'rating'      => $rating,
+					'in_wishlist' => in_array((int)$result['product_id'], $wishlist_ids, true),
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}

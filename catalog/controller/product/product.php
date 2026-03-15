@@ -281,6 +281,11 @@ class ControllerProductProduct extends Controller {
 			$data['tab_review'] = sprintf($this->language->get('tab_review'), (int)$product_info['reviews']);
 
 			$data['product_id'] = (int)$this->request->get['product_id'];
+			$wishlist_ids = $this->registry->get('wishlist_product_ids');
+			if (!is_array($wishlist_ids)) {
+				$wishlist_ids = array();
+			}
+			$data['in_wishlist'] = in_array($data['product_id'], $wishlist_ids, true);
 			$data['manufacturer'] = $product_info['manufacturer'];
 			$data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
 			$data['model'] = $product_info['model'];
@@ -666,6 +671,7 @@ class ControllerProductProduct extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,
+					'in_wishlist' => in_array((int)$result['product_id'], $wishlist_ids, true),
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}

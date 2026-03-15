@@ -2,11 +2,12 @@
                             <a href="{{ product.href }}" class="absolute inset-0 z-10" aria-label="Перейти к {{ product.name }}"></a>
                             <div class="absolute top-4 right-4 z-20">
                                 <button type="button"
-                                    class="product-favorite-btn bg-white flex items-center justify-center size-9 rounded-full text-luxury-charcoal hover:bg-white hover:text-discount-red transition-all duration-300 shadow-sm group/heart"
+                                    class="product-favorite-btn bg-white flex items-center justify-center size-9 rounded-full {% if product.in_wishlist|default(false) %}text-discount-red{% else %}text-luxury-charcoal hover:bg-white hover:text-discount-red{% endif %} transition-all duration-300 shadow-sm group/heart"
                                     data-product-id="{{ product.product_id }}"
-                                    title="Добавить в избранное">
+                                    title="{% if product.in_wishlist|default(false) %}Удалить из избранного{% else %}Добавить в избранное{% endif %}">
                                     <span
-                                        class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1">favorite</span>
+                                        class="material-symbols-outlined text-[20px] font-medium group-hover/heart:font-variation-settings-'FILL'-1"
+                                        {% if product.in_wishlist|default(false) %}style="font-variation-settings: 'FILL' 1"{% endif %}>favorite</span>
                                 </button>
                             </div>
                             <div
@@ -45,8 +46,9 @@
 										<p class="font-bold text-luxury-charcoal mt-1 text-lg">От {{ product.price }}</p>
 									{% else %}
 										<div class="flex flex-wrap items-center gap-2 mt-1">
+                                            <p class="font-bold text-luxury-charcoal text-lg">От {{ product.special }}</p>
 											<p class="text-discount-red line-through decoration-2 text-sm">{{ product.price }}</p>
-											<p class="font-bold text-luxury-charcoal text-lg">{{ product.special }}</p>
+											
 											{% if product.discount_percent %}
 											<span
 												class="bg-badge-pink-bg text-badge-pink-text px-2 py-0.5 rounded-lg text-sm font-bold">-{{ product.discount_percent }}%</span>

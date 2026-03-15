@@ -1,60 +1,45 @@
-{# <footer>
-  <div class="container">
-    <div class="row">
-      {% if informations %}
-      <div class="col-sm-3">
-        <h5>{{ text_information }}</h5>
-        <ul class="list-unstyled">
-         {% for information in informations %}
-          <li><a href="{{ information.href }}">{{ information.title }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      <div class="col-sm-3">
-        <h5>{{ text_service }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
-          <li><a href="{{ return }}">{{ text_return }}</a></li>
-          <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-3">
-        <h5>{{ text_extra }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
-          <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
-          <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>
-          <li><a href="{{ special }}">{{ text_special }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-3">
-        <h5>{{ text_account }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ account }}">{{ text_account }}</a></li>
-          <li><a href="{{ order }}">{{ text_order }}</a></li>
-          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
-          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
-        </ul>
-      </div>
-    </div>
-    <hr>
-    <p>{{ powered }}</p>
-  </div>
-</footer> #}
+{% if cookie_info %}
+	<div class="fixed bottom-0 left-0 right-0 z-[100] bg-[#263238]/95 backdrop-blur-sm border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] transform transition-transform duration-500" id="cookie-consent">
+  		<div class="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
+			<p class="text-white/90 text-sm font-light leading-relaxed text-center md:text-left max-w-3xl">
+				{{ cookie_info|raw }}
+			</p>
+			<div class="flex items-center gap-6 shrink-0">
+				{# <button type="button" class="cookie-consent-settings text-xs font-bold text-gray-300 hover:text-white underline uppercase tracking-widest transition-colors">
+					Настройки
+				</button> #}
+				<button type="button" id="accept-cookie" class="bg-white text-[#263238] hover:bg-gray-200 transition-colors px-8 py-3 text-xs font-bold uppercase tracking-widest rounded-sm shadow-sm min-w-[140px]">
+					{{ button_continue }}
+				</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		(function() {
+			var el = document.getElementById('cookie-consent');
+			var acceptBtn = document.getElementById('accept-cookie');
+			if (!el || !acceptBtn) return;
+			acceptBtn.addEventListener('click', function() {
+				fetch('index.php?route=common/footer/applyCookieNotification');
+				el.style.transform = 'translateY(100%)';
+			});
+		})();
+	</script>
+{% endif %}
         <footer class="bg-[#263238] border-t border-gray-700 pt-20 pb-10">
             <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                 <div class="flex flex-col gap-6">
-                    <div class="flex items-center gap-3 text-white">
+                    <a href="{{ home }}" class="flex items-center gap-3 text-white">
                         <div class="size-6 text-primary-light">
-                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            {# <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                                 <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
                                     stroke="currentColor" stroke-width="2"></path>
                                 <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
-                            </svg>
+                            </svg> #}
+                            <img src="catalog/view/theme/maison/image/logo.png" alt="Maison Textile" class="">
                         </div>
-                        <h2 class="text-xl font-bold tracking-wide">Maison Textile</h2>
-                    </div>
+                        <span class="text-xl font-bold tracking-wide color-white">Maison Textile</span>
+                    </a>
                     <p class="text-gray-400 text-sm leading-relaxed">Философия скандинавского уюта. Натуральные ткани,
                         чистые линии и спокойствие в каждой детали вашего дома.</p>
                     <div class="flex flex-col gap-3">
@@ -68,12 +53,16 @@
                         </a>
                     </div>
                     <div class="flex gap-4 mt-2">
-                        <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
+                        {# <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
                                 class="material-symbols-outlined">public</span></a>
                         <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
                                 class="material-symbols-outlined">camera_alt</span></a>
                         <a class="text-gray-400 hover:text-white transition-colors" href="#"><span
-                                class="material-symbols-outlined">share</span></a>
+                                class="material-symbols-outlined">share</span></a> #}
+
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors size-8" title="Max"><img src="{{ base }}catalog/view/theme/maison/image/max.png" alt="Max" class="w-full h-full object-contain" /></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors size-8" title="Telegram"><img src="{{ base }}catalog/view/theme/maison/image/telegram.png" alt="Telegram" class="w-full h-full object-contain" /></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors size-8" title="WhatsApp"><img src="{{ base }}catalog/view/theme/maison/image/whatsapp.png" alt="WhatsApp" class="w-full h-full object-contain" /></a>                                
                     </div>
                 </div>
                 <div class="md:pl-8">
@@ -118,20 +107,7 @@
 {% for script in scripts %}
 <script src="{{ script }}" type="text/javascript"></script>
 {% endfor %}
-{% if cookie_info %}
-	<div id="cookie-warning" class="cookie-notification">
-		<div class="cookie-notification__container container">
-			<div class="cookie-notification__info">{{ cookie_info|raw }}</div>
-			<button id="accept-cookie" class="cookie-notification__btn btn btn-primary">{{ button_continue }}</button>
-		</div>
-	</div>
-	<script>
-		$('#accept-cookie').on('click', () => {
-			$.get('index.php?route=common/footer/applyCookieNotification');
-			$('#cookie-warning').hide();
-		});
-	</script>
-{% endif %}
+
 
 <!--
 OpenCart is open source software and you are free to remove the powered by OpenCart if you want, but its generally accepted practise to make a small donation.

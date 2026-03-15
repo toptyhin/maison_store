@@ -49,6 +49,7 @@ class Cart {
 			if ($product_query->num_rows && ($cart['quantity'] > 0)) {
 				$option_price = 0;
 				$option_price_final = 0;
+				$option_price_original = 0;
 				$option_points = 0;
 				$option_weight = 0;
 
@@ -82,11 +83,14 @@ class Cart {
 
 							if ($eff_price_prefix == '+') {
 								$option_price += $eff_price;
+								$option_price_original += $eff_price;
 							} elseif ($eff_price_prefix == '-') {
 								$option_price -= $eff_price;
+								$option_price_original -= $eff_price;
 							} elseif ($eff_price_prefix == '=') {
 								$option_price = $eff_price;
 								$option_price_final = $eff_special ? $eff_special : $eff_price;
+								$option_price_original = $eff_price;
 							}
 
 							if ($option_value_query->row['points_prefix'] == '+') {
@@ -154,10 +158,13 @@ class Cart {
 
 								if ($eff_price_prefix == '+') {
 									$option_price += $eff_price;
+									$option_price_original += $eff_price;
 								} elseif ($eff_price_prefix == '-') {
 									$option_price -= $eff_price;
+									$option_price_original -= $eff_price;
 								} elseif ($eff_price_prefix == '=') {
 									$option_price = $eff_special ? $eff_special : $eff_price;
+									$option_price_original = $eff_price;
 								}
 
 								if ($option_value_query->row['points_prefix'] == '+') {
@@ -224,6 +231,7 @@ class Cart {
 				}
 
 				$price = $product_query->row['price'];
+				$price_original = $product_query->row['price'];
 
 				// Product Discounts
 				$discount_quantity = 0;
@@ -296,6 +304,8 @@ class Cart {
 				}
 
 			$price_final = $option_price_final > 0 ? $option_price_final : ($price + $option_price);
+				// $total_original = ($price_original + $option_price_original) * $cart['quantity'];
+				$total_original = $option_price_original * $cart['quantity'];
 
 				$product_data[] = array(
 					'cart_id'         => $cart['cart_id'],
@@ -312,6 +322,7 @@ class Cart {
 					'stock'           => $stock,
 					'price'           => $price_final,
 					'total'           => $price_final * $cart['quantity'],
+					'total_original'  => $total_original,
 					'reward'          => $reward * $cart['quantity'],
 					'points'          => ($product_query->row['points'] ? ($product_query->row['points'] + $option_points) * $cart['quantity'] : 0),
 					'tax_class_id'    => $product_query->row['tax_class_id'],
@@ -382,6 +393,16 @@ class Cart {
 
 		foreach ($this->getProducts() as $product) {
 			$total += $product['total'];
+		}
+
+		return $total;
+	}
+
+	public function getSubTotalBeforeDiscounts() {
+		$total = 0;
+
+		foreach ($this->getProducts() as $product) {
+			$total += isset($product['total_original']) ? $product['total_original'] : $product['total'];
 		}
 
 		return $total;

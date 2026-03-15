@@ -17,6 +17,7 @@ class ControllerCommonFooter extends Controller {
 		}
 
 		$data['contact'] = $this->url->link('information/contact');
+		$data['home'] = $this->url->link('common/home');
 		$data['return'] = $this->url->link('account/return/add', '', true);
 		$data['sitemap'] = $this->url->link('information/sitemap');
 		$data['tracking'] = $this->url->link('information/tracking');
@@ -32,6 +33,7 @@ class ControllerCommonFooter extends Controller {
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 		
 		$data['cookie_info'] = $this->getCookieNotification();
+
 
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {
@@ -70,12 +72,10 @@ class ControllerCommonFooter extends Controller {
 		if(!$this->customer->isLogged()) {
 			if(!isset($this->request->cookie['CookieNotificationAccept'])) {
 				$cookie_article_id = $this->config->get('config_cookie_id');
-			
 				if ($cookie_article_id) {
 					$this->load->model('catalog/information');
 					
 					$info = $this->model_catalog_information->getInformation($cookie_article_id);
-					
 					if ($info) {
 						$result = html_entity_decode($info['description'], ENT_QUOTES, 'UTF-8');
 					}

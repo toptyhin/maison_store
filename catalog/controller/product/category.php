@@ -183,6 +183,11 @@ class ControllerProductCategory extends Controller {
 
 			$data['products'] = array();
 
+			$wishlist_ids = $this->registry->get('wishlist_product_ids');
+			if (!is_array($wishlist_ids)) {
+				$wishlist_ids = array();
+			}
+
 			$filter_data = array(
 				'filter_category_id' => $category_id,
 				'filter_filter'      => $filter,
@@ -222,7 +227,6 @@ class ControllerProductCategory extends Controller {
 					$tax_price = (float)$result['price'];
 				}
 
-				$this->log->write($result['min_option_price_before_discount'] . ' ' . $result['min_option_price']);
 				
 				if (!is_null($result['min_option_price']) && (float)$result['min_option_price'] >= 0) {
 					$min_option_price = $this->currency->format($this->tax->calculate($result['min_option_price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -282,6 +286,7 @@ class ControllerProductCategory extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
+					'in_wishlist' => in_array((int)$result['product_id'], $wishlist_ids, true),
 					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
 				);
 			}
