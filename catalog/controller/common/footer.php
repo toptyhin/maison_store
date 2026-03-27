@@ -31,8 +31,23 @@ class ControllerCommonFooter extends Controller {
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
-		
+
+		$this->load->helper('cookie_consent');
+
 		$data['cookie_info'] = $this->getCookieNotification();
+		$data['cookie_consent_save'] = $this->url->link('common/footer/saveCookieConsent', '', true);
+		$data['text_cookie_settings'] = $this->language->get('text_cookie_settings');
+		$data['text_cookie_modal_title'] = $this->language->get('text_cookie_modal_title');
+		$data['text_cookie_modal_intro'] = $this->language->get('text_cookie_modal_intro');
+		$data['text_cookie_modal_close'] = $this->language->get('text_cookie_modal_close');
+		$data['text_cookie_necessary_title'] = $this->language->get('text_cookie_necessary_title');
+		$data['text_cookie_necessary_help'] = $this->language->get('text_cookie_necessary_help');
+		$data['text_cookie_analytics_title'] = $this->language->get('text_cookie_analytics_title');
+		$data['text_cookie_analytics_help'] = $this->language->get('text_cookie_analytics_help');
+		$data['text_cookie_marketing_title'] = $this->language->get('text_cookie_marketing_title');
+		$data['text_cookie_marketing_help'] = $this->language->get('text_cookie_marketing_help');
+		$data['text_cookie_save_choice'] = $this->language->get('text_cookie_save_choice');
+		$data['text_cookie_accept_all'] = $this->language->get('text_cookie_accept_all');
 
 
 		// Whos Online
@@ -68,27 +83,49 @@ class ControllerCommonFooter extends Controller {
 	
 	private function getCookieNotification() {
 		$result = '';
-		
-		if(!$this->customer->isLogged()) {
-			if(!isset($this->request->cookie['CookieNotificationAccept'])) {
-				$cookie_article_id = $this->config->get('config_cookie_id');
-				if ($cookie_article_id) {
-					$this->load->model('catalog/information');
-					
-					$info = $this->model_catalog_information->getInformation($cookie_article_id);
-					if ($info) {
-						$result = html_entity_decode($info['description'], ENT_QUOTES, 'UTF-8');
-					}
+
+		if (!$this->customer->isLogged() && !cookie_consent_choice_saved($this->request)) {
+			$cookie_article_id = $this->config->get('config_cookie_id');
+			if ($cookie_article_id) {
+				$this->load->model('catalog/information');
+
+				$info = $this->model_catalog_information->getInformation($cookie_article_id);
+				if ($info) {
+					$result = html_entity_decode($info['description'], ENT_QUOTES, 'UTF-8');
 				}
 			}
 		}
-		
+
 		return $result;
 	}
-	
+
+	/**
+	 * Accept all (marketing on), legacy route for the bar button.
+	 */
 	public function applyCookieNotification() {
-		$time = 60*60;
-		
-		setcookie('CookieNotificationAccept', true, time()+$time, '/');
+		$this->load->helper('cookie_consent');
+		cookie_consent_set_cookies(true, true);
+	}
+
+	public function saveCookieConsent() {
+		$this->load->helper('cookie_consent');
+
+		$json = array();
+
+		if ($this->request->server['REQUEST_METHOD'] !== 'POST') {
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode(array('error' => 'Method not allowed')));
+			return;
+		}
+
+		$analytics = !empty($this->request->post['analytics']) && (string)$this->request->post['analytics'] !== '0';
+		$marketing = !empty($this->request->post['marketing']) && (string)$this->request->post['marketing'] !== '0';
+
+		cookie_consent_set_cookies($analytics, $marketing);
+
+		$json['success'] = true;
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 }

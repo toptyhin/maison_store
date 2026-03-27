@@ -4,25 +4,173 @@
 			<p class="text-white/90 text-sm font-light leading-relaxed text-center md:text-left max-w-3xl">
 				{{ cookie_info|raw }}
 			</p>
-			<div class="flex items-center gap-6 shrink-0">
-				{# <button type="button" class="cookie-consent-settings text-xs font-bold text-gray-300 hover:text-white underline uppercase tracking-widest transition-colors">
-					Настройки
-				</button> #}
+			<div class="flex flex-wrap items-center justify-center gap-4 md:gap-6 shrink-0">
+				<button type="button" id="cookie-consent-open-settings" class="text-xs font-bold text-gray-300 hover:text-white underline uppercase tracking-widest transition-colors">
+					{{ text_cookie_settings }}
+				</button>
 				<button type="button" id="accept-cookie" class="bg-white text-[#263238] hover:bg-gray-200 transition-colors px-8 py-3 text-xs font-bold uppercase tracking-widest rounded-sm shadow-sm min-w-[140px]">
 					{{ button_continue }}
 				</button>
 			</div>
 		</div>
 	</div>
+	<style>
+		#cookie-consent-modal .cookie-consent-toggle:checked + .cookie-consent-slider {
+			background-color: #263238;
+		}
+		#cookie-consent-modal .cookie-consent-toggle:checked + .cookie-consent-slider::before {
+			transform: translateX(1.25rem);
+		}
+		#cookie-consent-modal .cookie-consent-slider::before {
+			content: "";
+			position: absolute;
+			height: 1.25rem;
+			width: 1.25rem;
+			left: 0.25rem;
+			bottom: 0.25rem;
+			background-color: white;
+			transition: .3s;
+			border-radius: 50%;
+		}
+	</style>
+	<div id="cookie-consent-modal" class="fixed inset-0 z-[110] hidden items-center justify-center px-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="cookie-consent-modal-title">
+		<div class="bg-white w-full max-w-lg rounded-sm shadow-2xl overflow-hidden relative" role="document">
+			<div class="bg-luxury-charcoal p-6 md:p-8 flex items-center justify-between">
+				<h2 id="cookie-consent-modal-title" class="text-white text-2xl font-serif font-medium tracking-tight pr-4">{{ text_cookie_modal_title }}</h2>
+				<button type="button" id="cookie-consent-modal-close" class="text-white/70 hover:text-white transition-colors shrink-0" aria-label="{{ text_cookie_modal_close }}">
+					<span class="material-symbols-outlined text-[24px]">close</span>
+				</button>
+			</div>
+			<div class="p-6 md:p-8 space-y-8">
+				<p class="text-gray-600 text-sm font-light leading-relaxed">{{ text_cookie_modal_intro }}</p>
+				<div class="space-y-6">
+					<div class="flex items-start justify-between gap-6 pb-6 border-b border-gray-100">
+						<div class="flex-1">
+							<h3 class="text-luxury-charcoal font-bold text-sm uppercase tracking-widest mb-2">{{ text_cookie_necessary_title }}</h3>
+							<p class="text-gray-500 text-xs leading-relaxed">{{ text_cookie_necessary_help }}</p>
+						</div>
+						<div class="shrink-0 pt-1">
+							<span class="relative inline-block w-11 h-6 cursor-not-allowed" aria-hidden="true">
+								<input type="checkbox" class="opacity-0 w-0 h-0 pointer-events-none" checked disabled />
+								<span class="absolute inset-0 bg-luxury-charcoal rounded-full before:content-[''] before:absolute before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:translate-x-5"></span>
+							</span>
+						</div>
+					</div>
+					<div class="flex items-start justify-between gap-6 pb-6 border-b border-gray-100">
+						<div class="flex-1">
+							<h3 class="text-luxury-charcoal font-bold text-sm uppercase tracking-widest mb-2">{{ text_cookie_analytics_title }}</h3>
+							<p class="text-gray-500 text-xs leading-relaxed">{{ text_cookie_analytics_help }}</p>
+						</div>
+						<div class="shrink-0 pt-1">
+							<label class="relative inline-block w-11 h-6 cursor-pointer">
+								<input type="checkbox" id="cookie-consent-analytics" class="cookie-consent-toggle opacity-0 w-0 h-0" />
+								<span class="cookie-consent-slider absolute inset-0 bg-gray-200 rounded-full transition-colors duration-300"></span>
+							</label>
+						</div>
+					</div>
+					<div class="flex items-start justify-between gap-6">
+						<div class="flex-1">
+							<h3 class="text-luxury-charcoal font-bold text-sm uppercase tracking-widest mb-2">{{ text_cookie_marketing_title }}</h3>
+							<p class="text-gray-500 text-xs leading-relaxed">{{ text_cookie_marketing_help }}</p>
+						</div>
+						<div class="shrink-0 pt-1">
+							<label class="relative inline-block w-11 h-6 cursor-pointer">
+								<input type="checkbox" id="cookie-consent-marketing" class="cookie-consent-toggle opacity-0 w-0 h-0" />
+								<span class="cookie-consent-slider absolute inset-0 bg-gray-200 rounded-full transition-colors duration-300"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="p-6 md:p-8 pt-0 flex flex-col sm:flex-row gap-4">
+				<button type="button" id="cookie-consent-save" class="flex-1 border border-luxury-charcoal/30 text-luxury-charcoal py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-gray-50 transition-colors">
+					{{ text_cookie_save_choice }}
+				</button>
+				<button type="button" id="cookie-consent-accept-all" class="flex-1 bg-luxury-charcoal text-white py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-primary-dark transition-colors shadow-lg shadow-black/10">
+					{{ text_cookie_accept_all }}
+				</button>
+			</div>
+		</div>
+	</div>
 	<script>
 		(function() {
-			var el = document.getElementById('cookie-consent');
+			var bar = document.getElementById('cookie-consent');
+			var modal = document.getElementById('cookie-consent-modal');
 			var acceptBtn = document.getElementById('accept-cookie');
-			if (!el || !acceptBtn) return;
-			acceptBtn.addEventListener('click', function() {
-				fetch('index.php?route=common/footer/applyCookieNotification');
-				el.style.transform = 'translateY(100%)';
+			var openSettings = document.getElementById('cookie-consent-open-settings');
+			var closeBtn = document.getElementById('cookie-consent-modal-close');
+			var saveBtn = document.getElementById('cookie-consent-save');
+			var acceptAllBtn = document.getElementById('cookie-consent-accept-all');
+			var analyticsCb = document.getElementById('cookie-consent-analytics');
+			var marketingCb = document.getElementById('cookie-consent-marketing');
+			var saveUrl = {{ cookie_consent_save|json_encode|raw }};
+			if (!bar) return;
+
+			function hideBar() {
+				bar.style.transform = 'translateY(100%)';
+				setTimeout(function() { bar.style.display = 'none'; }, 500);
+			}
+
+			function openModal() {
+				if (!modal) return;
+				modal.classList.remove('hidden');
+				modal.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+			}
+
+			function closeModal() {
+				if (!modal) return;
+				modal.classList.add('hidden');
+				modal.classList.remove('flex');
+				document.body.style.overflow = '';
+			}
+
+			function postConsent(analyticsOn, marketingOn) {
+				var fd = new FormData();
+				fd.append('analytics', analyticsOn ? '1' : '0');
+				fd.append('marketing', marketingOn ? '1' : '0');
+				return fetch(saveUrl, { method: 'POST', body: fd, credentials: 'same-origin' }).then(function(r) { return r.json(); });
+			}
+
+			if (acceptBtn) {
+				acceptBtn.addEventListener('click', function() {
+					fetch('index.php?route=common/footer/applyCookieNotification', { credentials: 'same-origin' })
+						.then(function() { hideBar(); location.reload(); });
+				});
+			}
+
+			if (openSettings) openSettings.addEventListener('click', openModal);
+			if (closeBtn) closeBtn.addEventListener('click', closeModal);
+			if (modal) {
+				modal.addEventListener('click', function(e) {
+					if (e.target === modal) closeModal();
+				});
+			}
+			document.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
 			});
+
+			if (saveBtn && saveUrl) {
+				saveBtn.addEventListener('click', function() {
+					postConsent(analyticsCb && analyticsCb.checked, marketingCb && marketingCb.checked)
+						.then(function() {
+							closeModal();
+							hideBar();
+							location.reload();
+						});
+				});
+			}
+
+			if (acceptAllBtn) {
+				acceptAllBtn.addEventListener('click', function() {
+					fetch('index.php?route=common/footer/applyCookieNotification', { credentials: 'same-origin' })
+						.then(function() {
+							closeModal();
+							hideBar();
+							location.reload();
+						});
+				});
+			}
 		})();
 	</script>
 {% endif %}

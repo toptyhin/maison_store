@@ -236,6 +236,14 @@ class Smtp extends \stdClass {
 
 		if ($status_code) {
 			if (substr($reply, 0, 3) != $status_code) {
+				$detail = trim(preg_replace('/\s+/', ' ', str_replace(array("\r", "\n"), ' ', $reply)));
+				if (strlen($detail) > 500) {
+					$detail = substr($detail, 0, 500) . '…';
+				}
+				if ($detail !== '') {
+					$error_text .= ' Server reply: ' . $detail;
+				}
+
 				return $this->error($error_text);
 			}
 		}

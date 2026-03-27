@@ -14,6 +14,9 @@ $_['text_register_account']        = 'Создание учётной запис
 $_['text_returning_customer']      = 'Постоянный покупатель';
 $_['text_i_am_returning_customer'] = 'Я совершал здесь покупки ранее и регистрировался';
 $_['text_forgotten']               = 'Забыли пароль?';
+$_['text_customer_type']           = 'Тип покупателя';
+$_['text_customer_type_retail']    = 'Розничный';
+$_['text_customer_type_wholesale'] = 'Оптовый';
 
 // Entry
 $_['entry_email']                  = 'E-Mail адрес';

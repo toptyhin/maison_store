@@ -1042,6 +1042,8 @@ class ControllerSettingSetting extends Controller {
 					$data['config_product_return_info'] = "";
 				}
 
+		$data = array_merge($this->language->all(), $data);
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -1127,6 +1129,122 @@ class ControllerSettingSetting extends Controller {
 		}
 
 		return !$this->error;
+	}
+
+	public function testMail() {
+		$this->load->language('setting/setting');
+
+		$json = array(
+			'success' => false,
+			'message' => '',
+			'log'     => array(),
+		);
+
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+
+		if (!$this->user->hasPermission('modify', 'setting/setting')) {
+			$json['message'] = $this->language->get('error_permission');
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		if ($this->request->server['REQUEST_METHOD'] != 'POST') {
+			$json['message'] = 'Method not allowed';
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		$to = isset($this->request->post['test_mail_to']) ? trim($this->request->post['test_mail_to']) : '';
+
+		if ((utf8_strlen($to) > 96) || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
+			$json['message'] = $this->language->get('error_test_mail_email');
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		$from = $this->config->get('config_email');
+
+		if (!$from || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
+			$json['message'] = $this->language->get('error_test_mail_from');
+			$json['log'][] = 'config_email is empty or invalid.';
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		$engine = $this->config->get('config_mail_engine') ? $this->config->get('config_mail_engine') : 'mail';
+
+		$json['log'][] = 'Mail engine: ' . $engine;
+		$json['log'][] = 'SMTP hostname: ' . ($this->config->get('config_mail_smtp_hostname') ? $this->config->get('config_mail_smtp_hostname') : '(not set)');
+		$json['log'][] = 'SMTP port: ' . (string)(int)$this->config->get('config_mail_smtp_port');
+		$json['log'][] = 'SMTP timeout: ' . (string)(int)$this->config->get('config_mail_smtp_timeout');
+		$json['log'][] = 'SMTP username: ' . ($this->config->get('config_mail_smtp_username') ? '(set)' : '(not set)');
+		$json['log'][] = 'SMTP password: ' . ($this->config->get('config_mail_smtp_password') ? '(set)' : '(not set)');
+
+		$fail_message = '';
+
+		try {
+			set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+				if (($errno === E_USER_WARNING) || ($errno === E_WARNING)) {
+					throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+				}
+
+				return false;
+			});
+
+			$mail = new Mail($engine);
+			$mail->parameter = $this->config->get('config_mail_parameter');
+			$mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+			$mail->smtp_username = $this->config->get('config_mail_smtp_username');
+			$mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+			$mail->smtp_port = $this->config->get('config_mail_smtp_port');
+			$mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+
+			$mail->setTo($to);
+			$mail->setFrom($from);
+			$mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
+
+			$subject = sprintf($this->language->get('text_test_mail_subject'), html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'), date('Y-m-d H:i:s T'));
+			$mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
+
+			$host = isset($this->request->server['HTTP_HOST']) ? $this->request->server['HTTP_HOST'] : '';
+			$mail->setText(sprintf($this->language->get('text_test_mail_body'), date('c'), $host));
+
+			$mail->send();
+
+			if ($engine === 'mail') {
+				$last = error_get_last();
+
+				if ($last && !empty($last['message'])) {
+					$m = $last['message'];
+
+					if (preg_match('/mail|send|failed|spawn/i', $m)) {
+						$json['log'][] = 'error_get_last after mail(): ' . $m;
+					}
+				}
+			}
+		} catch (\Throwable $e) {
+			$fail_message = $e->getMessage();
+		} finally {
+			restore_error_handler();
+		}
+
+		if ($fail_message !== '') {
+			$json['message'] = $this->language->get('text_test_mail_failed');
+			$json['log'][] = $fail_message;
+			$this->response->setOutput(json_encode($json));
+
+			return;
+		}
+
+		$json['success'] = true;
+		$json['message'] = $this->language->get('text_test_mail_success');
+		$json['log'][] = $this->language->get('text_test_mail_sent');
+
+		$this->response->setOutput(json_encode($json));
 	}
 
 	public function theme() {

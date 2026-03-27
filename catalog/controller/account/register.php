@@ -25,6 +25,21 @@ class ControllerAccountRegister extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$customer_id = $this->model_account_customer->addCustomer($this->request->post);
 
+			if ($this->isWholesalePost()) {
+				$this->load->model('account/company');
+				$inn_clean = preg_replace('/\D/', '', (string)$this->request->post['inn']);
+				$this->model_account_company->addCompany($customer_id, array(
+					'company' => $this->request->post['company'],
+					'inn'     => $inn_clean,
+					'kpp'     => isset($this->request->post['company_kpp']) ? $this->request->post['company_kpp'] : '',
+					'address' => isset($this->request->post['company_address']) ? $this->request->post['company_address'] : '',
+					'bik'     => '',
+					'bank'    => '',
+					'rs'      => '',
+					'ks'      => ''
+				));
+			}
+
 			// Clear any previous login attempts for unregistered accounts.
 			$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 
@@ -81,6 +96,18 @@ class ControllerAccountRegister extends Controller {
 			$data['error_telephone'] = $this->error['telephone'];
 		} else {
 			$data['error_telephone'] = '';
+		}
+
+		if (isset($this->error['company'])) {
+			$data['error_company'] = $this->error['company'];
+		} else {
+			$data['error_company'] = '';
+		}
+
+		if (isset($this->error['inn'])) {
+			$data['error_inn'] = $this->error['inn'];
+		} else {
+			$data['error_inn'] = '';
 		}
 
 		if (isset($this->error['custom_field'])) {
@@ -213,6 +240,34 @@ class ControllerAccountRegister extends Controller {
 
 		$data['datepicker'] = $this->language->get('datepicker');
 
+		$data['customer_type'] = $this->getCustomerTypeForForm();
+		$data['customer_wholesale'] = ($data['customer_type'] === 'wholesale');
+		$data['dadata_token'] = $this->config->get('config_dadata_token') ?: '85cf2f2c09d828596149c915817a2e19b5335522';
+
+		if (isset($this->request->post['company'])) {
+			$data['company'] = $this->request->post['company'];
+		} else {
+			$data['company'] = '';
+		}
+
+		if (isset($this->request->post['inn'])) {
+			$data['inn'] = $this->request->post['inn'];
+		} else {
+			$data['inn'] = '';
+		}
+
+		if (isset($this->request->post['company_kpp'])) {
+			$data['company_kpp'] = $this->request->post['company_kpp'];
+		} else {
+			$data['company_kpp'] = '';
+		}
+
+		if (isset($this->request->post['company_address'])) {
+			$data['company_address'] = $this->request->post['company_address'];
+		} else {
+			$data['company_address'] = '';
+		}
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
@@ -242,6 +297,18 @@ class ControllerAccountRegister extends Controller {
 
 		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
 			$this->error['telephone'] = $this->language->get('error_telephone');
+		}
+
+		if ($this->isWholesalePost()) {
+			if ((utf8_strlen(trim($this->request->post['company'])) < 1) || (utf8_strlen(trim($this->request->post['company'])) > 255)) {
+				$this->error['company'] = $this->language->get('error_company');
+			}
+
+			$inn_clean = preg_replace('/\D/', '', (string)$this->request->post['inn']);
+
+			if (!preg_match('/^(\d{10}|\d{12})$/', $inn_clean)) {
+				$this->error['inn'] = $this->language->get('error_inn');
+			}
 		}
 
 		// Customer Group
@@ -320,5 +387,21 @@ class ControllerAccountRegister extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+	private function getCustomerTypeForForm() {
+		if (isset($this->request->post['customer_type'])) {
+			return $this->request->post['customer_type'] === 'wholesale' ? 'wholesale' : 'retail';
+		}
+
+		if (isset($this->request->get['customer_type']) && $this->request->get['customer_type'] === 'wholesale') {
+			return 'wholesale';
+		}
+
+		return 'retail';
+	}
+
+	private function isWholesalePost() {
+		return isset($this->request->post['customer_type']) && $this->request->post['customer_type'] === 'wholesale';
 	}
 }

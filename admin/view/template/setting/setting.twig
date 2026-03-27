@@ -1205,6 +1205,22 @@
                 </div>
               </fieldset>
               <fieldset>
+                <legend>{{ text_test_mail_legend }}</legend>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-test-mail-to">{{ entry_test_mail_to }}</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <input type="email" id="input-test-mail-to" class="form-control" placeholder="{{ entry_test_mail_to }}" autocomplete="off" />
+                      <span class="input-group-btn">
+                        <button type="button" id="button-test-mail" class="btn btn-primary">{{ button_test_mail }}</button>
+                      </span>
+                    </div>
+                    <p class="help-block" id="mail-test-help"></p>
+                    <pre id="mail-test-log" class="well well-sm" style="display:none; max-height:240px; overflow:auto; white-space:pre-wrap; font-size:12px; margin-top:10px;"></pre>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
                 <legend>{{ text_mail_alert }}</legend>
                 <div class="form-group">
                   <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_mail_alert }}">{{ entry_mail_alert }}</span></label>
@@ -1707,5 +1723,50 @@ $('select[name=\'config_country_id\']').on('change', function() {
 });
 
 $('select[name=\'config_country_id\']').trigger('change');
+//--></script>
+  <script type="text/javascript"><!--
+$('#button-test-mail').on('click', function() {
+	var btn = $(this);
+	var email = $.trim($('#input-test-mail-to').val());
+	var help = $('#mail-test-help');
+	var logBox = $('#mail-test-log');
+	help.text('').removeClass('text-danger text-success');
+	logBox.hide().text('');
+
+	if (!email.length) {
+		help.addClass('text-danger').text('{{ error_test_mail_email|e('js') }}');
+		return;
+	}
+
+	btn.prop('disabled', true);
+	$.ajax({
+		url: 'index.php?route=setting/setting/testMail&user_token={{ user_token }}',
+		type: 'post',
+		data: { test_mail_to: email },
+		dataType: 'json',
+		complete: function() {
+			btn.prop('disabled', false);
+		},
+		success: function(json) {
+			if (json['log'] && json['log'].length) {
+				logBox.text(json['log'].join("\n")).show();
+			}
+			if (json['success']) {
+				help.addClass('text-success').text(json['message'] || '');
+			} else {
+				help.addClass('text-danger').text(json['message'] || 'Error');
+			}
+		},
+		error: function(xhr) {
+			var msg = xhr.responseText || xhr.statusText;
+			try {
+				var j = JSON.parse(xhr.responseText);
+				if (j.message) msg = j.message;
+				if (j.log && j.log.length) logBox.text(j.log.join("\n")).show();
+			} catch (e) {}
+			help.addClass('text-danger').text(msg);
+		}
+	});
+});
 //--></script></div>
 {{ footer }} 

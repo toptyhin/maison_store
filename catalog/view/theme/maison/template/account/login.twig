@@ -45,7 +45,21 @@
           </div>
           <h2 class="text-xl font-serif font-medium text-luxury-charcoal mb-3">{{ text_new_customer }}</h2>
           <p class="text-sm text-gray-600 leading-relaxed mb-6">{{ text_register_account }}</p>
-          <a href="{{ register }}" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-luxury-charcoal text-white border border-transparent px-8 py-4 rounded-sm text-xs font-bold uppercase tracking-[0.15em] hover:bg-primary-dark transition-colors shadow-sm group">
+          <p class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">{{ text_customer_type }}</p>
+          <div class="flex flex-wrap gap-6 mb-6">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="login_customer_type" value="retail" checked="checked"
+                class="rounded border-gray-300 text-primary focus:ring-luxury-charcoal" />
+              <span class="text-sm text-luxury-charcoal">{{ text_customer_type_retail }}</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="login_customer_type" value="wholesale"
+                class="rounded border-gray-300 text-primary focus:ring-luxury-charcoal" />
+              <span class="text-sm text-luxury-charcoal">{{ text_customer_type_wholesale }}</span>
+            </label>
+          </div>
+          <a id="link-register" href="{{ register }}" data-href-retail="{{ register }}" data-href-wholesale="{{ register_wholesale }}"
+            class="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-luxury-charcoal text-white border border-transparent px-8 py-4 rounded-sm text-xs font-bold uppercase tracking-[0.15em] hover:bg-primary-dark transition-colors shadow-sm group">
             {{ text_register }}
             <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </a>
@@ -92,4 +106,18 @@
     {{ content_bottom }}
   </main>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var link = document.getElementById('link-register');
+  if (!link || !link.dataset.hrefRetail) return;
+  function syncRegisterHref() {
+    var wholesale = document.querySelector('input[name="login_customer_type"]:checked');
+    link.href = (wholesale && wholesale.value === 'wholesale') ? link.dataset.hrefWholesale : link.dataset.hrefRetail;
+  }
+  document.querySelectorAll('input[name="login_customer_type"]').forEach(function(r) {
+    r.addEventListener('change', syncRegisterHref);
+  });
+  syncRegisterHref();
+});
+</script>
 {{ footer }}

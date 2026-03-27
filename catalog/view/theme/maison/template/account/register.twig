@@ -1,4 +1,8 @@
 {{ header }}
+{% if customer_wholesale and dadata_token %}
+<link href="https://cdn.jsdelivr.net/npm/@dadata/suggestions@25.11.0/dist/suggestions.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@dadata/suggestions@25.11.0/dist/suggestions.min.js"></script>
+{% endif %}
 <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark font-display text-luxury-charcoal antialiased">
   <main class="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 py-12 mt-24">
     {# Breadcrumbs #}
@@ -39,6 +43,7 @@
       <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none"></div>
       <div class="relative z-10 max-w-2xl">
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-register">
+          <input type="hidden" name="customer_type" value="{{ customer_type }}" />
           <fieldset id="account" class="space-y-6 mb-10">
             <h2 class="text-lg font-serif font-medium text-luxury-charcoal pb-3 border-b border-gray-100">{{ text_your_details }}</h2>
 
@@ -81,6 +86,25 @@
               <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="{{ input_class }}" />
               {% if error_telephone %}<p class="{{ error_class }}">{{ error_telephone }}</p>{% endif %}
             </div>
+
+            {% if customer_wholesale %}
+            <div class="space-y-6 pt-4 border-t border-gray-100">
+              <h3 class="text-base font-serif font-medium text-luxury-charcoal">{{ text_wholesale_details }}</h3>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ help_dadata_company }}</p>
+              <input type="hidden" name="company_kpp" value="{{ company_kpp }}" id="input-register-company-kpp" />
+              <input type="hidden" name="company_address" value="{{ company_address }}" id="input-register-company-address" />
+              <div>
+                <label class="{{ label_class }}" for="input-register-company">{{ entry_company }}</label>
+                <input type="text" name="company" value="{{ company }}" placeholder="{{ entry_company }}" id="input-register-company" autocomplete="organization" class="{{ input_class }}" />
+                {% if error_company %}<p class="{{ error_class }}">{{ error_company }}</p>{% endif %}
+              </div>
+              <div>
+                <label class="{{ label_class }}" for="input-register-inn">{{ entry_inn }}</label>
+                <input type="text" name="inn" value="{{ inn }}" placeholder="{{ entry_inn }}" id="input-register-inn" inputmode="numeric" autocomplete="off" class="{{ input_class }}" />
+                {% if error_inn %}<p class="{{ error_class }}">{{ error_inn }}</p>{% endif %}
+              </div>
+            </div>
+            {% endif %}
 
             {% for custom_field in custom_fields %}
               {% if custom_field.type == 'select' %}
@@ -335,6 +359,46 @@ window.addEventListener('load', function() {
     $('.date').datetimepicker({ language: '{{ datepicker }}', pickTime: false });
     $('.time').datetimepicker({ language: '{{ datepicker }}', pickDate: false });
     $('.datetime').datetimepicker({ language: '{{ datepicker }}', pickDate: true, pickTime: true });
+  }
+});
+</script>
+{% endif %}
+{% if customer_wholesale and dadata_token %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var token = {{ dadata_token|json_encode|raw }};
+  var companyIn = document.getElementById('input-register-company');
+  var innIn = document.getElementById('input-register-inn');
+  var kppIn = document.getElementById('input-register-company-kpp');
+  var addrIn = document.getElementById('input-register-company-address');
+  if (!token || typeof Dadata === 'undefined' || !companyIn) return;
+
+  function applyParty(suggestion) {
+    if (!suggestion || !suggestion.data) return;
+    var d = suggestion.data;
+    if (companyIn && suggestion.value) companyIn.value = suggestion.value;
+    if (innIn && d.inn) innIn.value = d.inn;
+    if (kppIn && d.kpp) kppIn.value = d.kpp;
+    if (addrIn && d.address) {
+      addrIn.value = d.address.unrestricted_value || d.address.value || '';
+    }
+  }
+
+  try {
+    Dadata.createSuggestions(companyIn, {
+      token: token,
+      type: 'party',
+      onSelect: applyParty
+    });
+    if (innIn) {
+      Dadata.createSuggestions(innIn, {
+        token: token,
+        type: 'party',
+        onSelect: applyParty
+      });
+    }
+  } catch (e) {
+    console.error('DaData party suggestions:', e);
   }
 });
 </script>

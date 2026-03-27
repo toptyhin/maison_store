@@ -20,6 +20,12 @@ $_['entry_telephone']      = 'Telephone';
 $_['entry_newsletter']     = 'Subscribe';
 $_['entry_password']       = 'Password';
 $_['entry_confirm']        = 'Password Confirm';
+$_['text_wholesale_details'] = 'Company details';
+$_['entry_company']        = 'Company name';
+$_['entry_inn']            = 'INN (tax id)';
+$_['help_dadata_company']  = 'Start typing company name, INN or address — suggestions are provided by DaData.';
+$_['error_company']        = 'Company name must be between 1 and 255 characters!';
+$_['error_inn']            = 'INN must be 10 digits (legal entity) or 12 digits (sole proprietor)!';
 
 // Error
 $_['error_exists']         = 'Warning: E-Mail Address is already registered!';
