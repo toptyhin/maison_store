@@ -1,5 +1,5 @@
 {{ header }}
-<main class="flex-1 bg-background-dark">
+<main class="flex-1 bg-background-dark mt-24">
 {{ include('maison/template/account/account_header.twig') }}
   <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
     <div class="flex flex-col lg:flex-row gap-8">
@@ -43,25 +43,33 @@
 
     if (skuInput && skuDropdown && addForm) {
       function hideDropdown() { if (skuDropdown) { skuDropdown.classList.add('hidden'); skuDropdown.innerHTML = ''; } }
+      function applySuggestionAndAdd(item) {
+        if (!item) return;
+        if (addProductId) addProductId.value = item.product_id || '';
+        if (addProductOptionId) addProductOptionId.value = item.product_option_id || '';
+        if (addProductOptionValueId) addProductOptionValueId.value = item.product_option_value_id || '';
+        if (skuInput) skuInput.value = item.code || item.label || '';
+        hideDropdown();
+        doAddToCart(item.product_id, item.product_option_id, item.product_option_value_id, item.code || '');
+      }
       function showDropdown(items) {
         if (!skuDropdown) return;
         skuDropdown.innerHTML = '';
         if (!items || !items.length) { hideDropdown(); return; }
         items.forEach(function(item) {
-          var a = document.createElement('a');
-          a.href = '#';
-          a.className = 'flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-100 text-left no-underline text-luxury-charcoal border-b border-gray-50 last:border-b-0';
-          a.innerHTML = '<img src="' + (item.image || '') + '" alt="" class="w-10 h-10 object-cover rounded flex-shrink-0" /><span class="truncate flex-1">' + (item.label || item.code || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
-          a.addEventListener('click', function(e) {
+          var row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-100 text-left text-luxury-charcoal border-b border-gray-50 last:border-b-0';
+          row.innerHTML = '<img src="' + (item.image || '') + '" alt="" class="w-10 h-10 object-cover rounded flex-shrink-0" /><span class="truncate flex-1">' + (item.label || item.code || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+          row.addEventListener('mousedown', function(e) {
+            // Keep focus on input long enough so blur doesn't hide list before click handler.
             e.preventDefault();
-            if (addProductId) addProductId.value = item.product_id || '';
-            if (addProductOptionId) addProductOptionId.value = item.product_option_id || '';
-            if (addProductOptionValueId) addProductOptionValueId.value = item.product_option_value_id || '';
-            if (skuInput) skuInput.value = item.code || item.label || '';
-            hideDropdown();
-            doAddToCart(item.product_id, item.product_option_id, item.product_option_value_id, item.code || '');
           });
-          skuDropdown.appendChild(a);
+          row.addEventListener('click', function(e) {
+            e.preventDefault();
+            applySuggestionAndAdd(item);
+          });
+          skuDropdown.appendChild(row);
         });
         skuDropdown.classList.remove('hidden');
       }

@@ -93,6 +93,13 @@ class ControllerCheckoutCart extends Controller {
 			$data['free_shipping_progress'] = 0;
 			$data['free_shipping_left_text'] = '';
 			$data['free_shipping_active'] = false;
+			$data['show_discount_block'] = false;
+			$data['discount_tiers'] = array();
+			$data['current_discount'] = 0;
+			$data['next_tier'] = null;
+			$data['discount_progress_percent'] = 0;
+			$data['wholesale_discount_value'] = 0;
+			$data['wholesale_discount_text'] = '';
 			$data['continue'] = $this->url->link('common/home');
 			$data['checkout'] = $this->config->get('config_theme') == 'maison'
 				? $this->url->link('checkout/maison_checkout', '', true)
@@ -302,6 +309,8 @@ class ControllerCheckoutCart extends Controller {
 		$data['discount_text'] = '';
 		$data['shipping_text'] = '';
 		$data['shipping_pending'] = false;
+		$data['wholesale_discount_value'] = 0;
+		$data['wholesale_discount_text'] = '';
 
 		foreach ($totals as $row) {
 			$data['totals'][] = array(
@@ -318,6 +327,10 @@ class ControllerCheckoutCart extends Controller {
 			}
 			if (!empty($row['code']) && $row['code'] == 'shipping') {
 				$data['shipping_text'] = $this->currency->format($row['value'], $this->session->data['currency']);
+			}
+			if (!empty($row['code']) && $row['code'] == 'wholesale_discount') {
+				$data['wholesale_discount_value'] = (float)$row['value'];
+				$data['wholesale_discount_text'] = $this->currency->format($row['value'], $this->session->data['currency']);
 			}
 			if ($row['value'] < 0) {
 				$data['discount_value'] += $row['value'];
@@ -359,6 +372,13 @@ class ControllerCheckoutCart extends Controller {
 			&& $data['sub_total_value'] > 0
 			&& $data['free_shipping_left'] === 0;
 
+		$data['discount_tiers'] = $this->getDiscountTiers();
+		$data['show_discount_block'] = $this->config->get('total_wholesale_discount_status') && !empty($data['discount_tiers']);
+		$data['current_discount'] = $this->getCurrentDiscount($data['sub_total_value'], $data['discount_tiers']);
+		$data['next_tier'] = $this->getNextTier($data['sub_total_value'], $data['discount_tiers']);
+		$max_threshold = $this->getMaxDiscountThreshold($data['discount_tiers']);
+		$data['discount_progress_percent'] = $max_threshold > 0 ? min(100, round(($data['sub_total_value'] / $max_threshold) * 100)) : 0;
+
 		$data['continue'] = $this->url->link('common/home');
 		$data['checkout'] = $this->config->get('config_theme') == 'maison'
 			? $this->url->link('checkout/maison_checkout', '', true)
@@ -373,6 +393,8 @@ class ControllerCheckoutCart extends Controller {
 
 		$data['frequently_bought'] = array();
 		$data['text_frequently_bought'] = $this->language->get('text_frequently_bought');
+		$data['text_discount'] = $this->language->get('text_discount');
+		$data['text_discount_progress'] = !empty($data['next_tier']) ? sprintf($this->language->get('text_discount_progress'), $data['next_tier']['left_text'], $data['next_tier']['percent']) : '';
 		$this->load->model('setting/module');
 		$upsell_modules = $this->model_setting_module->getModulesByCode('upsell');
 		foreach ($upsell_modules as $mod) {
@@ -463,6 +485,107 @@ class ControllerCheckoutCart extends Controller {
 		$data['text_recurring_item'] = $this->language->get('text_recurring_item');
 
 		return $data;
+	}
+
+	private function getDiscountTiers() {
+		$raw_tiers = $this->config->get('total_wholesale_discount_customer_group_tiers');
+		$customer_group_id = $this->getCurrentCustomerGroupId();
+		$tiers = array();
+
+		if (is_string($raw_tiers)) {
+			$decoded_tiers = json_decode($raw_tiers, true);
+			$raw_tiers = is_array($decoded_tiers) ? $decoded_tiers : array();
+		}
+
+		if (is_array($raw_tiers) && !empty($raw_tiers[$customer_group_id]) && is_array($raw_tiers[$customer_group_id])) {
+			foreach ($raw_tiers[$customer_group_id] as $tier) {
+				if (!is_array($tier)) {
+					continue;
+				}
+
+				$threshold = isset($tier['threshold']) ? (float)$tier['threshold'] : 0;
+				$percent = isset($tier['percent']) ? (float)$tier['percent'] : 0;
+
+				if ($threshold <= 0 || $percent <= 0) {
+					continue;
+				}
+
+				$tiers[] = array(
+					'percent' => $percent,
+					'threshold' => $threshold
+				);
+			}
+		}
+
+		usort($tiers, function($a, $b) {
+			if ($a['threshold'] == $b['threshold']) {
+				return 0;
+			}
+
+			return ($a['threshold'] < $b['threshold']) ? -1 : 1;
+		});
+
+		foreach ($tiers as &$tier) {
+			$tier['threshold_text'] = $this->currency->format($tier['threshold'], $this->session->data['currency']);
+		}
+		unset($tier);
+
+		return $tiers;
+	}
+
+	private function getCurrentDiscount($sub_total, $tiers = null) {
+		if ($tiers === null) {
+			$tiers = $this->getDiscountTiers();
+		}
+
+		$current = 0;
+
+		foreach ($tiers as $tier) {
+			if ($sub_total >= $tier['threshold']) {
+				$current = $tier['percent'];
+			}
+		}
+
+		return $current;
+	}
+
+	private function getNextTier($sub_total, $tiers = null) {
+		if ($tiers === null) {
+			$tiers = $this->getDiscountTiers();
+		}
+
+		foreach ($tiers as $tier) {
+			if ($sub_total < $tier['threshold']) {
+				return array(
+					'percent'   => $tier['percent'],
+					'threshold' => $tier['threshold'],
+					'left'      => $tier['threshold'] - $sub_total,
+					'left_text' => $this->currency->format($tier['threshold'] - $sub_total, $this->session->data['currency'])
+				);
+			}
+		}
+
+		return null;
+	}
+
+	private function getMaxDiscountThreshold($tiers) {
+		$max_threshold = 0;
+
+		foreach ($tiers as $tier) {
+			if (!empty($tier['threshold']) && (float)$tier['threshold'] > $max_threshold) {
+				$max_threshold = (float)$tier['threshold'];
+			}
+		}
+
+		return $max_threshold;
+	}
+
+	private function getCurrentCustomerGroupId() {
+		if ($this->customer->isLogged()) {
+			return (int)$this->customer->getGroupId();
+		}
+
+		return (int)$this->config->get('config_customer_group_id');
 	}
 
 	/**

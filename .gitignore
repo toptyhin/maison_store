@@ -6,7 +6,7 @@ system/storage/modification/
 system/storage/session/
 system/storage/upload/
 
-image/
+./image/
 # Image Cache
 image/cache/
 image/catalog/

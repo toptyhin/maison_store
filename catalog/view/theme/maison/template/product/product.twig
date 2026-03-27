@@ -778,7 +778,7 @@ function updateWholesalePrice(wholesalePrice, wholesaleDiscount) {
 	if (!priceEl || !discountEl) return;
 
 	if (wholesalePrice) {
-		priceEl.textContent = wholesalePrice;
+		priceEl.textContent = 'от ' + wholesalePrice;
 		priceEl.classList.remove(CSS_CLASSES.HIDDEN);
 	} else {
 		priceEl.textContent = '';

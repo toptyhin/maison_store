@@ -69,6 +69,7 @@ class ControllerAccountCart extends Controller {
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 				$unit_price = $this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'));
 				$price = $this->currency->format($unit_price, $this->session->data['currency']);
+				$price = floatval($unit_price);
 				$total = $this->currency->format($unit_price * $product['quantity'], $this->session->data['currency']);
 			} else {
 				$price = $total = '';
@@ -558,10 +559,11 @@ class ControllerAccountCart extends Controller {
 			}
 
 			$data['discount_tiers'] = $this->getDiscountTiers();
-			$data['current_discount'] = $this->getCurrentDiscount($data['sub_total_value']);
-			$data['next_tier'] = $this->getNextTier($data['sub_total_value']);
-			$max_threshold = 200000;
-			$data['discount_progress_percent'] = min(100, round(($data['sub_total_value'] / $max_threshold) * 100));
+			$data['show_discount_block'] = $this->config->get('total_wholesale_discount_status') && !empty($data['discount_tiers']);
+			$data['current_discount'] = $this->getCurrentDiscount($data['sub_total_value'], $data['discount_tiers']);
+			$data['next_tier'] = $this->getNextTier($data['sub_total_value'], $data['discount_tiers']);
+			$max_threshold = $this->getMaxDiscountThreshold($data['discount_tiers']);
+			$data['discount_progress_percent'] = $max_threshold > 0 ? min(100, round(($data['sub_total_value'] / $max_threshold) * 100)) : 0;
 		} else {
 			$data['products'] = array();
 			$data['items_count'] = 0;
@@ -571,8 +573,9 @@ class ControllerAccountCart extends Controller {
 			$data['order_total_text'] = $this->currency->format(0, $this->session->data['currency']);
 			$data['sub_total_value'] = 0;
 			$data['discount_tiers'] = $this->getDiscountTiers();
+			$data['show_discount_block'] = $this->config->get('total_wholesale_discount_status') && !empty($data['discount_tiers']);
 			$data['current_discount'] = 0;
-			$data['next_tier'] = $this->getNextTier(0);
+			$data['next_tier'] = $this->getNextTier(0, $data['discount_tiers']);
 			$data['discount_progress_percent'] = 0;
 			$data['error_warning'] = '';
 			$data['success'] = '';
@@ -618,20 +621,58 @@ class ControllerAccountCart extends Controller {
 	}
 
 	private function getDiscountTiers() {
-		$tiers = array(
-			array('percent' => 5, 'threshold' => 50000),
-			array('percent' => 10, 'threshold' => 100000),
-			array('percent' => 15, 'threshold' => 200000)
-		);
-		foreach ($tiers as &$t) {
-			$t['threshold_text'] = $this->currency->format($t['threshold'], $this->session->data['currency']);
+		$raw_tiers = $this->config->get('total_wholesale_discount_customer_group_tiers');
+		$customer_group_id = $this->getCurrentCustomerGroupId();
+		$tiers = array();
+
+		if (is_string($raw_tiers)) {
+			$decoded_tiers = json_decode($raw_tiers, true);
+			$raw_tiers = is_array($decoded_tiers) ? $decoded_tiers : array();
 		}
+
+		if (is_array($raw_tiers) && !empty($raw_tiers[$customer_group_id]) && is_array($raw_tiers[$customer_group_id])) {
+			foreach ($raw_tiers[$customer_group_id] as $tier) {
+				if (!is_array($tier)) {
+					continue;
+				}
+
+				$threshold = isset($tier['threshold']) ? (float)$tier['threshold'] : 0;
+				$percent = isset($tier['percent']) ? (float)$tier['percent'] : 0;
+
+				if ($threshold <= 0 || $percent <= 0) {
+					continue;
+				}
+
+				$tiers[] = array(
+					'percent' => $percent,
+					'threshold' => $threshold
+				);
+			}
+		}
+
+		usort($tiers, function($a, $b) {
+			if ($a['threshold'] == $b['threshold']) {
+				return 0;
+			}
+
+			return ($a['threshold'] < $b['threshold']) ? -1 : 1;
+		});
+
+		foreach ($tiers as &$tier) {
+			$tier['threshold_text'] = $this->currency->format($tier['threshold'], $this->session->data['currency']);
+		}
+		unset($tier);
+
 		return $tiers;
 	}
 
-	private function getCurrentDiscount($sub_total) {
-		$tiers = $this->getDiscountTiers();
+	private function getCurrentDiscount($sub_total, $tiers = null) {
+		if ($tiers === null) {
+			$tiers = $this->getDiscountTiers();
+		}
+
 		$current = 0;
+
 		foreach ($tiers as $tier) {
 			if ($sub_total >= $tier['threshold']) {
 				$current = $tier['percent'];
@@ -640,8 +681,11 @@ class ControllerAccountCart extends Controller {
 		return $current;
 	}
 
-	private function getNextTier($sub_total) {
-		$tiers = $this->getDiscountTiers();
+	private function getNextTier($sub_total, $tiers = null) {
+		if ($tiers === null) {
+			$tiers = $this->getDiscountTiers();
+		}
+
 		foreach ($tiers as $tier) {
 			if ($sub_total < $tier['threshold']) {
 				return array(
@@ -653,5 +697,25 @@ class ControllerAccountCart extends Controller {
 			}
 		}
 		return null;
+	}
+
+	private function getMaxDiscountThreshold($tiers) {
+		$max_threshold = 0;
+
+		foreach ($tiers as $tier) {
+			if (!empty($tier['threshold']) && (float)$tier['threshold'] > $max_threshold) {
+				$max_threshold = (float)$tier['threshold'];
+			}
+		}
+
+		return $max_threshold;
+	}
+
+	private function getCurrentCustomerGroupId() {
+		if ($this->customer->isLogged()) {
+			return (int)$this->customer->getGroupId();
+		}
+
+		return (int)$this->config->get('config_customer_group_id');
 	}
 }

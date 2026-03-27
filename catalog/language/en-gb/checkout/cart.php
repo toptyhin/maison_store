@@ -27,6 +27,8 @@ $_['text_payment_cancel']      = '%s every %d %s(s) until canceled';
 // Custom
 $_['text_free_shipping_left']  = 'Add %s more to your order to get free shipping';
 $_['text_frequently_bought']   = 'Frequently bought together';
+$_['text_discount']             = 'Your discount';
+$_['text_discount_progress']    = 'Add products for %s more to get %s%% discount on entire order';
 
 // Column
 $_['column_image']             = 'Image';
