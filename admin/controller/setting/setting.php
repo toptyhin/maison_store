@@ -526,6 +526,14 @@ class ControllerSettingSetting extends Controller {
 			$data['config_customer_group_display'] = array();
 		}
 
+		if (isset($this->request->post['config_wholesale_customer_group_id'])) {
+			$data['config_wholesale_customer_group_id'] = $this->request->post['config_wholesale_customer_group_id'];
+		} elseif ($this->config->has('config_wholesale_customer_group_id')) {
+			$data['config_wholesale_customer_group_id'] = $this->config->get('config_wholesale_customer_group_id');
+		} else {
+			$data['config_wholesale_customer_group_id'] = 0;
+		}
+
 		if (isset($this->request->post['config_customer_price'])) {
 			$data['config_customer_price'] = $this->request->post['config_customer_price'];
 		} else {
@@ -860,6 +868,26 @@ class ControllerSettingSetting extends Controller {
 			$data['config_mail_alert_email'] = $this->request->post['config_mail_alert_email'];
 		} else {
 			$data['config_mail_alert_email'] = $this->config->get('config_mail_alert_email');
+		}
+
+		if (isset($this->request->post['config_telegram_alert'])) {
+			$data['config_telegram_alert'] = $this->request->post['config_telegram_alert'];
+		} elseif ($this->config->has('config_telegram_alert')) {
+			$data['config_telegram_alert'] = $this->config->get('config_telegram_alert');
+		} else {
+			$data['config_telegram_alert'] = array();
+		}
+
+		if (isset($this->request->post['config_telegram_bot_token'])) {
+			$data['config_telegram_bot_token'] = $this->request->post['config_telegram_bot_token'];
+		} else {
+			$data['config_telegram_bot_token'] = $this->config->get('config_telegram_bot_token');
+		}
+
+		if (isset($this->request->post['config_telegram_chat_ids'])) {
+			$data['config_telegram_chat_ids'] = $this->request->post['config_telegram_chat_ids'];
+		} else {
+			$data['config_telegram_chat_ids'] = $this->config->get('config_telegram_chat_ids');
 		}
 
 		if (isset($this->request->post['config_secure'])) {

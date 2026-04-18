@@ -656,6 +656,21 @@
                     {% endif %} </div>
                 </div>
                 <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-wholesale-customer-group"><span data-toggle="tooltip" title="{{ help_wholesale_customer_group }}">{{ entry_wholesale_customer_group }}</span></label>
+                  <div class="col-sm-10">
+                    <select name="config_wholesale_customer_group_id" id="input-wholesale-customer-group" class="form-control">
+                      <option value="0">{{ text_none }}</option>
+                      {% for customer_group in customer_groups %}
+                      {% if customer_group.customer_group_id == config_wholesale_customer_group_id %}
+                      <option value="{{ customer_group.customer_group_id }}" selected="selected">{{ customer_group.name }}</option>
+                      {% else %}
+                      <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name }}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
                   <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_customer_price }}">{{ entry_customer_price }}</span></label>
                   <div class="col-sm-10">
                     <label class="radio-inline"> {% if config_customer_price %}
@@ -1242,6 +1257,40 @@
                   <label class="col-sm-2 control-label" for="input-mail-alert-email"><span data-toggle="tooltip" title="{{ help_mail_alert_email }}">{{ entry_mail_alert_email }}</span></label>
                   <div class="col-sm-10">
                     <textarea name="config_mail_alert_email" rows="5" placeholder="{{ entry_mail_alert_email }}" id="input-alert-email" class="form-control">{{ config_mail_alert_email }}</textarea>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>{{ text_telegram_alert }}</legend>
+                <div class="form-group">
+                  <div class="col-sm-12">{{ text_telegram_instructions|raw }}</div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_telegram_alert }}">{{ entry_telegram_alert }}</span></label>
+                  <div class="col-sm-10">
+                    <div class="well well-sm" style="height: 150px; overflow: auto;"> {% for mail_alert in mail_alerts %}
+                      <div class="checkbox">
+                        <label> {% if mail_alert.value in config_telegram_alert %}
+                          <input type="checkbox" name="config_telegram_alert[]" value="{{ mail_alert.value }}" checked="checked" />
+                          {{ mail_alert.text }}
+                          {% else %}
+                          <input type="checkbox" name="config_telegram_alert[]" value="{{ mail_alert.value }}" />
+                          {{ mail_alert.text }}
+                          {% endif %} </label>
+                      </div>
+                      {% endfor %} </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-telegram-bot-token"><span data-toggle="tooltip" title="{{ help_telegram_bot_token }}">{{ entry_telegram_bot_token }}</span></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="config_telegram_bot_token" value="{{ config_telegram_bot_token }}" placeholder="{{ entry_telegram_bot_token }}" id="input-telegram-bot-token" class="form-control" autocomplete="off" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-telegram-chat-ids"><span data-toggle="tooltip" title="{{ help_telegram_chat_ids }}">{{ entry_telegram_chat_ids }}</span></label>
+                  <div class="col-sm-10">
+                    <textarea name="config_telegram_chat_ids" rows="3" placeholder="{{ entry_telegram_chat_ids }}" id="input-telegram-chat-ids" class="form-control">{{ config_telegram_chat_ids }}</textarea>
                   </div>
                 </div>
               </fieldset>

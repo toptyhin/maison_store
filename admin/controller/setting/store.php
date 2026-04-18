@@ -528,6 +528,14 @@ class ControllerSettingStore extends Controller {
 			$data['config_customer_group_display'] = array();
 		}
 
+		if (isset($this->request->post['config_wholesale_customer_group_id'])) {
+			$data['config_wholesale_customer_group_id'] = $this->request->post['config_wholesale_customer_group_id'];
+		} elseif (isset($store_info['config_wholesale_customer_group_id'])) {
+			$data['config_wholesale_customer_group_id'] = $store_info['config_wholesale_customer_group_id'];
+		} else {
+			$data['config_wholesale_customer_group_id'] = 0;
+		}
+
 		if (isset($this->request->post['config_customer_price'])) {
 			$data['config_customer_price'] = $this->request->post['config_customer_price'];
 		} elseif (isset($store_info['config_customer_price'])) {

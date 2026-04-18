@@ -83,7 +83,7 @@
 
             <div>
               <label class="{{ label_class }}" for="input-telephone">{{ entry_telephone }}</label>
-              <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="{{ input_class }}" />
+              <input type="tel" name="telephone" value="{{ telephone }}" placeholder="+ 7 900 000 00 00" id="input-telephone" class="{{ input_class }}" />
               {% if error_telephone %}<p class="{{ error_class }}">{{ error_telephone }}</p>{% endif %}
             </div>
 
@@ -295,7 +295,9 @@ document.addEventListener('DOMContentLoaded', function() {
   customerGroupInputs.forEach(function(input) {
     input.addEventListener('change', function() {
       var customerGroupId = this.value;
-      fetch(base + 'index.php?route=account/register/customfield&customer_group_id=' + customerGroupId)
+      var ctInput = form ? form.querySelector('[name="customer_type"]') : null;
+      var customerType = ctInput ? encodeURIComponent(ctInput.value) : 'retail';
+      fetch(base + 'index.php?route=account/register/customfield&customer_group_id=' + customerGroupId + '&customer_type=' + customerType)
         .then(function(r) { return r.json(); })
         .then(function(json) {
           document.querySelectorAll('.custom-field[data-sort]').forEach(function(el) {

@@ -357,8 +357,13 @@ class ControllerMailOrder extends Controller {
 		}
 
 		$order_info = $this->model_checkout_order->getOrder($order_id);
-		
-		if ($order_info && !$order_info['order_status_id'] && $order_status_id && in_array('order', (array)$this->config->get('config_mail_alert'))) {	
+
+		if ($order_info && !$order_info['order_status_id'] && $order_status_id) {
+			$this->load->library('AdminNotifier');
+			if (!$this->AdminNotifier->isAlertChannelEnabled('order')) {
+				return;
+			}
+
 			$this->load->language('mail/order_alert');
 			
 			// HTML Mail
@@ -443,32 +448,9 @@ class ControllerMailOrder extends Controller {
 			}
 
 			$data['comment'] = strip_tags($order_info['comment']);
+			$data['store_name'] = $order_info['store_name'];
 
-			$mail = new Mail($this->config->get('config_mail_engine'));
-			$mail->parameter = $this->config->get('config_mail_parameter');
-			$mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
-			$mail->smtp_username = $this->config->get('config_mail_smtp_username');
-			$mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-			$mail->smtp_port = $this->config->get('config_mail_smtp_port');
-			$mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
-
-			$mail->setTo($this->config->get('config_email'));
-			$mail->setFrom($this->config->get('config_email'));
-			$mail->setSender(html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'));
-			$mail->setSubject(html_entity_decode(sprintf($this->language->get('text_subject'), $this->config->get('config_name'), $order_info['order_id']), ENT_QUOTES, 'UTF-8'));
-			$mail->setText($this->load->view('mail/order_alert', $data));
-			$mail->send();
-
-			// Send to additional alert emails
-			$emails = explode(',', $this->config->get('config_mail_alert_email'));
-
-			foreach ($emails as $email) {
-				$email = trim($email);
-				if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-					$mail->setTo($email);
-					$mail->send();
-				}
-			}
+			$this->AdminNotifier->notifyOrderAlert($data);
 		}
 	}
 }

@@ -23,7 +23,16 @@ class ControllerAccountRegister extends Controller {
 		$this->load->model('account/customer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$customer_id = $this->model_account_customer->addCustomer($this->request->post);
+			$post = $this->request->post;
+			$wholesale_gid = (int)$this->config->get('config_wholesale_customer_group_id');
+
+			if ($this->isWholesalePost() && $wholesale_gid > 0) {
+				$post['customer_group_id'] = $wholesale_gid;
+			} elseif (!$this->isWholesalePost() && $wholesale_gid > 0 && isset($post['customer_group_id']) && (int)$post['customer_group_id'] === $wholesale_gid) {
+				unset($post['customer_group_id']);
+			}
+
+			$customer_id = $this->model_account_customer->addCustomer($post);
 
 			if ($this->isWholesalePost()) {
 				$this->load->model('account/company');
@@ -146,6 +155,8 @@ class ControllerAccountRegister extends Controller {
 
 		if (isset($this->request->post['customer_group_id'])) {
 			$data['customer_group_id'] = $this->request->post['customer_group_id'];
+		} elseif ($this->getCustomerTypeForForm() === 'wholesale' && (int)$this->config->get('config_wholesale_customer_group_id') > 0) {
+			$data['customer_group_id'] = (int)$this->config->get('config_wholesale_customer_group_id');
 		} else {
 			$data['customer_group_id'] = $this->config->get('config_customer_group_id');
 		}
@@ -295,7 +306,9 @@ class ControllerAccountRegister extends Controller {
 			$this->error['warning'] = $this->language->get('error_exists');
 		}
 
-		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+		$telephone_digits = preg_replace('/\D/', '', (string)$this->request->post['telephone']);
+
+		if (!preg_match('/^\d{11}$/', $telephone_digits)) {
 			$this->error['telephone'] = $this->language->get('error_telephone');
 		}
 
@@ -311,12 +324,7 @@ class ControllerAccountRegister extends Controller {
 			}
 		}
 
-		// Customer Group
-		if (isset($this->request->post['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->post['customer_group_id'], $this->config->get('config_customer_group_display'))) {
-			$customer_group_id = $this->request->post['customer_group_id'];
-		} else {
-			$customer_group_id = $this->config->get('config_customer_group_id');
-		}
+		$customer_group_id = $this->getRegistrationCustomerGroupId();
 
 		// Custom field validation
 		$this->load->model('account/custom_field');
@@ -369,12 +377,7 @@ class ControllerAccountRegister extends Controller {
 
 		$this->load->model('account/custom_field');
 
-		// Customer Group
-		if (isset($this->request->get['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->get['customer_group_id'], $this->config->get('config_customer_group_display'))) {
-			$customer_group_id = $this->request->get['customer_group_id'];
-		} else {
-			$customer_group_id = $this->config->get('config_customer_group_id');
-		}
+		$customer_group_id = $this->getCustomfieldCustomerGroupId();
 
 		$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
 
@@ -403,5 +406,42 @@ class ControllerAccountRegister extends Controller {
 
 	private function isWholesalePost() {
 		return isset($this->request->post['customer_type']) && $this->request->post['customer_type'] === 'wholesale';
+	}
+
+	private function getRegistrationCustomerGroupId() {
+		$wholesale_gid = (int)$this->config->get('config_wholesale_customer_group_id');
+
+		if ($this->isWholesalePost() && $wholesale_gid > 0) {
+			$this->load->model('account/customer_group');
+
+			if ($this->model_account_customer_group->getCustomerGroup($wholesale_gid)) {
+				return $wholesale_gid;
+			}
+		}
+
+		if (isset($this->request->post['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->post['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+			return (int)$this->request->post['customer_group_id'];
+		}
+
+		return (int)$this->config->get('config_customer_group_id');
+	}
+
+	private function getCustomfieldCustomerGroupId() {
+		$wholesale_gid = (int)$this->config->get('config_wholesale_customer_group_id');
+		$is_wholesale = isset($this->request->get['customer_type']) && $this->request->get['customer_type'] === 'wholesale';
+
+		if ($is_wholesale && $wholesale_gid > 0) {
+			$this->load->model('account/customer_group');
+
+			if ($this->model_account_customer_group->getCustomerGroup($wholesale_gid)) {
+				return $wholesale_gid;
+			}
+		}
+
+		if (isset($this->request->get['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->get['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+			return (int)$this->request->get['customer_group_id'];
+		}
+
+		return (int)$this->config->get('config_customer_group_id');
 	}
 }

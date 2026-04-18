@@ -1,10 +1,17 @@
 <?php
 class ModelAccountCustomer extends Model {
 	public function addCustomer($data) {
-		if (isset($data['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($data['customer_group_id'], $this->config->get('config_customer_group_display'))) {
+		$customer_group_id = $this->config->get('config_customer_group_id');
+		$config_wholesale = (int)$this->config->get('config_wholesale_customer_group_id');
+
+		if ($config_wholesale > 0 && isset($data['customer_group_id']) && (int)$data['customer_group_id'] === $config_wholesale) {
+			$this->load->model('account/customer_group');
+
+			if ($this->model_account_customer_group->getCustomerGroup($config_wholesale)) {
+				$customer_group_id = $config_wholesale;
+			}
+		} elseif (isset($data['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($data['customer_group_id'], $this->config->get('config_customer_group_display'))) {
 			$customer_group_id = $data['customer_group_id'];
-		} else {
-			$customer_group_id = $this->config->get('config_customer_group_id');
 		}
 
 		$this->load->model('account/customer_group');

@@ -1,3 +1,22 @@
+{% if wholesale %}
+{{ text_wholesale_welcome }}
+
+{% if not approval %}
+{{ text_login }}
+
+{{ login }}
+
+{{ text_thanks }}
+{{ store }}
+{% else %}
+{{ text_approval }}
+
+{{ login }}
+
+{{ text_thanks }}
+{{ store }}
+{% endif %}
+{% else %}
 {{ text_welcome }}
 
 {% if not approval %}
@@ -16,4 +35,5 @@
 
 {{ text_thanks }}
 {{ store }}
+{% endif %}
 {% endif %}

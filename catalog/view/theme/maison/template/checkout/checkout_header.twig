@@ -1,32 +1,35 @@
 <style>
-    /* Скрываем стандартную фиксированную шапку Maison на странице корзины */
-    header.fixed.top-0.left-0.right-0 {
-        display: none;
+    /* Скрываем основную фиксированную шапку Maison (порядок utility-классов в билде может отличаться) */
+    #app-root > header.fixed {
+        display: none !important;
     }
+    html,
     body {
+        margin: 0 !important;
         padding-top: 0 !important;
     }
 </style>
 
-    <header class="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
+    <header class="fixed top-0 left-0 right-0 z-[55] bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300 shadow-sm w-full">
         <div class="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
-            <div class="flex items-center gap-6 lg:gap-12">
-                <a href="{{ continue }}" class="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-luxury-charcoal transition-colors group">
+            <div class="flex items-center gap-6 lg:gap-12 min-w-0">
+                <a href="{{ continue }}" class="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-luxury-charcoal transition-colors group shrink-0">
                     <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
                     <span class="hidden sm:inline">{{ button_shopping }}</span>
                 </a>
-                <div class="flex items-center gap-3 text-luxury-charcoal">
-                    <div class="size-12 flex items-center justify-center text-primary group-hover:text-primary-dark transition-all">
-                        <img src="catalog/view/theme/maison/image/logo.png" alt="Maison Textile" class="">
-                    </div>
-                    <h2 class="text-lg lg:text-2xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison Textile</h2>
-                </div>
+                <a href="{{ home }}" class="flex min-w-0 items-center gap-3 text-luxury-charcoal no-underline hover:opacity-90 transition-opacity">
+                    <span class="size-12 shrink-0 flex items-center justify-center text-primary">
+                        <img src="catalog/view/theme/maison/image/logo.png" alt="Maison Textile" width="48" height="48" class="block max-h-10 w-auto object-contain">
+                    </span>
+                    <h2 class="m-0 text-lg lg:text-2xl font-serif font-bold tracking-wide text-luxury-charcoal leading-none">Maison Textile</h2>
+                </a>
             </div>
-            <div>
-                <a href="tel:{{ telephone is defined and telephone ? telephone : '88005553535' }}" class="flex items-center gap-2 border border-gray-200 hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white px-4 py-2.5 rounded-full transition-all duration-300 group">
-                    <span class="material-symbols-outlined text-[18px]">call</span>
-                    <span class="text-xs font-bold uppercase tracking-widest hidden sm:inline">{{ text_call_order is defined ? text_call_order : 'Заказать по телефону' }}</span>
+            <div class="shrink-0">
+                <a href="tel:{{ telephone is defined and telephone ? telephone : '88005553535' }}" class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-gray-600 no-underline transition-all duration-300 hover:border-luxury-charcoal hover:bg-luxury-charcoal hover:text-white group">
+                    <span class="material-symbols-outlined text-[18px] text-gray-600 group-hover:text-white">call</span>
+                    <span class="hidden sm:inline">{{ text_call_order is defined ? text_call_order : 'Заказать по телефону' }}</span>
                 </a>
             </div>
         </div>
     </header>
+    <div class="h-20 w-full shrink-0" aria-hidden="true"></div>

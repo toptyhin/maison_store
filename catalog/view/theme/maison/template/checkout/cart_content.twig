@@ -37,7 +37,6 @@
                             <div class="flex flex-col md:flex-row justify-between items-start mb-4 relative z-10">
                                 <div>
                                     <h2 class="text-lg font-serif font-bold text-luxury-charcoal">{{ text_discount }}</h2>
-                                    <p class="text-sm text-gray-500 mt-1">Текущая скидка: <span class="font-bold text-primary text-lg">{{ current_discount }}%</span></p>
                                 </div>
                                 {% if text_discount_progress %}
                                     <p class="text-sm font-medium text-luxury-charcoal bg-gray-50 px-3 py-1.5 rounded-md border border-gray-100 mt-2 md:mt-0">
@@ -45,20 +44,39 @@
                                     </p>
                                 {% endif %}
                             </div>
-                            <div class="relative w-full h-8 bg-gray-100 rounded-full mt-6 mb-2 overflow-hidden">
-                                <div class="absolute top-0 left-0 z-10 h-full bg-positive-green bg-green-500 rounded-full transition-all duration-500 ease-out" style="width: {{ discount_progress_percent }}%;">
-                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
-                                </div>
+                            {% set p = discount_progress_percent %}
+                            {% set n_tiers = discount_tiers|length %}
+                            {% set tier_width_pct = n_tiers > 0 ? (100 / n_tiers) : 100 %}
+                            {% set next_tier_idx = -1 %}
+                            {% for tier in discount_tiers %}
+                                {% if next_tier_idx < 0 and sub_total_value < tier.threshold %}
+                                    {% set next_tier_idx = loop.index0 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% set seg_left = (next_tier_idx >= 0 and n_tiers > 0) ? (100 * next_tier_idx / n_tiers) : 0 %}
+                            {% set green1_w = next_tier_idx < 0 ? p : min(p, seg_left) %}
+                            {% set yellow_w = (next_tier_idx >= 0 and p > seg_left) ? (p - seg_left) : 0 %}
+                            <div class="relative w-full h-8 bg-gray-100 rounded-full mt-2 mb-2 overflow-hidden">
+                                {% if green1_w > 0 %}
+                                    <div class="absolute top-0 left-0 z-10 h-full bg-positive-green bg-green-500 transition-all duration-500 ease-out" style="width: {{ green1_w }}%;">
+                                        <div class="absolute inset-0 bg-white/20 animate-pulse pointer-events-none"></div>
+                                    </div>
+                                {% endif %}
+                                {% if yellow_w > 0 %}
+                                    <div class="absolute top-0 left-0 z-10 h-full transition-all duration-500 ease-out" style="left: {{ seg_left }}%; width: {{ yellow_w }}%; background-color: #EAB308; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);">
+                                        <div class="absolute inset-0 bg-white/10 pointer-events-none"></div>
+                                    </div>
+                                {% endif %}
                                 <div class="absolute top-0 left-0 z-20 w-full h-full flex justify-between items-center px-2 text-xs font-bold text-gray-500 pointer-events-none">
-                                    {% set tier_width = discount_tiers|length > 0 ? (100 / discount_tiers|length) : 100 %}
                                     {% for tier in discount_tiers %}
-                                        <div class="relative h-full flex items-center justify-center transition-colors duration-500 {{ not loop.last ? 'border-r border-white/50' : '' }}" style="width: {{ tier_width }}%;">
+                                        <div class="relative h-full flex items-center justify-center transition-colors duration-500 {{ not loop.last ? 'border-r border-white/50' : '' }}" style="width: {{ tier_width_pct }}%;">
                                             <span class="relative z-10 transition-colors duration-500 {{ sub_total_value >= tier.threshold ? 'mix-blend-screen text-white' : 'mix-blend-multiply text-gray-400' }}">{{ tier.percent }}%</span>
                                             <span class="absolute bottom-full mb-2 text-[10px] {{ sub_total_value >= tier.threshold ? 'text-luxury-charcoal font-bold' : 'text-gray-400 font-normal' }} whitespace-nowrap">{{ tier.threshold_text }}</span>
                                         </div>
                                     {% endfor %}
                                 </div>
                             </div>
+                            <p class="text-sm text-gray-500 mt-1 relative z-10">Текущая скидка: <span class="font-bold text-primary text-lg">{{ current_discount }}%</span></p>
                         </div>
                     {% endif %}
 
