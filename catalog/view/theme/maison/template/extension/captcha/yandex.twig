@@ -1,0 +1,8 @@
+<script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+<div class="space-y-2">
+  <span class="block text-xs font-bold uppercase tracking-widest text-gray-500">{{ entry_captcha }}</span>
+  <div class="smart-captcha min-h-[65px]" data-sitekey="{{ site_key }}"></div>
+  {% if error_captcha %}
+    <p class="text-red-600 text-xs mt-1">{{ error_captcha }}</p>
+  {% endif %}
+</div>

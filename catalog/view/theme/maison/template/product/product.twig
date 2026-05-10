@@ -1246,7 +1246,14 @@ function handleReviewSubmit(e) {
 	}).then(function(res) { return res.json(); }).then(function(json) {
 		if (submitBtn) submitBtn.disabled = false;
 		if (json.error) {
+			var capErr = document.getElementById('review-captcha-error');
+			if (document.getElementById('review-captcha-wrap') && capErr) {
+				showError(capErr, typeof json.error === 'string' ? json.error : '');
+			}
 			showResultPopup(json.error, false);
+			if (window.smartCaptcha && typeof window.smartCaptcha.reset === 'function') {
+				try { window.smartCaptcha.reset(); } catch (e) {}
+			}
 			return;
 		}
 		if (json.success) {
@@ -1270,6 +1277,53 @@ function handleReviewSubmit(e) {
 	});
 }
 
+function whenSmartCaptchaReady(callback, attemptsLeft) {
+	attemptsLeft = typeof attemptsLeft === 'number' ? attemptsLeft : 50;
+	if (window.smartCaptcha) {
+		callback();
+		return;
+	}
+	if (attemptsLeft <= 0) {
+		return;
+	}
+	setTimeout(function() {
+		whenSmartCaptchaReady(callback, attemptsLeft - 1);
+	}, 50);
+}
+
+function refreshReviewModalSmartCaptcha() {
+	var wrap = document.getElementById('review-captcha-wrap');
+	if (!wrap || !window.smartCaptcha) {
+		return;
+	}
+	var host = wrap.querySelector('.smart-captcha');
+	if (!host) {
+		return;
+	}
+	var sitekey = host.getAttribute('data-sitekey');
+	if (!sitekey) {
+		return;
+	}
+	var hasFrame = !!host.querySelector('iframe');
+	try {
+		if (hasFrame && typeof window.smartCaptcha.reset === 'function') {
+			window.smartCaptcha.reset();
+			return;
+		}
+		if (host.getAttribute('data-maison-sc-rendered') === '1' && typeof window.smartCaptcha.reset === 'function') {
+			window.smartCaptcha.reset();
+			return;
+		}
+		if (!hasFrame && typeof window.smartCaptcha.render === 'function') {
+			window.smartCaptcha.render(host, {
+				sitekey: sitekey,
+				hl: (document.documentElement.getAttribute('lang') || 'ru').toLowerCase().indexOf('en') === 0 ? 'en' : 'ru'
+			});
+			host.setAttribute('data-maison-sc-rendered', '1');
+		}
+	} catch (e) {}
+}
+
 function toggleModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -1284,6 +1338,11 @@ function toggleModal(modalId) {
                 modal.classList.add('modal-show');
             });
         });
+        if (modalId === 'modal-review') {
+        	whenSmartCaptchaReady(function() {
+        		setTimeout(refreshReviewModalSmartCaptcha, 420);
+        	});
+        }
     } else {
         // Скрываем модальное окно
         modal.classList.remove('modal-show');

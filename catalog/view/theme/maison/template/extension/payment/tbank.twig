@@ -1,0 +1,25 @@
+{% if status == 'success' %}
+<div id="tbank-redirect-overlay" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.96);font-size:1.125rem;color:#111827;">
+	<span>{{ text_loading }}</span>
+</div>
+<form id="payment-existing-form" action="{{ url }}" method="get" aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+	{# GET без полей — отправка эквивалентна переходу на PaymentURL #}
+</form>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+	var form = document.getElementById('payment-existing-form');
+	if (form) {
+		form.submit();
+	}
+});
+</script>
+<noscript>
+	<div class="buttons" style="margin-top:1rem;">
+		<form action="{{ url }}" method="get">
+			<input type="submit" value="{{ text_submit }}" class="btn btn-primary"/>
+		</form>
+	</div>
+</noscript>
+{% else %}
+<div>{{ text_request_failed }}</div>
+{% endif %}

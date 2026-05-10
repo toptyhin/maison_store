@@ -1,0 +1,12 @@
+{% if status == 'success' %}
+    <form id="payment-existing-form" action="{{ url }}" method="get" class="form-horizontal">
+        <div class="buttons">
+            <div class="pull-right">
+                <input type="submit" value="{{ text_submit }}" id="button-confirm"
+                       data-loading-text="{{ text_loading }}" class="btn btn-primary"/>
+            </div>
+        </div>
+    </form>
+{% else %}
+    <div>{{ text_request_failed }}</div>
+{% endif %}

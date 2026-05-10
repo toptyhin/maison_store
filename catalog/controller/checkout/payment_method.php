@@ -175,6 +175,10 @@ class ControllerCheckoutPaymentMethod extends Controller {
 							$method['terms'] = 'Apple Pay, Google Pay, Visa, Mastercard';
 							$method['icon'] = 'credit_card';
 						}
+						if ($result['code'] == 'tbank') {
+							$method['terms'] = 'Оплата картой, СБП, T-Pay';
+							$method['icon'] = 'credit_card';
+						}
 						if ($result['code'] == 'bank_transfer') {
 							$method['terms'] = 'Для юридических лиц';
 							$method['icon'] = 'account_balance_wallet';

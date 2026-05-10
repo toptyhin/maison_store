@@ -1,0 +1,288 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-payment" data-toggle="tooltip" title="{{ button_save }}"
+                        class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i
+                            class="fa fa-reply"></i></a></div>
+            <h1><i class="fa fa-credit-card"></i> {{ heading_title }}</h1>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="panel-body">
+            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-payment"
+                  class="form-horizontal">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_settings }}</a></li>
+                    <li><a href="#tab-order-status" data-toggle="tab">{{ tab_order_status }}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-general">
+                        <div class="form-group required">
+                            <label class="col-sm-2 control-label" for="input-terminal">{{ text_terminal }}</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_tbank_terminal"
+                                       value="{{ payment_tbank_terminal }}"
+                                       placeholder="{{ text_terminal }}" id="input-terminal" class="form-control"/>
+                                {% if error_terminal %}
+                                    <div class="text-danger">{{ error_terminal }}</div>
+                                {% endif %} </div>
+                        </div>
+                        <div class="form-group required">
+                            <label class="col-sm-2 control-label" for="input-password">{{ text_password }}</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_tbank_password"
+                                       value="{{ payment_tbank_password }}"
+                                       placeholder="{{ text_password }}" id="input-password" class="form-control"/>
+                                {% if error_password %}
+                                    <div class="text-danger">{{ error_password }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"
+                                   for="input-enabled-taxation">{{ text_enabled_taxation }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_enabled_taxation" id="input-enabled-taxation"
+                                        class="form-control tbank-select-enabled-taxation">
+                                    <option value="0" {% if payment_tbank_enabled_taxation == 0 %} selected="selected" {% endif %}>{{ text_enabled_taxation_no }}</option>
+                                    <option value="1" {% if payment_tbank_enabled_taxation == 1 %} selected="selected" {% endif %}>{{ text_enabled_taxation_yes }}</option>
+                                </select>
+                                <span class="help-block">{{ text_enabled_taxation_desc }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group tbank-taxation">
+                            <label class="col-sm-2 control-label" for="input-email-company">{{ text_email_company }}</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_tbank_email_company"
+                                       value="{{ payment_tbank_email_company }}"
+                                       placeholder="{{ text_email_company }}" id="input-email_company" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group tbank-taxation">
+                            <label class="col-sm-2 control-label" for="input-taxation">{{ text_taxation }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_taxation" id="input-taxation" class="form-control">
+                                    {% for value, name in taxations %}
+                                        <option value="{{ value }}" {% if value == payment_tbank_taxation %} selected="selected" {% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <span class="help-block">{{ text_taxation_desc }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group tbank-taxation">
+                            <label class="col-sm-2 control-label" for="input-ffd">{{ ffd_1_2_version }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_ffd_12_v" class="form-control">
+                                    {% for value, name in ffd_version %}
+                                        <option value="{{ value }}" {% if value == payment_tbank_ffd_12_v %} selected="selected" {% endif %}> {{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <span class="help-block">{{ ffd_1_2_tips }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group tbank-taxation">
+                            <label class="col-sm-2 control-label" for="input-payment-method">{{ text_payment_method }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_method" id="input-payment-method" class="form-control">
+                                    {% for value, name in payment_method_list %}
+                                        <option value="{{ value }}" {% if value == payment_tbank_method %} selected="selected" {% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group tbank-taxation">
+                            <label class="col-sm-2 control-label" for="input-payment-object">{{ text_payment_object }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_object" id="input-payment-object" class="form-control">
+                                    {% for value, name in payment_object_list %}
+                                        <option value="{{ value }}" {% if value == payment_tbank_object %} selected="selected" {% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-status">{{ text_status }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_status" id="input-status" class="form-control">
+                                    {% if payment_tbank_status %}
+                                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                                        <option value="0">{{ text_disabled }}</option>
+                                    {% else %}
+                                        <option value="1">{{ text_enabled }}</option>
+                                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-language">{{ text_language }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_language" id="input-language" class="form-control">
+                                    {% if not payment_tbank_language %}
+                                        <option value="ru" selected="selected">{{ text_language_ru }}</option>
+                                        <option value="en">{{ text_language_en }}</option>
+                                    {% elseif payment_tbank_language == 'ru' %}
+                                        <option value="ru" selected="selected">{{ text_language_ru }}</option>
+                                        <option value="en">{{ text_language_en }}</option>
+                                    {% else %} 
+                                        <option value="ru">{{ text_language_ru }}</option>
+                                        <option value="en" selected="selected">{{ text_language_en }}</option> 
+                                    {% endif %}
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-status">{{ text_sort_order }}</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="payment_tbank_sort_order"
+                                       value="{{ payment_tbank_sort_order }}" placeholder="{{ text_sort_order }}"
+                                       id="input-sort-order" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab-order-status">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_authorized }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_authorized" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_authorized %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_confirmed }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_confirmed" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_confirmed %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_canceled }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_canceled" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_canceled %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_rejected }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_rejected" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_rejected %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_reversed }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_reversed" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_reversed %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ text_status_refunded }}</label>
+
+                            <div class="col-sm-10">
+                                <select name="payment_tbank_refunded" class="form-control">
+                                    {% for order_status in order_statuses %}
+                                        <option value="{{ order_status.order_status_id }}"
+                                                {% if order_status.order_status_id == payment_tbank_refunded %}
+                                            selected="selected"
+                                                {% endif %}>
+                                            {{ order_status.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var $enabledTaxation = $('.tbank-select-enabled-taxation');
+
+    toggleTBankTaxation();
+
+    function toggleTBankTaxation() {
+        var $taxation = $(".tbank-taxation");
+        if ($enabledTaxation.val() == 1) {
+            $taxation.removeClass('hidden');
+        }
+        else {
+            $taxation.addClass('hidden');
+        }
+    }
+
+    $enabledTaxation.on('change', function () {
+        toggleTBankTaxation();
+    });
+
+</script>
+
+{{ footer }}

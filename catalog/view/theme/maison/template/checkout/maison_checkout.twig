@@ -1030,7 +1030,7 @@
                     btn.disabled = false;
                     return;
                 }
-                const r5 = await fetch(baseUrl + 'checkout/maison_checkout/confirmOrder', { method: 'POST' }).then(res => res.json());
+                const r5 = await fetch(baseUrl + 'checkout/maison_checkout/prepareConfirm', { method: 'POST' }).then(res => res.json());
                 if (r5.redirect) window.location = r5.redirect;
                 else if (r5.error) {
                     showErrorInSection(document.getElementById('maison-confirm-section'), r5.error.warning || 'Ошибка подтверждения');

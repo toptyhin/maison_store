@@ -155,7 +155,9 @@
               <p class="text-red-500 text-xs mt-1.5">{{ error_enquiry }}</p>
             {% endif %}
           </div>
-          {{ captcha }}
+          {% if captcha %}
+            <div class="pt-1">{{ captcha }}</div>
+          {% endif %}
           {% if text_agree %}
             <div class="flex items-start gap-3">
               <input type="checkbox" name="agree" value="1" {% if agree %}checked{% endif %} class="mt-0.5 rounded-sm border-gray-300 text-luxury-charcoal focus:ring-luxury-charcoal/30 cursor-pointer" id="input-agree" />

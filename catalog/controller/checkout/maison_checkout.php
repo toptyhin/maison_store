@@ -548,9 +548,10 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 	}
 
 	/**
-	 * Подтверждение заказа. Создаёт и записывает заказ, перенаправляет на checkout/success.
+	 * Валидация сессии чекаута, при необходимости регистрация гостя; редирект на штатный checkout/confirm
+	 * (там создаётся заказ и подключается extension/payment/{code}).
 	 */
-	public function confirmOrder() {
+	public function prepareConfirm() {
 		$this->load->language('checkout/checkout');
 
 		$json = array();
@@ -583,23 +584,10 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 					$json['error']['warning'] = $error;
 				}
 			}
+		}
 
-			if (!$json) {
-				$order_id = $this->buildOrderDataAndAddOrder();
-				if ($order_id) {
-					if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] === 'bank_transfer') {
-						$this->load->language('extension/payment/bank_transfer');
-						$this->load->model('checkout/order');
-						$comment = $this->language->get('text_instruction') . "\n\n";
-						$comment .= $this->config->get('payment_bank_transfer_bank' . $this->config->get('config_language_id')) . "\n\n";
-						$comment .= $this->language->get('text_payment');
-						$this->model_checkout_order->addOrderHistory($order_id, 1, $comment, true);
-					}
-					$json['redirect'] = $this->url->link('checkout/success', '', true);
-				} else {
-					$json['error']['warning'] = $this->language->get('error_warning');
-				}
-			}
+		if (!$json) {
+			$json['redirect'] = $this->url->link('checkout/confirm', '', true);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -656,208 +644,6 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
-	}
-
-	/**
-	 * Собирает данные заказа из сессии и создаёт заказ.
-	 * @return int|false order_id или false при ошибке
-	 */
-	private function buildOrderDataAndAddOrder() {
-		if (!$this->cart->hasShipping()) {
-			unset($this->session->data['shipping_address']);
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-		}
-
-		$totals = array();
-		$taxes = $this->cart->getTaxes();
-		$total = 0;
-		$total_data = array(
-			'totals' => &$totals,
-			'taxes'  => &$taxes,
-			'total'  => &$total
-		);
-
-		$this->load->model('setting/extension');
-		$sort_order = array();
-		$results = $this->model_setting_extension->getExtensions('total');
-		foreach ($results as $key => $value) {
-			$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
-		}
-		array_multisort($sort_order, SORT_ASC, $results);
-		foreach ($results as $result) {
-			if ($this->config->get('total_' . $result['code'] . '_status')) {
-				$this->load->model('extension/total/' . $result['code']);
-				$this->{'model_extension_total_' . $result['code']}->getTotal($total_data);
-			}
-		}
-		$sort_order = array();
-		foreach ($totals as $key => $value) {
-			$sort_order[$key] = $value['sort_order'];
-		}
-		array_multisort($sort_order, SORT_ASC, $totals);
-
-		$order_data = array();
-		$order_data['totals'] = $totals;
-		$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
-		$order_data['store_id'] = $this->config->get('config_store_id');
-		$order_data['store_name'] = $this->config->get('config_name');
-		$order_data['store_url'] = $order_data['store_id'] ? $this->config->get('config_url') : ($this->request->server['HTTPS'] ? HTTPS_SERVER : HTTP_SERVER);
-
-		$this->load->model('account/customer');
-		if ($this->customer->isLogged()) {
-			$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
-			$order_data['customer_id'] = $this->customer->getId();
-			$order_data['customer_group_id'] = $customer_info['customer_group_id'];
-			$order_data['firstname'] = $customer_info['firstname'];
-			$order_data['lastname'] = $customer_info['lastname'];
-			$order_data['email'] = $customer_info['email'];
-			$order_data['telephone'] = $customer_info['telephone'];
-			$order_data['custom_field'] = json_decode($customer_info['custom_field'], true);
-		} elseif (isset($this->session->data['guest'])) {
-			$order_data['customer_id'] = 0;
-			$order_data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
-			$order_data['firstname'] = $this->session->data['guest']['firstname'];
-			$order_data['lastname'] = $this->session->data['guest']['lastname'];
-			$order_data['email'] = $this->session->data['guest']['email'];
-			$order_data['telephone'] = $this->session->data['guest']['telephone'];
-			$order_data['custom_field'] = isset($this->session->data['guest']['custom_field']) ? $this->session->data['guest']['custom_field'] : array();
-		} else {
-			return false;
-		}
-
-		$order_data['payment_firstname'] = $this->session->data['payment_address']['firstname'];
-		$order_data['payment_lastname'] = $this->session->data['payment_address']['lastname'];
-		$order_data['payment_company'] = isset($this->session->data['payment_address']['company']) ? $this->session->data['payment_address']['company'] : '';
-		$order_data['payment_address_1'] = $this->session->data['payment_address']['address_1'];
-		$order_data['payment_address_2'] = isset($this->session->data['payment_address']['address_2']) ? $this->session->data['payment_address']['address_2'] : '';
-		$order_data['payment_city'] = $this->session->data['payment_address']['city'];
-		$order_data['payment_postcode'] = isset($this->session->data['payment_address']['postcode']) ? $this->session->data['payment_address']['postcode'] : '';
-		$order_data['payment_zone'] = $this->session->data['payment_address']['zone'];
-		$order_data['payment_zone_id'] = $this->session->data['payment_address']['zone_id'];
-		$order_data['payment_country'] = $this->session->data['payment_address']['country'];
-		$order_data['payment_country_id'] = $this->session->data['payment_address']['country_id'];
-		$order_data['payment_address_format'] = isset($this->session->data['payment_address']['address_format']) ? $this->session->data['payment_address']['address_format'] : '';
-		$order_data['payment_custom_field'] = isset($this->session->data['payment_address']['custom_field']) ? $this->session->data['payment_address']['custom_field'] : array();
-		$order_data['payment_method'] = isset($this->session->data['payment_method']['title']) ? $this->session->data['payment_method']['title'] : '';
-		$order_data['payment_code'] = isset($this->session->data['payment_method']['code']) ? $this->session->data['payment_method']['code'] : '';
-
-		if ($this->cart->hasShipping()) {
-			$order_data['shipping_firstname'] = $this->session->data['shipping_address']['firstname'];
-			$order_data['shipping_lastname'] = $this->session->data['shipping_address']['lastname'];
-			$order_data['shipping_company'] = isset($this->session->data['shipping_address']['company']) ? $this->session->data['shipping_address']['company'] : '';
-			$order_data['shipping_address_1'] = $this->session->data['shipping_address']['address_1'];
-			$order_data['shipping_address_2'] = isset($this->session->data['shipping_address']['address_2']) ? $this->session->data['shipping_address']['address_2'] : '';
-			$order_data['shipping_city'] = $this->session->data['shipping_address']['city'];
-			$order_data['shipping_postcode'] = isset($this->session->data['shipping_address']['postcode']) ? $this->session->data['shipping_address']['postcode'] : '';
-			$order_data['shipping_zone'] = $this->session->data['shipping_address']['zone'];
-			$order_data['shipping_zone_id'] = $this->session->data['shipping_address']['zone_id'];
-			$order_data['shipping_country'] = $this->session->data['shipping_address']['country'];
-			$order_data['shipping_country_id'] = $this->session->data['shipping_address']['country_id'];
-			$order_data['shipping_address_format'] = isset($this->session->data['shipping_address']['address_format']) ? $this->session->data['shipping_address']['address_format'] : '';
-			$order_data['shipping_custom_field'] = isset($this->session->data['shipping_address']['custom_field']) ? $this->session->data['shipping_address']['custom_field'] : array();
-			$order_data['shipping_method'] = isset($this->session->data['shipping_method']['title']) ? $this->session->data['shipping_method']['title'] : '';
-			$order_data['shipping_code'] = isset($this->session->data['shipping_method']['code']) ? $this->session->data['shipping_method']['code'] : '';
-		} else {
-			$order_data['shipping_firstname'] = $order_data['shipping_lastname'] = $order_data['shipping_company'] = '';
-			$order_data['shipping_address_1'] = $order_data['shipping_address_2'] = $order_data['shipping_city'] = $order_data['shipping_postcode'] = '';
-			$order_data['shipping_zone'] = $order_data['shipping_zone_id'] = $order_data['shipping_country'] = $order_data['shipping_country_id'] = '';
-			$order_data['shipping_address_format'] = $order_data['shipping_custom_field'] = array();
-			$order_data['shipping_method'] = $order_data['shipping_code'] = '';
-		}
-
-		$order_data['products'] = array();
-		foreach ($this->cart->getProducts() as $product) {
-			$option_data = array();
-			foreach ($product['option'] as $option) {
-				$option_data[] = array(
-					'product_option_id'       => $option['product_option_id'],
-					'product_option_value_id' => $option['product_option_value_id'],
-					'option_id'               => $option['option_id'],
-					'option_value_id'         => $option['option_value_id'],
-					'name'                    => $option['name'],
-					'value'                   => $option['value'],
-					'type'                    => $option['type']
-				);
-			}
-			$order_data['products'][] = array(
-				'product_id' => $product['product_id'],
-				'name'       => $product['name'],
-				'model'      => $product['model'],
-				'option'     => $option_data,
-				'download'   => $product['download'],
-				'quantity'   => $product['quantity'],
-				'subtract'   => $product['subtract'],
-				'price'      => $product['price'],
-				'total'      => $product['total'],
-				'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
-				'reward'     => $product['reward']
-			);
-		}
-
-		$order_data['vouchers'] = array();
-		if (!empty($this->session->data['vouchers'])) {
-			foreach ($this->session->data['vouchers'] as $voucher) {
-				$order_data['vouchers'][] = array(
-					'description'      => $voucher['description'],
-					'code'             => token(10),
-					'to_name'          => $voucher['to_name'],
-					'to_email'         => $voucher['to_email'],
-					'from_name'        => $voucher['from_name'],
-					'from_email'       => $voucher['from_email'],
-					'voucher_theme_id' => $voucher['voucher_theme_id'],
-					'message'          => $voucher['message'],
-					'amount'           => $voucher['amount']
-				);
-			}
-		}
-
-		$order_data['comment'] = isset($this->session->data['comment']) ? $this->session->data['comment'] : '';
-		if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] === 'bank_transfer' && !empty($this->session->data['ur_lic'])) {
-			$ur = $this->session->data['ur_lic'];
-			$order_data['comment'] .= "\n\n--- Реквизиты для счёта ---\n";
-			if (!empty($ur['company'])) $order_data['comment'] .= "Организация: " . $ur['company'] . "\n";
-			if (!empty($ur['inn'])) $order_data['comment'] .= "ИНН: " . $ur['inn'] . "\n";
-			if (!empty($ur['kpp'])) $order_data['comment'] .= "КПП: " . $ur['kpp'] . "\n";
-			if (!empty($ur['address'])) $order_data['comment'] .= "Юр. адрес: " . $ur['address'] . "\n";
-			if (!empty($ur['bank'])) $order_data['comment'] .= "Банк: " . $ur['bank'] . "\n";
-			if (!empty($ur['bik'])) $order_data['comment'] .= "БИК: " . $ur['bik'] . "\n";
-			if (!empty($ur['rs'])) $order_data['comment'] .= "Р/с: " . $ur['rs'] . "\n";
-			if (!empty($ur['ks'])) $order_data['comment'] .= "К/с: " . $ur['ks'] . "\n";
-		}
-		$order_data['total'] = $total;
-
-		if (isset($this->request->cookie['tracking'])) {
-			$order_data['tracking'] = $this->request->cookie['tracking'];
-			$subtotal = $this->cart->getSubTotal();
-			$affiliate_info = $this->model_account_customer->getAffiliateByTracking($this->request->cookie['tracking']);
-			$order_data['affiliate_id'] = $affiliate_info ? $affiliate_info['customer_id'] : 0;
-			$order_data['commission'] = $affiliate_info ? ($subtotal / 100) * $affiliate_info['commission'] : 0;
-			$this->load->model('checkout/marketing');
-			$marketing_info = $this->model_checkout_marketing->getMarketingByCode($this->request->cookie['tracking']);
-			$order_data['marketing_id'] = $marketing_info ? $marketing_info['marketing_id'] : 0;
-		} else {
-			$order_data['affiliate_id'] = 0;
-			$order_data['commission'] = 0;
-			$order_data['marketing_id'] = 0;
-			$order_data['tracking'] = '';
-		}
-
-		$order_data['language_id'] = $this->config->get('config_language_id');
-		$order_data['currency_id'] = $this->currency->getId($this->session->data['currency']);
-		$order_data['currency_code'] = $this->session->data['currency'];
-		$order_data['currency_value'] = $this->currency->getValue($this->session->data['currency']);
-		$order_data['ip'] = $this->request->server['REMOTE_ADDR'];
-		$order_data['forwarded_ip'] = !empty($this->request->server['HTTP_X_FORWARDED_FOR']) ? $this->request->server['HTTP_X_FORWARDED_FOR'] : (!empty($this->request->server['HTTP_CLIENT_IP']) ? $this->request->server['HTTP_CLIENT_IP'] : '');
-		$order_data['user_agent'] = isset($this->request->server['HTTP_USER_AGENT']) ? $this->request->server['HTTP_USER_AGENT'] : '';
-		$order_data['accept_language'] = isset($this->request->server['HTTP_ACCEPT_LANGUAGE']) ? $this->request->server['HTTP_ACCEPT_LANGUAGE'] : '';
-
-
-	
-		$this->load->model('checkout/order');
-		$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
-
-		return $this->session->data['order_id'];
 	}
 
 	/**
