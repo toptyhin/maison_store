@@ -266,6 +266,12 @@ class ControllerCatalogOption extends Controller {
 			$data['error_option_value'] = array();
 		}
 
+		if (isset($this->error['option_custom_field_key'])) {
+			$data['error_option_custom_field_key'] = $this->error['option_custom_field_key'];
+		} else {
+			$data['error_option_custom_field_key'] = array();
+		}
+
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -366,6 +372,18 @@ class ControllerCatalogOption extends Controller {
 
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 
+		if (isset($this->request->post['option_custom_field_key'])) {
+			$data['option_custom_field_keys'] = $this->request->post['option_custom_field_key'];
+		} elseif (isset($this->request->get['option_id'])) {
+			$data['option_custom_field_keys'] = $this->model_catalog_option->getOptionCustomFieldKeys($this->request->get['option_id']);
+		} else {
+			$data['option_custom_field_keys'] = array();
+		}
+
+		$data['system_field_keys'] = $this->model_catalog_option->getSystemFieldKeys();
+		$data['show_custom_field_keys'] = in_array($data['type'], array('select', 'radio', 'checkbox', 'image'), true);
+		$data['option_custom_field_key_row'] = count($data['option_custom_field_keys']);
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -394,6 +412,26 @@ class ControllerCatalogOption extends Controller {
 					if ((utf8_strlen($option_value_description['name']) < 1) || (utf8_strlen($option_value_description['name']) > 128)) {
 						$this->error['option_value'][$option_value_id][$language_id] = $this->language->get('error_option_value');
 					}
+				}
+			}
+		}
+
+		if (isset($this->request->post['option_custom_field_key']) && is_array($this->request->post['option_custom_field_key'])) {
+			$seen_keys = array();
+
+			foreach ($this->request->post['option_custom_field_key'] as $row_index => $row) {
+				if (empty($row['field_key'])) {
+					continue;
+				}
+
+				$field_key = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($row['field_key'])));
+
+				if ($field_key === '') {
+					$this->error['option_custom_field_key'][$row_index] = $this->language->get('error_custom_field_key');
+				} elseif (isset($seen_keys[$field_key])) {
+					$this->error['option_custom_field_key'][$row_index] = $this->language->get('error_custom_field_key_duplicate');
+				} else {
+					$seen_keys[$field_key] = true;
 				}
 			}
 		}
@@ -485,11 +523,12 @@ class ControllerCatalogOption extends Controller {
 				}
 
 				$json[] = array(
-					'option_id'    => $option['option_id'],
-					'name'         => strip_tags(html_entity_decode($option['name'], ENT_QUOTES, 'UTF-8')),
-					'category'     => $type,
-					'type'         => $option['type'],
-					'option_value' => $option_value_data
+					'option_id'         => $option['option_id'],
+					'name'              => strip_tags(html_entity_decode($option['name'], ENT_QUOTES, 'UTF-8')),
+					'category'          => $type,
+					'type'              => $option['type'],
+					'option_value'      => $option_value_data,
+					'custom_field_keys' => $this->model_catalog_option->getOptionCustomFieldKeys($option['option_id'])
 				);
 			}
 		}

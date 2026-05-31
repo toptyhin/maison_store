@@ -155,6 +155,63 @@
 							</tfoot>
 						</table>
 					</fieldset>
+					<fieldset id="option-custom-field-keys"{% if not show_custom_field_keys %} style="display: none;"{% endif %}>
+						<legend>{{ text_custom_field_keys }}</legend>
+						<p class="help-block">{{ help_custom_field_keys }}</p>
+						<datalist id="option-cf-system-keys">
+							{% for field_key in system_field_keys %}
+							<option value="{{ field_key }}"></option>
+							{% endfor %}
+						</datalist>
+						<table id="option-custom-field-key" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<td class="text-left required">{{ entry_custom_field_key }}</td>
+									<td class="text-left">{{ entry_custom_field_name }}</td>
+									<td class="text-center">{{ entry_custom_field_required }}</td>
+									<td class="text-right">{{ entry_sort_order }}</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody>
+								{% set option_custom_field_key_row = 0 %}
+								{% for option_custom_field_key in option_custom_field_keys %}
+									<tr id="option-custom-field-key-row{{ option_custom_field_key_row }}">
+										<td class="text-left">
+											<input type="text" name="option_custom_field_key[{{ option_custom_field_key_row }}][field_key]" value="{{ option_custom_field_key.field_key }}" list="option-cf-system-keys" placeholder="{{ entry_custom_field_key_placeholder }}" class="form-control" autocomplete="off" />
+											{% if error_option_custom_field_key[option_custom_field_key_row] %}
+												<div class="text-danger">{{ error_option_custom_field_key[option_custom_field_key_row] }}</div>
+											{% endif %}
+										</td>
+										<td class="text-left">
+											<input type="text" name="option_custom_field_key[{{ option_custom_field_key_row }}][name]" value="{{ option_custom_field_key.name }}" placeholder="{{ entry_custom_field_name }}" class="form-control" />
+										</td>
+										<td class="text-center">
+											<label class="checkbox-inline">
+												<input type="checkbox" name="option_custom_field_key[{{ option_custom_field_key_row }}][required]" value="1"{% if option_custom_field_key.required %} checked="checked"{% endif %} />
+												{{ text_yes }}
+											</label>
+										</td>
+										<td class="text-right">
+											<input type="text" name="option_custom_field_key[{{ option_custom_field_key_row }}][sort_order]" value="{{ option_custom_field_key.sort_order }}" class="form-control" />
+										</td>
+										<td class="text-right">
+											<button type="button" onclick="$('#option-custom-field-key-row{{ option_custom_field_key_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+										</td>
+									</tr>
+									{% set option_custom_field_key_row = option_custom_field_key_row + 1 %}
+								{% endfor %}
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="4"></td>
+									<td class="text-right">
+										<button type="button" onclick="addOptionCustomFieldKey();" data-toggle="tooltip" title="{{ button_custom_field_key_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</fieldset>
 				</form>
 			</div>
 		</div>
@@ -163,14 +220,31 @@
 		$('select[name=\'type\']').on('change', function() {
 			if (this.value == 'select' || this.value == 'radio' || this.value == 'checkbox' || this.value == 'image') {
 				$('#option-value').parent().show();
+				$('#option-custom-field-keys').show();
 			} else {
 				$('#option-value').parent().hide();
+				$('#option-custom-field-keys').hide();
 			}
 		});
 
 		$('select[name=\'type\']').trigger('change');
 
 		var option_value_row = {{ option_value_row }};
+		var option_custom_field_key_row = {{ option_custom_field_key_row }};
+
+		function addOptionCustomFieldKey() {
+			html  = '<tr id="option-custom-field-key-row' + option_custom_field_key_row + '">';
+			html += '  <td class="text-left"><input type="text" name="option_custom_field_key[' + option_custom_field_key_row + '][field_key]" value="" list="option-cf-system-keys" placeholder="{{ entry_custom_field_key_placeholder }}" class="form-control" autocomplete="off" /></td>';
+			html += '  <td class="text-left"><input type="text" name="option_custom_field_key[' + option_custom_field_key_row + '][name]" value="" placeholder="{{ entry_custom_field_name }}" class="form-control" /></td>';
+			html += '  <td class="text-center"><label class="checkbox-inline"><input type="checkbox" name="option_custom_field_key[' + option_custom_field_key_row + '][required]" value="1" /> {{ text_yes }}</label></td>';
+			html += '  <td class="text-right"><input type="text" name="option_custom_field_key[' + option_custom_field_key_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
+			html += '  <td class="text-right"><button type="button" onclick="$(\'#option-custom-field-key-row' + option_custom_field_key_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+			html += '</tr>';
+
+			$('#option-custom-field-key tbody').append(html);
+
+			option_custom_field_key_row++;
+		}
 
 		function addOptionValue() {
 			html  = '<tr id="option-value-row' + option_value_row + '">';

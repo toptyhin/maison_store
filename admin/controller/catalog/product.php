@@ -1380,6 +1380,7 @@ class ControllerCatalogProduct extends Controller {
 				$this->load->model('tool/image');
 				foreach ($product_option['product_option_value'] as $product_option_value) {
 					$custom_fields = isset($product_option_value['custom_fields']) ? $product_option_value['custom_fields'] : array();
+					$custom_fields = $this->mergeRequiredOptionCustomFields($custom_fields, $product_option['option_id']);
 					foreach ($custom_fields as &$field) {
 						if (isset($field['key']) && $field['key'] == 'images' && !empty($field['value'])) {
 							$field['thumb'] = $this->model_tool_image->resize($field['value'], 100, 100);
@@ -1425,7 +1426,25 @@ class ControllerCatalogProduct extends Controller {
 			}
 		}
 
-		$data['option_custom_field_keys'] = array('pillow_size', 'sheet_size', 'code', 'images');
+		$data['option_custom_field_keys_by_option'] = array();
+
+		foreach ($data['product_options'] as $product_option) {
+			if (!in_array($product_option['type'], array('select', 'radio', 'checkbox', 'image'), true)) {
+				continue;
+			}
+
+			$option_id = (int)$product_option['option_id'];
+
+			if (!isset($data['option_custom_field_keys_by_option'][$option_id])) {
+				$data['option_custom_field_keys_by_option'][$option_id] = $this->model_catalog_option->getOptionCustomFieldKeys($option_id);
+			}
+		}
+
+		if ($data['option_custom_field_keys_by_option']) {
+			$data['option_custom_field_keys_by_option_json'] = json_encode($data['option_custom_field_keys_by_option'], JSON_UNESCAPED_UNICODE);
+		} else {
+			$data['option_custom_field_keys_by_option_json'] = '{}';
+		}
 
 		$this->load->model('customer/customer_group');
 
@@ -1622,6 +1641,8 @@ class ControllerCatalogProduct extends Controller {
 		$this->load->model('design/layout');
 
 		$data['layouts'] = $this->model_design_layout->getLayouts();
+
+		$data['product_options_editor_json'] = json_encode($this->buildProductOptionsEditorConfig($data), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -1846,5 +1867,93 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+	protected function buildProductOptionsEditorConfig($data) {
+		$customer_groups = array();
+
+		foreach ($data['customer_groups'] as $customer_group) {
+			$customer_groups[] = array(
+				'id'   => (int)$customer_group['customer_group_id'],
+				'name' => $customer_group['name']
+			);
+		}
+
+		$option_value_row = 0;
+
+		foreach ($data['product_options'] as $product_option) {
+			if (!in_array($product_option['type'], array('select', 'radio', 'checkbox', 'image'), true)) {
+				continue;
+			}
+
+			if (!empty($product_option['product_option_value'])) {
+				$option_value_row += count($product_option['product_option_value']);
+			}
+		}
+
+		return array(
+			'option_row'                   => count($data['product_options']),
+			'option_value_row'             => $option_value_row,
+			'default_customer_group_id'    => (int)$this->config->get('config_customer_group_id'),
+			'customer_groups'              => $customer_groups,
+			'option_custom_field_keys_by_option' => isset($data['option_custom_field_keys_by_option']) ? $data['option_custom_field_keys_by_option'] : array(),
+			'option_values'                => isset($data['option_values']) ? $data['option_values'] : array(),
+			'product_options'              => $data['product_options'],
+			'placeholder'                  => isset($data['placeholder']) ? $data['placeholder'] : '',
+			'user_token'                   => $this->session->data['user_token'],
+			'labels'                       => array(
+				'entry_option_value'        => $this->language->get('entry_option_value'),
+				'entry_quantity'            => $this->language->get('entry_quantity'),
+				'entry_subtract'            => $this->language->get('entry_subtract'),
+				'entry_price'               => $this->language->get('entry_price'),
+				'entry_option_group_prices' => $this->language->get('entry_option_group_prices'),
+				'entry_option_points'       => $this->language->get('entry_option_points'),
+				'entry_points'              => $this->language->get('entry_points'),
+				'entry_weight'              => $this->language->get('entry_weight'),
+				'entry_option_custom_fields' => $this->language->get('entry_option_custom_fields'),
+				'entry_option_field_key'    => $this->language->get('entry_option_field_key'),
+				'entry_option_field_value'  => $this->language->get('entry_option_field_value'),
+				'entry_option_field_add'    => $this->language->get('entry_option_field_add'),
+				'entry_customer_group'      => $this->language->get('entry_customer_group'),
+				'entry_special'             => $this->language->get('entry_special'),
+				'entry_required'            => $this->language->get('entry_required'),
+				'text_yes'                  => $this->language->get('text_yes'),
+				'text_no'                   => $this->language->get('text_no'),
+				'button_remove'             => $this->language->get('button_remove'),
+				'button_option_value_add'   => $this->language->get('button_option_value_add'),
+				'button_option_field_add'   => $this->language->get('button_option_field_add'),
+			)
+		);
+	}
+
+	protected function mergeRequiredOptionCustomFields($custom_fields, $option_id) {
+		if (!is_array($custom_fields)) {
+			$custom_fields = array();
+		}
+
+		$configured = $this->model_catalog_option->getOptionCustomFieldKeys((int)$option_id);
+
+		if (!$configured) {
+			return $custom_fields;
+		}
+
+		$existing_keys = array();
+
+		foreach ($custom_fields as $field) {
+			if (!empty($field['key'])) {
+				$existing_keys[$field['key']] = true;
+			}
+		}
+
+		foreach ($configured as $cfg) {
+			if (!empty($cfg['required']) && empty($existing_keys[$cfg['field_key']])) {
+				$custom_fields[] = array(
+					'key'   => $cfg['field_key'],
+					'value' => ''
+				);
+			}
+		}
+
+		return $custom_fields;
 	}
 }

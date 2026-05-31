@@ -20,6 +20,17 @@ $_['text_datetime']      = 'Date &amp; Time';
 $_['text_time']          = 'Time';
 $_['text_option']        = 'Option';
 $_['text_value']         = 'Option Values';
+$_['text_custom_field_keys'] = 'Custom fields';
+$_['text_yes']           = 'Yes';
+$_['text_select']        = '--- Please Select ---';
+$_['entry_custom_field_key'] = 'Key';
+$_['entry_custom_field_key_placeholder'] = 'sheet_size or new key';
+$_['entry_custom_field_name'] = 'Title';
+$_['entry_custom_field_required'] = 'Required in product editor';
+$_['button_custom_field_key_add'] = 'Add key';
+$_['help_custom_field_keys'] = 'Key: pick from suggestions or type a new one (letters, digits, underscores). Title — label on the product form.';
+$_['error_custom_field_key'] = 'Invalid key.';
+$_['error_custom_field_key_duplicate'] = 'This key is already in the list.';
 
 // Column
 $_['column_name']        = 'Option Name';

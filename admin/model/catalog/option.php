@@ -21,6 +21,10 @@ class ModelCatalogOption extends Model {
 			}
 		}
 
+		if (isset($data['option_custom_field_key'])) {
+			$this->saveOptionCustomFieldKeys($option_id, $data['option_custom_field_key']);
+		}
+
 		return $option_id;
 	}
 
@@ -52,6 +56,10 @@ class ModelCatalogOption extends Model {
 			}
 
 		}
+
+		if (isset($data['option_custom_field_key'])) {
+			$this->saveOptionCustomFieldKeys($option_id, $data['option_custom_field_key']);
+		}
 	}
 
 	public function deleteOption($option_id) {
@@ -59,6 +67,90 @@ class ModelCatalogOption extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "option_description WHERE option_id = '" . (int)$option_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "option_value WHERE option_id = '" . (int)$option_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "option_value_description WHERE option_id = '" . (int)$option_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "option_custom_field_key WHERE option_id = '" . (int)$option_id . "'");
+	}
+
+	public function getOptionCustomFieldKeys($option_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "option_custom_field_key WHERE option_id = '" . (int)$option_id . "' ORDER BY sort_order, field_key");
+
+		$rows = array();
+
+		foreach ($query->rows as $row) {
+			$rows[] = array(
+				'option_custom_field_key_id' => $row['option_custom_field_key_id'],
+				'field_key'                  => $row['field_key'],
+				'name'                       => $row['name'],
+				'required'                   => (int)$row['required'],
+				'sort_order'                 => (int)$row['sort_order']
+			);
+		}
+
+		return $rows;
+	}
+
+	public function saveOptionCustomFieldKeys($option_id, $rows) {
+		$this->db->query("DELETE FROM " . DB_PREFIX . "option_custom_field_key WHERE option_id = '" . (int)$option_id . "'");
+
+		if (!is_array($rows)) {
+			return;
+		}
+
+		$sort_order = 0;
+
+		foreach ($rows as $row) {
+			if (empty($row['field_key'])) {
+				continue;
+			}
+
+			$field_key = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($row['field_key'])));
+
+			if ($field_key === '') {
+				continue;
+			}
+
+			$name = isset($row['name']) ? trim($row['name']) : '';
+
+			$this->db->query("INSERT INTO " . DB_PREFIX . "option_custom_field_key SET option_id = '" . (int)$option_id . "', field_key = '" . $this->db->escape($field_key) . "', name = '" . $this->db->escape($name) . "', required = '" . (int)!empty($row['required']) . "', sort_order = '" . (int)(isset($row['sort_order']) ? $row['sort_order'] : $sort_order) . "'");
+
+			$sort_order++;
+		}
+	}
+
+	public function getSystemFieldKeys() {
+		$keys = array();
+
+		$query = $this->db->query("SELECT DISTINCT field_key FROM " . DB_PREFIX . "product_option_value_field WHERE field_key <> '' ORDER BY field_key");
+
+		foreach ($query->rows as $row) {
+			$keys[] = $row['field_key'];
+		}
+
+		$query = $this->db->query("SELECT DISTINCT field_key FROM " . DB_PREFIX . "option_custom_field_key WHERE field_key <> '' ORDER BY field_key");
+
+		foreach ($query->rows as $row) {
+			if (!in_array($row['field_key'], $keys, true)) {
+				$keys[] = $row['field_key'];
+			}
+		}
+
+		foreach (array('pillow_size', 'sheet_size', 'code', 'images', 'stock_status') as $field_key) {
+			if (!in_array($field_key, $keys, true)) {
+				$keys[] = $field_key;
+			}
+		}
+
+		sort($keys);
+
+		return $keys;
+	}
+
+	public function getDefaultOptionCustomFieldKeys() {
+		return array(
+			array('field_key' => 'pillow_size', 'name' => '', 'required' => 0, 'sort_order' => 0),
+			array('field_key' => 'sheet_size', 'name' => '', 'required' => 0, 'sort_order' => 1),
+			array('field_key' => 'code', 'name' => '', 'required' => 0, 'sort_order' => 2),
+			array('field_key' => 'images', 'name' => '', 'required' => 0, 'sort_order' => 3)
+		);
 	}
 
 	public function getOption($option_id) {
