@@ -69,6 +69,7 @@ $_['entry_priority'] = 'Приоритет';
 $_['entry_attribute'] = 'Характеристики';
 $_['entry_attribute_group'] = 'Группа характеристик';
 $_['entry_text'] = 'Текст';
+$_['entry_attribute_value_autocomplete'] = 'Добавить значение из справочника';
 $_['entry_option'] = 'Опции';
 $_['entry_option_value'] = 'Значение опции';
 $_['entry_option_custom_fields'] = 'Доп. поля';

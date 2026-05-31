@@ -487,7 +487,12 @@
                       <tr id="attribute-row{{ attribute_row }}">
                         <td class="text-left" style="width: 40%;"><input type="text" name="product_attribute[{{ attribute_row }}][name]" value="{{ product_attribute.name }}" placeholder="{{ entry_attribute }}" class="form-control"/> <input type="hidden" name="product_attribute[{{ attribute_row }}][attribute_id]" value="{{ product_attribute.attribute_id }}"/></td>
                         <td class="text-left">{% for language in languages %}
-                            <div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/></span> <textarea name="product_attribute[{{ attribute_row }}][product_attribute_description][{{ language.language_id }}][text]" rows="5" placeholder="{{ entry_text }}" class="form-control">{{ product_attribute.product_attribute_description[language.language_id] ? product_attribute.product_attribute_description[language.language_id].text }}</textarea>
+                            <div class="input-group product-attribute-value-widget"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/></span>
+                              <div class="form-control product-attribute-value-panel">
+                                <div class="product-attribute-value-tags well well-sm"></div>
+                                <input type="text" value="" placeholder="{{ entry_attribute_value_autocomplete }}" class="form-control product-attribute-value-picker" autocomplete="off" />
+                                <textarea name="product_attribute[{{ attribute_row }}][product_attribute_description][{{ language.language_id }}][text]" class="product-attribute-text" style="display: none;">{{ product_attribute.product_attribute_description[language.language_id] ? product_attribute.product_attribute_description[language.language_id].text }}</textarea>
+                              </div>
                             </div>
                           {% endfor %}</td>
                         <td class="text-right"><button type="button" onclick="$('#attribute-row{{ attribute_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
@@ -1178,13 +1183,157 @@ $('#article-related').delegate('.fa-minus-circle', 'click', function() {
 //--></script>
   <script type="text/javascript"><!--
   var attribute_row = {{ attribute_row }};
+  var ATTRIBUTE_VALUE_SEPARATOR = ', ';
+
+  function parseAttributeValues(text) {
+	  if (!text) {
+		  return [];
+	  }
+
+	  var parts = String(text).split(/\s*,\s*|\n+/);
+	  var values = [];
+	  var seen = {};
+
+	  for (var i = 0; i < parts.length; i++) {
+		  var value = $.trim(parts[i]);
+
+		  if (value !== '' && !seen[value]) {
+			  seen[value] = true;
+			  values.push(value);
+		  }
+	  }
+
+	  return values;
+  }
+
+  function serializeAttributeValues(values) {
+	  return values.join(ATTRIBUTE_VALUE_SEPARATOR);
+  }
+
+  function syncAttributeValueWidget($widget) {
+	  var values = [];
+
+	  $widget.find('.product-attribute-value-tags > div').each(function() {
+		  values.push(String($(this).data('value')));
+	  });
+
+	  $widget.find('textarea.product-attribute-text').val(serializeAttributeValues(values));
+  }
+
+  function renderAttributeValueTags($widget, values) {
+	  var $tags = $widget.find('.product-attribute-value-tags');
+
+	  $tags.empty();
+
+	  for (var i = 0; i < values.length; i++) {
+		  var $tag = $('<div><i class="fa fa-minus-circle"></i> <span></span></div>');
+
+		  $tag.data('value', values[i]);
+		  $tag.find('span').text(values[i]);
+		  $tags.append($tag);
+	  }
+
+	  syncAttributeValueWidget($widget);
+  }
+
+  function getAttributeValueWidgetValues($widget) {
+	  var values = [];
+
+	  $widget.find('.product-attribute-value-tags > div').each(function() {
+		  values.push(String($(this).data('value')));
+	  });
+
+	  return values;
+  }
+
+  function addAttributeValueTag($widget, value) {
+	  value = $.trim(value);
+
+	  if (value === '') {
+		  return;
+	  }
+
+	  var values = getAttributeValueWidgetValues($widget);
+
+	  if ($.inArray(value, values) !== -1) {
+		  return;
+	  }
+
+	  values.push(value);
+	  renderAttributeValueTags($widget, values);
+  }
+
+  function bindAttributeValueMultiselect(attribute_row, attribute_id) {
+	  $('#attribute-row' + attribute_row + ' .product-attribute-value-widget').each(function() {
+		  var $widget = $(this);
+		  var $picker = $widget.find('.product-attribute-value-picker');
+		  var $textarea = $widget.find('textarea.product-attribute-text');
+		  var name = $textarea.attr('name') || '';
+		  var match = name.match(/\[product_attribute_description\]\[(\d+)\]\[text\]/);
+
+		  if (!match) {
+			  return;
+		  }
+
+		  var language_id = match[1];
+
+		  renderAttributeValueTags($widget, parseAttributeValues($textarea.val()));
+
+		  if ($picker.data('ocAutocomplete')) {
+			  $picker.autocomplete('destroy');
+		  }
+
+		  $picker.val('');
+
+		  $picker.autocomplete({
+			  'source': function(request, response) {
+				  if (!attribute_id) {
+					  response([]);
+					  return;
+				  }
+
+				  var selected = getAttributeValueWidgetValues($widget);
+
+				  $.ajax({
+					  url: 'index.php?route=catalog/attribute/valueAutocomplete&user_token={{ user_token }}&attribute_id=' + encodeURIComponent(attribute_id) + '&language_id=' + encodeURIComponent(language_id) + '&filter_name=' + encodeURIComponent(request),
+					  dataType: 'json',
+					  success: function(json) {
+						  var items = [];
+
+						  $.each(json, function(i, item) {
+							  if ($.inArray(item.value, selected) === -1) {
+								  items.push({
+									  label: item.label,
+									  value: item.value
+								  });
+							  }
+						  });
+
+						  response(items);
+					  }
+				  });
+			  },
+			  'select': function(item) {
+				  addAttributeValueTag($widget, item['value']);
+				  $picker.val('');
+
+				  return false;
+			  }
+		  });
+	  });
+  }
 
   function addAttribute() {
 	  html = '<tr id="attribute-row' + attribute_row + '">';
 	  html += '  <td class="text-left" style="width: 20%;"><input type="text" name="product_attribute[' + attribute_row + '][name]" value="" placeholder="{{ entry_attribute }}" class="form-control" /><input type="hidden" name="product_attribute[' + attribute_row + '][attribute_id]" value="" /></td>';
 	  html += '  <td class="text-left">';
     {% for language in languages %}
-	  html += '<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span><textarea name="product_attribute[' + attribute_row + '][product_attribute_description][{{ language.language_id }}][text]" rows="5" placeholder="{{ entry_text }}" class="form-control"></textarea></div>';
+	  html += '<div class="input-group product-attribute-value-widget"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>';
+	  html += '<div class="form-control product-attribute-value-panel">';
+	  html += '<div class="product-attribute-value-tags well well-sm"></div>';
+	  html += '<input type="text" value="" placeholder="{{ entry_attribute_value_autocomplete }}" class="form-control product-attribute-value-picker" autocomplete="off" />';
+	  html += '<textarea name="product_attribute[' + attribute_row + '][product_attribute_description][{{ language.language_id }}][text]" class="product-attribute-text" style="display: none;"></textarea>';
+	  html += '</div></div>';
     {% endfor %}
 	  html += '  </td>';
 	  html += '  <td class="text-right"><button type="button" onclick="$(\'#attribute-row' + attribute_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
@@ -1217,15 +1366,70 @@ $('#article-related').delegate('.fa-minus-circle', 'click', function() {
 		  'select': function(item) {
 			  $('input[name=\'product_attribute[' + attribute_row + '][name]\']').val(item['label']);
 			  $('input[name=\'product_attribute[' + attribute_row + '][attribute_id]\']').val(item['value']);
+			  bindAttributeValueMultiselect(attribute_row, item['value']);
 		  }
 	  });
   }
 
+  $('#attribute').on('click', '.product-attribute-value-tags .fa-minus-circle', function() {
+	  var $widget = $(this).closest('.product-attribute-value-widget');
+
+	  $(this).parent().remove();
+	  syncAttributeValueWidget($widget);
+  });
+
   $('#attribute tbody tr').each(function(index, element) {
 	  attributeautocomplete(index);
+
+	  var attribute_id = $('input[name=\'product_attribute[' + index + '][attribute_id]\']').val();
+
+	  if (attribute_id) {
+		  bindAttributeValueMultiselect(index, attribute_id);
+	  }
   });
   //--></script>
   <style>
+  #tab-attribute .table-responsive,
+  #tab-attribute #attribute td {
+    overflow: visible;
+  }
+  #tab-attribute .product-attribute-value-widget {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 10px;
+  }
+  #tab-attribute .product-attribute-value-widget.oc-autocomplete-open {
+    z-index: 10050;
+  }
+  #tab-attribute .product-attribute-value-panel {
+    height: auto;
+    min-height: 34px;
+    padding: 6px 8px;
+  }
+  #tab-attribute .product-attribute-value-tags {
+    min-height: 34px;
+    max-height: 120px;
+    overflow: auto;
+    margin-bottom: 6px;
+    padding: 6px;
+  }
+  #tab-attribute .product-attribute-value-tags > div {
+    display: inline-block;
+    margin: 0 6px 6px 0;
+    padding: 2px 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  #tab-attribute .product-attribute-value-tags .fa-minus-circle {
+    cursor: pointer;
+  }
+  #tab-attribute .product-attribute-value-picker {
+    border: 0;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
   #tab-option .option-value-card { margin-bottom: 14px; border-color: #ddd; }
   #tab-option .option-value-card .panel-heading { background: #f8f8f8; padding: 8px 12px; }
   #tab-option .option-value-card .panel-heading > .row { margin-left: 0; margin-right: 0; }

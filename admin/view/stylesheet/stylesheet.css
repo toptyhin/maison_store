@@ -42,6 +42,8 @@ a:hover, a:focus {text-decoration:none}
 .container-fluid {padding:0 20px}
 
 .dropdown-menu{border-radius:var(--border-radius-1)}
+.input-group.oc-autocomplete-open{position:relative;z-index:10050}
+ul.dropdown-menu.oc-autocomplete-menu{position:fixed;z-index:10051;max-height:240px;overflow-y:auto;display:none;margin:0}
 
 #header {min-height:0px;background:#fff;border-bottom:1px solid #d8d8d8;margin:0;padding:0;box-shadow:0px 0px 3px #ccc}
 #header .container-fluid {padding:0}

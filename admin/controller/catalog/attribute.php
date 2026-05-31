@@ -268,6 +268,12 @@ class ControllerCatalogAttribute extends Controller {
 			$data['error_attribute_group'] = '';
 		}
 
+		if (isset($this->error['attribute_value'])) {
+			$data['error_attribute_value'] = $this->error['attribute_value'];
+		} else {
+			$data['error_attribute_value'] = array();
+		}
+
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -338,6 +344,16 @@ class ControllerCatalogAttribute extends Controller {
 			$data['sort_order'] = '';
 		}
 
+		if (isset($this->request->post['attribute_value'])) {
+			$data['attribute_values'] = $this->request->post['attribute_value'];
+		} elseif (isset($this->request->get['attribute_id'])) {
+			$data['attribute_values'] = $this->model_catalog_attribute->getAttributeValueDescriptions($this->request->get['attribute_id']);
+		} else {
+			$data['attribute_values'] = array();
+		}
+
+		$data['attribute_value_row'] = count($data['attribute_values']);
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -360,6 +376,31 @@ class ControllerCatalogAttribute extends Controller {
 			}
 		}
 
+		if (isset($this->request->post['attribute_value'])) {
+			foreach ($this->request->post['attribute_value'] as $attribute_value_row => $attribute_value) {
+				$has_content = false;
+
+				if (!empty($attribute_value['attribute_value_description']) && is_array($attribute_value['attribute_value_description'])) {
+					foreach ($attribute_value['attribute_value_description'] as $attribute_value_description) {
+						if (!empty($attribute_value_description['name']) && trim($attribute_value_description['name']) !== '') {
+							$has_content = true;
+							break;
+						}
+					}
+				}
+
+				if (!$has_content) {
+					continue;
+				}
+
+				foreach ($attribute_value['attribute_value_description'] as $language_id => $attribute_value_description) {
+					if ((utf8_strlen(trim($attribute_value_description['name'])) < 1) || (utf8_strlen($attribute_value_description['name']) > 255)) {
+						$this->error['attribute_value'][$attribute_value_row][$language_id] = $this->language->get('error_attribute_value');
+					}
+				}
+			}
+		}
+
 		return !$this->error;
 	}
 
@@ -379,6 +420,38 @@ class ControllerCatalogAttribute extends Controller {
 		}
 
 		return !$this->error;
+	}
+
+	public function valueAutocomplete() {
+		$json = array();
+
+		if (isset($this->request->get['attribute_id'])) {
+			$this->load->model('catalog/attribute');
+
+			$attribute_id = (int)$this->request->get['attribute_id'];
+
+			if (isset($this->request->get['language_id'])) {
+				$language_id = (int)$this->request->get['language_id'];
+			} else {
+				$language_id = (int)$this->config->get('config_language_id');
+			}
+
+			$filter_name = isset($this->request->get['filter_name']) ? $this->request->get['filter_name'] : '';
+
+			$results = $this->model_catalog_attribute->getAttributeValueAutocomplete($attribute_id, $language_id, $filter_name, $this->config->get('config_limit_autocomplete'));
+
+			foreach ($results as $result) {
+				$name = strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'));
+
+				$json[] = array(
+					'label' => $name,
+					'value' => $name
+				);
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 
 	public function autocomplete() {

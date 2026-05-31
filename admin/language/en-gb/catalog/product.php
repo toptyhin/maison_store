@@ -74,6 +74,7 @@ $_['entry_priority']         = 'Priority';
 $_['entry_attribute']        = 'Attribute';
 $_['entry_attribute_group']  = 'Attribute Group';
 $_['entry_text']             = 'Text';
+$_['entry_attribute_value_autocomplete'] = 'Add value from dictionary';
 $_['entry_option']           = 'Option';
 $_['entry_option_value']     = 'Option Value';
 $_['entry_option_custom_fields'] = 'Custom Fields';

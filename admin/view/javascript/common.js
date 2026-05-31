@@ -159,9 +159,32 @@ $(() => {
 // Autocomplete */
 (function($) {
 	$.fn.autocomplete = function(option) {
+		if (option === 'destroy') {
+			return this.each(function() {
+				var $this = $(this);
+				var instance = $this.data('ocAutocomplete');
+
+				if (instance) {
+					instance.$dropdown.remove();
+					$this.removeClass('oc-autocomplete-open');
+					$this.closest('.input-group').removeClass('oc-autocomplete-open');
+					$this.removeData('ocAutocomplete').off('.ocAutocomplete');
+				}
+			});
+		}
+
 		return this.each(function() {
 			var $this = $(this);
-			var $dropdown = $('<ul class="dropdown-menu" />');
+			var instance = $this.data('ocAutocomplete');
+
+			if (instance) {
+				instance.$dropdown.remove();
+				$this.removeClass('oc-autocomplete-open');
+				$this.closest('.input-group').removeClass('oc-autocomplete-open');
+				$this.off('.ocAutocomplete');
+			}
+
+			var $dropdown = $('<ul class="dropdown-menu oc-autocomplete-menu" />');
 
 			this.timer = null;
 			this.items = [];
@@ -171,19 +194,19 @@ $(() => {
 			$this.attr('autocomplete', 'off');
 
 			// Focus
-			$this.on('focus', function() {
+			$this.on('focus.ocAutocomplete', function() {
 				this.request();
 			});
 
 			// Blur
-			$this.on('blur', function() {
+			$this.on('blur.ocAutocomplete', function() {
 				setTimeout(function(object) {
 					object.hide();
 				}, 200, this);
 			});
 
 			// Keydown
-			$this.on('keydown', function(event) {
+			$this.on('keydown.ocAutocomplete', function(event) {
 				switch(event.keyCode) {
 					case 27: // escape
 						this.hide();
@@ -207,11 +230,17 @@ $(() => {
 
 			// Show
 			this.show = function() {
-				var pos = $this.position();
+				var rect = $this[0].getBoundingClientRect();
+
+				$this.addClass('oc-autocomplete-open');
+				$this.closest('.input-group').addClass('oc-autocomplete-open');
 
 				$dropdown.css({
-					top: pos.top + $this.outerHeight(),
-					left: pos.left
+					position: 'fixed',
+					top: rect.bottom,
+					left: rect.left,
+					minWidth: $this.outerWidth(),
+					zIndex: 10051
 				});
 
 				$dropdown.show();
@@ -220,6 +249,8 @@ $(() => {
 			// Hide
 			this.hide = function() {
 				$dropdown.hide();
+				$this.removeClass('oc-autocomplete-open');
+				$this.closest('.input-group').removeClass('oc-autocomplete-open');
 			}
 
 			// Request
@@ -275,8 +306,15 @@ $(() => {
 				$dropdown.html(html);
 			}
 
+			$dropdown.on('mousedown', function(e) {
+				e.preventDefault();
+			});
 			$dropdown.on('click', '> li > a', $.proxy(this.click, this));
-			$this.after($dropdown);
+			$dropdown.appendTo('body');
+
+			$this.data('ocAutocomplete', {
+				$dropdown: $dropdown
+			});
 		});
 	}
 })(window.jQuery);
