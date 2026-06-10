@@ -1,0 +1,7 @@
+{% if image %}
+<section class="relative overflow-hidden rounded-lg my-8">
+  <a href="{{ href|default('#') }}"{% if external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+    <img src="{{ image }}" alt="{{ title|default('') }}" class="w-full h-auto object-cover" />
+  </a>
+</section>
+{% endif %}

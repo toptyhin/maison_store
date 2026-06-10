@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label class="col-sm-3 control-label">{{ label|default('Изображение') }}</label>
+  <div class="col-sm-9">
+    <a href="" id="thumb-cms-{{ block_id }}-{{ field_key }}" data-toggle="image" class="img-thumbnail">
+      <img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" />
+    </a>
+    <input type="hidden" name="{{ field_name }}" value="{{ value|default('') }}" id="input-cms-{{ block_id }}-{{ field_key }}" />
+  </div>
+</div>

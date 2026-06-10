@@ -15,10 +15,18 @@ class ControllerCommonHome extends Controller {
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
+
+		if (cms_has_page($this->registry, 'common/home', 0)) {
+			$preview = cms_preview_options($this->registry);
+			$data['cms_main'] = cms_render_slot($this->registry, 'common/home', 0, 'main', array(), $preview);
+			$data['content_top'] = cms_render_slot($this->registry, 'common/home', 0, 'content_top', array(), $preview);
+			$data['content_bottom'] = cms_render_slot($this->registry, 'common/home', 0, 'content_bottom', array(), $preview);
+		} else {
+			$data['content_top'] = $this->load->controller('common/content_top');
+			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		}
 
 		$this->response->setOutput($this->load->view('common/home', $data));
 	}

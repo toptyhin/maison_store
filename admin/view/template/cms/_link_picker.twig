@@ -1,0 +1,41 @@
+{# Link picker partial: expects prefix like settings[button_link] #}
+<div class="cms-link-picker" data-prefix="{{ prefix }}">
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Тип ссылки</label>
+    <div class="col-sm-9">
+      <select name="{{ prefix }}[type]" class="form-control cms-link-type">
+        {% for lt in link_types %}
+        <option value="{{ lt.value }}" {% if link.type|default('custom') == lt.value %}selected{% endif %}>{{ lt.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-group cms-link-category" {% if link.type|default('') != 'category' %}style="display:none"{% endif %}>
+    <label class="col-sm-3 control-label">Категория</label>
+    <div class="col-sm-9">
+      <select name="{{ prefix }}[id]" class="form-control">
+        <option value="0">—</option>
+        {% for cat in categories %}
+        <option value="{{ cat.category_id }}" {% if link.id|default(0) == cat.category_id %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-group cms-link-information" {% if link.type|default('') != 'information' %}style="display:none"{% endif %}>
+    <label class="col-sm-3 control-label">Страница</label>
+    <div class="col-sm-9">
+      <select name="{{ prefix }}[id]" class="form-control">
+        <option value="0">—</option>
+        {% for info in informations %}
+        <option value="{{ info.information_id }}" {% if link.id|default(0) == info.information_id %}selected{% endif %}>{{ info.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-group cms-link-custom" {% if link.type|default('custom') != 'custom' %}style="display:none"{% endif %}>
+    <label class="col-sm-3 control-label">URL</label>
+    <div class="col-sm-9">
+      <input type="text" name="{{ prefix }}[url]" value="{{ link.url|default('') }}" class="form-control" placeholder="/contact-us или https://..." />
+    </div>
+  </div>
+</div>

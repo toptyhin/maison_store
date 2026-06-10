@@ -469,10 +469,14 @@ class ControllerProductCategory extends Controller {
 
 			$data['continue'] = $this->url->link('common/home');
 
+			$preview = cms_preview_options($this->registry);
+			$data['cms_before_content'] = cms_render_slot($this->registry, 'product/category', $category_id, 'before_content', array('category_id' => $category_id), $preview);
+			$data['cms_after_content'] = cms_render_slot($this->registry, 'product/category', $category_id, 'after_content', array('category_id' => $category_id), $preview);
+
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+			$data['content_top'] = cms_render_slot($this->registry, 'product/category', $category_id, 'content_top', array('category_id' => $category_id), $preview) . $this->load->controller('common/content_top');
+			$data['content_bottom'] = cms_render_slot($this->registry, 'product/category', $category_id, 'content_bottom', array('category_id' => $category_id), $preview) . $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 

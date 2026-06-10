@@ -1,6 +1,7 @@
 {{ header }}
 <main class="flex-1 mt-24">
-	{{ content_top }}
+	{{ cms_before_content|default('')|raw }}
+	{{ content_top|raw }}
 	<div class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex flex-col lg:flex-row gap-12">
 		{% if products %}
 			{{ product_filter }}
@@ -49,6 +50,8 @@
 			{% endif %}
 		</div>
 	</div>
+	{{ cms_after_content|default('')|raw }}
+	{{ content_bottom|raw }}
 </main>
 
 {% if product_filter_script %}

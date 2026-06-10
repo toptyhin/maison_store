@@ -1,0 +1,21 @@
+<section class="py-24 px-6 lg:px-12 max-w-7xl mx-auto bg-background-dark">
+  {% if title %}
+  <div class="text-center mb-16">
+    <h2 class="font-serif text-3xl md:text-4xl text-luxury-charcoal mb-4">{{ title }}</h2>
+    <div class="w-12 h-px bg-luxury-silver mx-auto"></div>
+  </div>
+  {% endif %}
+  {% if items %}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    {% for item in items %}
+    <div class="bg-white p-10 rounded shadow-soft hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center text-center border border-luxury-silver/10">
+      <div class="w-16 h-16 rounded-full bg-background-section flex items-center justify-center mb-6 text-luxury-charcoal">
+        <span class="material-symbols-outlined text-[32px] font-light">{{ item.icon }}</span>
+      </div>
+      {% if item.title %}<h3 class="font-serif text-lg text-luxury-charcoal mb-3">{{ item.title }}</h3>{% endif %}
+      {% if item.subtitle %}<p class="text-[10px] uppercase tracking-wider text-luxury-charcoal/60 leading-relaxed">{{ item.subtitle }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>

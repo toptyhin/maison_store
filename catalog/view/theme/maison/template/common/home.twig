@@ -1,6 +1,9 @@
 {{ header }}
-<main class="flex-1 mt-24">
-    {{ content_top }}
-    {{ content_bottom }}
+<main class="flex-1 {% if not cms_main|default('') %}mt-24{% endif %}">
+    {% if cms_main|default('') %}
+    {{ cms_main|raw }}
+    {% endif %}
+    {{ content_top|raw }}
+    {{ content_bottom|raw }}
 </main>
 {{ footer }}

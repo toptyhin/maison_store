@@ -1,0 +1,5 @@
+{% if text and href and href != '#' %}
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-6 text-center">
+  <a href="{{ href }}" class="inline-flex items-center justify-center px-8 py-4 bg-luxury-charcoal text-white text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors"{% if external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ text }}</a>
+</div>
+{% endif %}

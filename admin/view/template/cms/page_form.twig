@@ -1,0 +1,133 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-page" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger">{{ error_warning }}</div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3></div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" id="form-page" class="form-horizontal">
+          <div class="form-group required">
+            <label class="col-sm-2 control-label">{{ entry_name }}</label>
+            <div class="col-sm-10"><input type="text" name="name" value="{{ name }}" class="form-control" /></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_route }}</label>
+            <div class="col-sm-10">
+              <select name="route" id="input-route" class="form-control">
+                {% for r in routes %}
+                <option value="{{ r.value }}" {% if route == r.value %}selected{% endif %}>{{ r.label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group" id="entity-group">
+            <label class="col-sm-2 control-label" id="entity-label">{{ entry_entity }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="entity_name" value="{{ entity_name }}" placeholder="{{ entry_entity_autocomplete }}" class="form-control" id="input-entity-name" autocomplete="off" />
+              <input type="hidden" name="entity_id" value="{{ entity_id }}" id="input-entity-id" />
+              <p class="help-block" id="entity-help">{{ help_entity }}</p>
+            </div>
+          </div>
+          <input type="hidden" name="store_id" value="{{ store_id }}" />
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" class="form-control">
+                <option value="1" {% if status %}selected{% endif %}>{{ text_enabled }}</option>
+                <option value="0" {% if not status %}selected{% endif %}>{{ text_disabled }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+(function() {
+  var userToken = '{{ user_token }}';
+  var entityLabels = {
+    'information/information': '{{ text_entity_information }}',
+    'product/category': '{{ text_entity_category }}',
+    'product/product': '{{ text_entity_product }}'
+  };
+  var entityHelps = {
+    'information/information': '{{ help_entity_information }}',
+    'product/category': '{{ help_entity_category }}',
+    'product/product': '{{ help_entity_product }}'
+  };
+
+  function toggleEntityField() {
+    var route = $('#input-route').val();
+    if (route === 'common/home') {
+      $('#entity-group').hide();
+      $('#input-entity-id').val('0');
+      $('#input-entity-name').val('');
+    } else {
+      $('#entity-group').show();
+      $('#entity-label').text(entityLabels[route] || '{{ entry_entity }}');
+      $('#entity-help').text(entityHelps[route] || '{{ help_entity }}');
+    }
+  }
+
+  function bindEntityAutocomplete() {
+    var $input = $('#input-entity-name');
+    if ($input.data('ocAutocomplete')) {
+      $input.autocomplete('destroy');
+    }
+
+    $input.autocomplete({
+      source: function(request, response) {
+        var route = $('#input-route').val();
+        if (route === 'common/home') {
+          response([]);
+          return;
+        }
+        $.ajax({
+          url: 'index.php?route=cms/page/entityAutocomplete&user_token=' + userToken + '&entity_route=' + encodeURIComponent(route) + '&filter_name=' + encodeURIComponent(request),
+          dataType: 'json',
+          success: function(json) {
+            response($.map(json, function(item) {
+              return {
+                label: item.name,
+                value: item.id
+              };
+            }));
+          }
+        });
+      },
+      select: function(item) {
+        $('#input-entity-name').val(item.label);
+        $('#input-entity-id').val(item.value);
+      }
+    });
+  }
+
+  $('#input-route').on('change', function() {
+    $('#input-entity-id').val('0');
+    $('#input-entity-name').val('');
+    toggleEntityField();
+    bindEntityAutocomplete();
+  });
+
+  toggleEntityField();
+  bindEntityAutocomplete();
+})();
+</script>
+{{ footer }}

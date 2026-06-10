@@ -1,0 +1,128 @@
+{% import 'cms/_macros.twig' as cms %}
+
+<div class="panel panel-default cms-block-item" id="block-{{ block.block_id }}" data-block-id="{{ block.block_id }}">
+  <div class="panel-heading clearfix" style="cursor:move">
+    <span class="pull-left"><i class="fa fa-arrows"></i> <strong>{{ label }}</strong> <small class="text-muted">({{ block.slot }})</small></span>
+    <span class="pull-right">
+      {% if block.status %}<span class="label label-success">вкл</span>{% else %}<span class="label label-default">выкл</span>{% endif %}
+      {% if block.is_draft %}<span class="label label-warning">черновик</span>{% endif %}
+    </span>
+  </div>
+  <div class="panel-body">
+    <form class="cms-block-form form-horizontal" data-block-id="{{ block.block_id }}">
+      <input type="hidden" name="block_id" value="{{ block.block_id }}" />
+      <div class="form-group">
+        <label class="col-sm-3 control-label">{{ entry_slot }}</label>
+        <div class="col-sm-9">
+          <select name="slot" class="form-control">
+            {% for slot_key, slot_label in slots %}
+            <option value="{{ slot_key }}" {% if block.slot == slot_key %}selected{% endif %}>{{ slot_label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">{{ entry_block_status }}</label>
+        <div class="col-sm-9"><select name="status" class="form-control"><option value="1" {% if block.status %}selected{% endif %}>Да</option><option value="0" {% if not block.status %}selected{% endif %}>Нет</option></select></div>
+      </div>
+
+      {% if block.type == 'about_hero' %}
+        {% include 'cms/_image_picker.twig' with { block_id: block.block_id, field_key: 'image', field_name: 'settings[image]', value: block.settings.image|default(''), thumb: block.settings.image_thumb|default(placeholder), placeholder: placeholder } %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Подзаголовок</label><div class="col-sm-9">{{ cms.lang_tabs('subtitle', block.settings.subtitle|default({}), languages, 'textarea') }}</div></div>
+
+      {% elseif block.type == 'feature_cards' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок секции</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        <div id="feature-items-{{ block.block_id }}">
+          {% for fi in block.settings.items|default([]) %}
+          <div class="well well-sm feature-item-row">
+            <div class="form-group"><label class="col-sm-3">Иконка</label><div class="col-sm-9"><input type="text" name="settings[items][{{ loop.index0 }}][icon]" value="{{ fi.icon|default('star') }}" class="form-control" placeholder="shopping_bag" /></div></div>
+            <input type="hidden" name="settings[items][{{ loop.index0 }}][status]" value="1" />
+            {% for language in languages %}
+            <div class="form-group"><label class="col-sm-3">{{ language.name }} title</label><div class="col-sm-9"><input type="text" name="settings[items][{{ loop.parent.loop.index0 }}][title][{{ language.language_id }}]" value="{{ fi.title[language.language_id]|default('') }}" class="form-control" /></div></div>
+            <div class="form-group"><label class="col-sm-3">{{ language.name }} subtitle</label><div class="col-sm-9"><input type="text" name="settings[items][{{ loop.parent.loop.index0 }}][subtitle][{{ language.language_id }}]" value="{{ fi.subtitle[language.language_id]|default('') }}" class="form-control" /></div></div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="btn btn-default btn-sm add-feature-item" data-block="{{ block.block_id }}">+ Карточка</button>
+
+      {% elseif block.type == 'media_text' %}
+        {% include 'cms/_image_picker.twig' with { block_id: block.block_id, field_key: 'image', field_name: 'settings[image]', value: block.settings.image|default(''), thumb: block.settings.image_thumb|default(placeholder), placeholder: placeholder } %}
+        <div class="form-group"><label class="col-sm-3 control-label">Метка</label><div class="col-sm-9">{{ cms.lang_tabs('label', block.settings.label|default({}), languages, 'text') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        {% for language in languages %}
+        <div class="form-group"><label class="col-sm-3 control-label">Абзац 1 ({{ language.name }})</label><div class="col-sm-9"><textarea name="settings[paragraphs][0][{{ language.language_id }}]" class="form-control" rows="2">{{ block.settings.paragraphs[0][language.language_id]|default('') }}</textarea></div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Абзац 2 ({{ language.name }})</label><div class="col-sm-9"><textarea name="settings[paragraphs][1][{{ language.language_id }}]" class="form-control" rows="2">{{ block.settings.paragraphs[1][language.language_id]|default('') }}</textarea></div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Абзац 3 ({{ language.name }})</label><div class="col-sm-9"><textarea name="settings[paragraphs][2][{{ language.language_id }}]" class="form-control" rows="2">{{ block.settings.paragraphs[2][language.language_id]|default('') }}</textarea><input type="hidden" name="settings[paragraphs][2][accent]" value="1" /></div></div>
+        {% endfor %}
+        <div class="form-group"><label class="col-sm-3 control-label">Текст кнопки</label><div class="col-sm-9">{{ cms.lang_tabs('button_text', block.settings.button_text|default({}), languages, 'text') }}</div></div>
+        {% include 'cms/_link_picker.twig' with { prefix: 'settings[button_link]', link: block.settings.button_link|default({}) } %}
+
+      {% elseif block.type == 'category_grid' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Подзаголовок</label><div class="col-sm-9">{{ cms.lang_tabs('subtitle', block.settings.subtitle|default({}), languages, 'textarea') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Текст ссылки каталога</label><div class="col-sm-9">{{ cms.lang_tabs('link_text', block.settings.link_text|default({}), languages, 'text') }}</div></div>
+        {% include 'cms/_link_picker.twig' with { prefix: 'settings[link]', link: block.settings.link|default({}) } %}
+        <hr />
+        <p class="help-block">Плитки (large/medium): category_id, layout, sort_order</p>
+        {% for ti in 0..2 %}
+        <div class="well well-sm">
+          <div class="form-group"><label class="col-sm-3">Категория #{{ ti + 1 }}</label><div class="col-sm-9"><select name="settings[tiles][{{ ti }}][category_id]" class="form-control"><option value="0">—</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {% if block.settings.tiles[ti].category_id|default(0) == cat.category_id %}selected{% endif %}>{{ cat.name }}</option>{% endfor %}</select></div></div>
+          <div class="form-group"><label class="col-sm-3">Layout</label><div class="col-sm-9"><select name="settings[tiles][{{ ti }}][layout]" class="form-control"><option value="large" {% if block.settings.tiles[ti].layout|default('') == 'large' %}selected{% endif %}>large</option><option value="medium" {% if block.settings.tiles[ti].layout|default('medium') == 'medium' %}selected{% endif %}>medium</option></select><input type="hidden" name="settings[tiles][{{ ti }}][status]" value="1" /><input type="hidden" name="settings[tiles][{{ ti }}][sort_order]" value="{{ ti }}" /></div></div>
+          {% include 'cms/_image_picker.twig' with { block_id: block.block_id, field_key: 'tile-' ~ ti, field_name: 'settings[tiles][' ~ ti ~ '][image]', value: block.settings.tiles[ti].image|default(''), thumb: block.settings.tiles[ti].image_thumb|default(placeholder), placeholder: placeholder, label: 'Изображение' } %}
+        </div>
+        {% endfor %}
+        <p class="help-block">Список категорий (нижний ряд)</p>
+        {% for li in 0..2 %}
+        <div class="form-group"><label class="col-sm-3">Список #{{ li + 1 }}</label><div class="col-sm-9"><select name="settings[list][{{ li }}][category_id]" class="form-control"><option value="0">—</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {% if block.settings.list[li].category_id|default(0) == cat.category_id %}selected{% endif %}>{{ cat.name }}</option>{% endfor %}</select><input type="hidden" name="settings[list][{{ li }}][status]" value="1" /><input type="hidden" name="settings[list][{{ li }}][sort_order]" value="{{ li }}" /></div></div>
+        {% endfor %}
+
+      {% elseif block.type == 'rich_text' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Текст</label><div class="col-sm-9">{{ cms.lang_tabs('content', block.settings.content|default({}), languages, 'textarea') }}</div></div>
+
+      {% elseif block.type == 'promo_banner' %}
+        {% include 'cms/_image_picker.twig' with { block_id: block.block_id, field_key: 'image', field_name: 'settings[image]', value: block.settings.image|default(''), thumb: block.settings.image_thumb|default(placeholder), placeholder: placeholder } %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        {% include 'cms/_link_picker.twig' with { prefix: 'settings[link]', link: block.settings.link|default({}) } %}
+
+      {% elseif block.type == 'module_reference' or block.type == 'hero_slideshow' or block.type == 'featured_products' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Код модуля</label><div class="col-sm-9">
+          <select name="settings[module_code]" class="form-control">
+            <option value="">—</option>
+            {% for mod in modules %}
+            <option value="{{ mod.code }}.{{ mod.module_id }}" {% if block.settings.module_code|default('') == mod.code ~ '.' ~ mod.module_id %}selected{% endif %}>{{ mod.name }} ({{ mod.code }})</option>
+            {% endfor %}
+          </select>
+          <span class="help-block">Напр. slideshow.27, featured.28</span>
+        </div></div>
+
+      {% elseif block.type == 'category_tiles' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Заголовок</label><div class="col-sm-9">{{ cms.lang_tabs('title', block.settings.title|default({}), languages, 'text') }}</div></div>
+        <p class="help-block">Категории для плиток (до 8)</p>
+        {% for ti in 0..7 %}
+        <div class="well well-sm">
+          <div class="form-group"><label class="col-sm-3">Категория #{{ ti + 1 }}</label><div class="col-sm-9"><select name="settings[items][{{ ti }}][category_id]" class="form-control"><option value="0">—</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {% if block.settings.items[ti].category_id|default(0) == cat.category_id %}selected{% endif %}>{{ cat.name }}</option>{% endfor %}</select><input type="hidden" name="settings[items][{{ ti }}][status]" value="1" /><input type="hidden" name="settings[items][{{ ti }}][sort_order]" value="{{ ti }}" /></div></div>
+          <div class="form-group"><label class="col-sm-3">Layout</label><div class="col-sm-9"><select name="settings[items][{{ ti }}][layout]" class="form-control"><option value="medium" {% if block.settings.items[ti].layout|default('medium') == 'medium' %}selected{% endif %}>medium</option><option value="large" {% if block.settings.items[ti].layout|default('') == 'large' %}selected{% endif %}>large</option></select></div></div>
+        </div>
+        {% endfor %}
+
+      {% elseif block.type == 'cta_button' %}
+        <div class="form-group"><label class="col-sm-3 control-label">Текст кнопки</label><div class="col-sm-9">{{ cms.lang_tabs('text', block.settings.text|default({}), languages, 'text') }}</div></div>
+        <div class="form-group"><label class="col-sm-3 control-label">Стиль</label><div class="col-sm-9"><select name="settings[style]" class="form-control"><option value="primary" {% if block.settings.style|default('primary') == 'primary' %}selected{% endif %}>Primary</option><option value="secondary" {% if block.settings.style|default('') == 'secondary' %}selected{% endif %}>Secondary</option><option value="outline" {% if block.settings.style|default('') == 'outline' %}selected{% endif %}>Outline</option></select></div></div>
+        {% include 'cms/_link_picker.twig' with { prefix: 'settings[link]', link: block.settings.link|default({}) } %}
+
+      {% else %}
+        <p class="text-muted">Форма для типа «{{ block.type }}»</p>
+      {% endif %}
+
+      <div class="form-group">
+        <div class="col-sm-12 text-right">
+          <button type="button" class="btn btn-primary btn-save-block">{{ text_save_block }}</button>
+          <button type="button" class="btn btn-danger btn-delete-block">{{ text_delete_block }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

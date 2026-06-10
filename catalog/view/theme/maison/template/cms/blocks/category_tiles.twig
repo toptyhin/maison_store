@@ -1,0 +1,15 @@
+<section class="py-16 bg-background-section border-t border-gray-200">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    {% if title %}<h2 class="font-serif text-2xl text-luxury-charcoal mb-8 text-center">{{ title }}</h2>{% endif %}
+    {% if items %}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for item in items %}
+      <a href="{{ item.href }}" class="group flex flex-col items-center text-center p-6 bg-white rounded-sm border border-gray-200 hover:border-primary/30 transition-colors">
+        {% if item.image %}<img src="{{ item.image }}" alt="{{ item.name }}" class="w-full aspect-square object-cover rounded-sm mb-4" />{% endif %}
+        <span class="font-serif text-luxury-charcoal group-hover:text-primary transition-colors">{{ item.name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>

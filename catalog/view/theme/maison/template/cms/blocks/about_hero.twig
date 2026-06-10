@@ -1,0 +1,13 @@
+<section class="relative w-full min-h-[70vh] pt-24 flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    {% if image %}
+    <img alt="" class="w-full h-full object-cover" src="{{ image }}" />
+    {% endif %}
+    <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 text-center">
+    {% if title %}<h1 class="font-serif text-4xl md:text-5xl text-luxury-charcoal mb-8 max-w-4xl mx-auto tracking-tight leading-tight">{{ title }}</h1>{% endif %}
+    {% if subtitle %}<p class="text-base md:text-lg text-luxury-charcoal/80 max-w-2xl mx-auto leading-relaxed">{{ subtitle }}</p>{% endif %}
+  </div>
+</section>

@@ -16,6 +16,17 @@ class ControllerCommonColumnLeft extends Controller {
 				'children' => array()
 			);
 
+			if ($this->user->hasPermission('access', 'cms/page')) {
+				$this->load->language('cms/page');
+				$data['menus'][] = array(
+					'id'       => 'menu-cms',
+					'icon'	   => 'fa-th-large',
+					'name'	   => $this->language->get('heading_title'),
+					'href'     => $this->url->link('cms/page', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
 			// Catalog
 			$catalog = array();
 

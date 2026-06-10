@@ -1,0 +1,18 @@
+{% macro lang_tabs(name, values, languages, type) %}
+<ul class="nav nav-tabs">
+  {% for language in languages %}
+  <li{% if loop.first %} class="active"{% endif %}><a href="#{{ name }}-{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" /> {{ language.name }}</a></li>
+  {% endfor %}
+</ul>
+<div class="tab-content" style="margin-top:10px">
+  {% for language in languages %}
+  <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ name }}-{{ language.language_id }}">
+    {% if type == 'textarea' %}
+    <textarea name="settings[{{ name }}][{{ language.language_id }}]" rows="4" class="form-control">{{ values[language.language_id]|default('') }}</textarea>
+    {% else %}
+    <input type="text" name="settings[{{ name }}][{{ language.language_id }}]" value="{{ values[language.language_id]|default('') }}" class="form-control" />
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

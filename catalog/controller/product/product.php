@@ -738,10 +738,11 @@ class ControllerProductProduct extends Controller {
 			}
 			
 			$data['cart'] = $this->url->link('checkout/cart');
+			$preview = cms_preview_options($this->registry);
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+			$data['content_top'] = cms_render_slot($this->registry, 'product/product', (int)$this->request->get['product_id'], 'content_top', array('product_id' => (int)$this->request->get['product_id']), $preview) . $this->load->controller('common/content_top');
+			$data['content_bottom'] = cms_render_slot($this->registry, 'product/product', (int)$this->request->get['product_id'], 'content_bottom', array('product_id' => (int)$this->request->get['product_id']), $preview) . $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 

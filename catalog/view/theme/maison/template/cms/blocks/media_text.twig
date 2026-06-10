@@ -1,0 +1,23 @@
+<section class="py-24 px-6 lg:px-12 bg-white border-y border-luxury-silver/20">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+    <div class="order-2 lg:order-1 relative aspect-[3/4] overflow-hidden rounded bg-background-section">
+      {% if image %}<img alt="" class="w-full h-full object-cover" src="{{ image }}" />{% endif %}
+    </div>
+    <div class="order-1 lg:order-2 lg:pl-12 flex flex-col justify-center">
+      {% if label %}<span class="text-xs font-bold uppercase tracking-widest text-luxury-charcoal/50 mb-4 block">{{ label }}</span>{% endif %}
+      {% if title %}<h2 class="font-serif text-3xl md:text-4xl text-luxury-charcoal mb-8">{{ title }}</h2>{% endif %}
+      {% if paragraphs %}
+      <div class="space-y-6 text-base text-luxury-charcoal/80 mb-10">
+        {% for p in paragraphs %}
+        <p class="{% if p.accent %}font-medium text-luxury-charcoal{% endif %}">{{ p.text }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if button_text and button_href and button_href != '#' %}
+      <div>
+        <a href="{{ button_href }}" class="inline-flex items-center justify-center px-8 py-4 bg-luxury-charcoal text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors duration-300"{% if button_external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ button_text }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
