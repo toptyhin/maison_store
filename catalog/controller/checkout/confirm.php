@@ -420,7 +420,16 @@ class ControllerCheckoutConfirm extends Controller {
 				);
 			}
 
-			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
+			$payment_code = $this->session->data['payment_method']['code'];
+
+			$data['payment_code'] = $payment_code;
+			$data['text_loading'] = $this->language->get('text_loading');
+
+			if (in_array($payment_code, array('card_payment', 'free_checkout'), true)) {
+				$data['payment_continue'] = $this->url->link('checkout/success', '', true);
+			}
+
+			$data['payment'] = $this->load->controller('extension/payment/' . $payment_code);
 		} else {
 			$data['redirect'] = $redirect;
 		}

@@ -48,6 +48,50 @@
   </table>
 </div>
 {{ payment }}
+{% if payment_code and payment_code != 'tbank' %}
+<div id="confirm-redirect-overlay" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.96);font-size:1.125rem;color:#111827;">
+	<span>{{ text_loading }}</span>
+</div>
+<script type="text/javascript"><!--
+document.addEventListener('DOMContentLoaded', function () {
+	var code = '{{ payment_code|e('js') }}';
+	var continueUrl = '{{ payment_continue|default('')|e('js') }}';
+	var url = 'index.php?route=extension/payment/' + code + '/confirm';
+
+	fetch(url, { credentials: 'same-origin' })
+		.then(function (response) {
+			return response.text().then(function (text) {
+				if (!text) {
+					return null;
+				}
+				try {
+					return JSON.parse(text);
+				} catch (e) {
+					return null;
+				}
+			});
+		})
+		.then(function (json) {
+			if (json && json.redirect) {
+				window.location = json.redirect;
+			} else if (continueUrl) {
+				window.location = continueUrl;
+			} else {
+				var overlay = document.getElementById('confirm-redirect-overlay');
+				if (overlay) {
+					overlay.remove();
+				}
+			}
+		})
+		.catch(function () {
+			var overlay = document.getElementById('confirm-redirect-overlay');
+			if (overlay) {
+				overlay.remove();
+			}
+		});
+});
+//--></script>
+{% endif %}
 {% else %} 
 <script type="text/javascript"><!--
 location = '{{ redirect }}';

@@ -798,6 +798,33 @@ $(document).delegate('#button-payment-method', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('<a href="#collapse-checkout-confirm" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_confirm }} <i class="fa fa-caret-down"></i></a>');
 
 						$('a[href=\'#collapse-checkout-confirm\']').trigger('click');
+
+						var pm = $('#collapse-payment-method input[name="payment_method"]:checked').val();
+						if (pm && pm !== 'tbank' && typeof fetch === 'function') {
+							var confirmUrl = 'index.php?route=extension/payment/' + pm + '/confirm';
+							var continueUrl = (pm === 'card_payment' || pm === 'free_checkout') ? 'index.php?route=checkout/success' : '';
+
+							fetch(confirmUrl, { credentials: 'same-origin' })
+								.then(function (response) {
+									return response.text().then(function (text) {
+										if (!text) {
+											return null;
+										}
+										try {
+											return JSON.parse(text);
+										} catch (e) {
+											return null;
+										}
+									});
+								})
+								.then(function (json) {
+									if (json && json.redirect) {
+										location = json.redirect;
+									} else if (continueUrl) {
+										location = continueUrl;
+									}
+								});
+						}
 					},
                     error: function(xhr, ajaxOptions, thrownError) {
                         alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

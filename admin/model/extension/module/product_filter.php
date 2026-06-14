@@ -22,7 +22,7 @@ class ModelExtensionModuleProductFilter extends Model {
 	}
 
 	public function getAttributes() {
-		$query = $this->db->query("SELECT a.attribute_id, ad.name FROM " . DB_PREFIX . "attribute a LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE ad.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY ad.name");
+		$query = $this->db->query("SELECT a.attribute_id, ad.name, (SELECT agd.name FROM " . DB_PREFIX . "attribute_group_description agd WHERE agd.attribute_group_id = a.attribute_group_id AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS attribute_group FROM " . DB_PREFIX . "attribute a LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE ad.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY attribute_group, ad.name");
 		return $query->rows;
 	}
 

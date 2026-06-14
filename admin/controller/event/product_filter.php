@@ -25,9 +25,9 @@ class ControllerEventProductFilter extends Controller {
 		}
 		$content .= '</div>';
 		$content .= '<button type="button" id="add-filter-criterion" class="btn btn-default" style="margin-top:10px">Добавить критерий</button>';
-		$src_opts = '<option value="0">-- Выберите --</option><optgroup label="Атрибуты">';
+		$src_opts = '<option value="0">-- Выберите --</option><optgroup label="Характеристики">';
 		foreach ($attributes as $a) {
-			$src_opts .= '<option value="' . (int)$a['attribute_id'] . '">' . htmlspecialchars($a['name'], ENT_QUOTES) . '</option>';
+			$src_opts .= '<option value="' . (int)$a['attribute_id'] . '">' . htmlspecialchars($this->getAttributeOptionLabel($a), ENT_QUOTES) . '</option>';
 		}
 		$src_opts .= '</optgroup><optgroup label="Опции">';
 		foreach ($options as $o) {
@@ -40,7 +40,7 @@ class ControllerEventProductFilter extends Controller {
 			$("#add-filter-criterion").on("click", function(){
 				var idx = $("#product-filter-configs .filter-criterion-row").length;
 				var srcHtml = $("#product-filter-source-options").html();
-				var row = $(\'<div class="well well-sm filter-criterion-row" style="margin-bottom:8px"><select name="product_filter_config[\'+idx+\'][criterion_type]" class="form-control" style="display:inline-block;width:150px"><option value="price">Цена</option><option value="manufacturer">Производитель</option><option value="rating">Рейтинг</option><option value="discount">Скидки</option><option value="attribute">Атрибут</option><option value="option">Опция</option></select> <select name="product_filter_config[\'+idx+\'][source_id]" class="form-control filter-source" style="display:none;width:180px">\'+srcHtml+\'</select> <select name="product_filter_config[\'+idx+\'][widget_type]" class="form-control" style="display:inline-block;width:120px"><option value="checkboxes">Чекбоксы</option><option value="select">Селект</option><option value="slider">Слайдер</option><option value="inputs">Поля ввода</option></select> <button type="button" class="btn btn-danger btn-sm remove-criterion">×</button></div>\');
+				var row = $(\'<div class="well well-sm filter-criterion-row" style="margin-bottom:8px"><select name="product_filter_config[\'+idx+\'][criterion_type]" class="form-control" style="display:inline-block;width:150px"><option value="price">Цена</option><option value="manufacturer">Производитель</option><option value="rating">Рейтинг</option><option value="discount">Скидки</option><option value="attribute">Характеристика</option><option value="option">Опция</option></select> <select name="product_filter_config[\'+idx+\'][source_id]" class="form-control filter-source" style="display:none;width:180px">\'+srcHtml+\'</select> <select name="product_filter_config[\'+idx+\'][widget_type]" class="form-control" style="display:inline-block;width:120px"><option value="checkboxes">Чекбоксы</option><option value="select">Селект</option><option value="slider">Слайдер</option><option value="inputs">Поля ввода</option></select> <button type="button" class="btn btn-danger btn-sm remove-criterion">×</button></div>\');
 				$("#product-filter-configs").append(row);
 			});
 			$(document).on("change", "#product-filter-configs select[name*=\\"[criterion_type]\\"]", function(){
@@ -57,9 +57,16 @@ class ControllerEventProductFilter extends Controller {
 		$output = str_replace('<div class="tab-pane" id="tab-design">', $content . '<div class="tab-pane" id="tab-design">', $output);
 	}
 
+	protected function getAttributeOptionLabel($attribute) {
+		$group = !empty($attribute['attribute_group']) ? $attribute['attribute_group'] : '';
+		$name = isset($attribute['name']) ? $attribute['name'] : '';
+
+		return $group !== '' ? $group . ' - ' . $name : $name;
+	}
+
 	protected function renderFilterConfigRow($config, $attributes, $options, $index) {
 		$ct = isset($config['criterion_type']) ? $config['criterion_type'] : 'price';
-		$types = array('price' => 'Цена', 'manufacturer' => 'Производитель', 'rating' => 'Рейтинг', 'discount' => 'Скидки', 'attribute' => 'Атрибут', 'option' => 'Опция');
+		$types = array('price' => 'Цена', 'manufacturer' => 'Производитель', 'rating' => 'Рейтинг', 'discount' => 'Скидки', 'attribute' => 'Характеристика', 'option' => 'Опция');
 		$widgets = array('checkboxes' => 'Чекбоксы', 'select' => 'Селект', 'slider' => 'Слайдер', 'inputs' => 'Поля ввода');
 		$html = '<div class="well well-sm filter-criterion-row" style="margin-bottom:8px">';
 		$html .= '<select name="product_filter_config[' . $index . '][criterion_type]" class="form-control" style="display:inline-block;width:150px">';
@@ -70,10 +77,10 @@ class ControllerEventProductFilter extends Controller {
 		$html .= '</select> ';
 		$html .= '<select name="product_filter_config[' . $index . '][source_id]" class="form-control filter-source" style="display:inline-block;width:180px;' . (in_array($ct, array('attribute', 'option')) ? '' : 'display:none!important') . '">';
 		$html .= '<option value="0">-- Выберите --</option>';
-		$html .= '<optgroup label="Атрибуты">';
+		$html .= '<optgroup label="Характеристики">';
 		foreach ($attributes as $a) {
 			$sel = ($ct == 'attribute' && isset($config['source_id']) && $config['source_id'] == $a['attribute_id']) ? ' selected' : '';
-			$html .= '<option value="' . $a['attribute_id'] . '" data-type="attribute"' . $sel . '>' . $a['name'] . '</option>';
+			$html .= '<option value="' . $a['attribute_id'] . '" data-type="attribute"' . $sel . '>' . htmlspecialchars($this->getAttributeOptionLabel($a), ENT_QUOTES) . '</option>';
 		}
 		$html .= '</optgroup><optgroup label="Опции">';
 		foreach ($options as $o) {

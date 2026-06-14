@@ -115,11 +115,11 @@
         <div class="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm z-[70] bg-[#263238] shadow-2xl flex flex-col h-full transform"
             id="mobile-menu-drawer">
             <div class="flex items-center justify-between p-6 border-b border-white/10">
-                <div class="flex items-center gap-2">
-                    <div class="size-6 text-primary-light flex items-center justify-center">
-                    <img src="catalog/view/theme/maison/image/logo_white.png" alt="Maison Textile" class="block">
-                    </div>
-                    <span class="text-xl font-serif font-bold tracking-wide text-white">Maison</span>
+                <div class="flex min-w-0 items-center gap-3">
+                    <span class="size-6 shrink-0 flex items-center justify-center text-primary-light">
+                        <img src="catalog/view/theme/maison/image/logo_white.png" alt="Maison Textile" width="24" height="24" class="block max-h-6 w-auto object-contain">
+                    </span>
+                    <span class="text-xl font-serif font-bold tracking-wide text-white leading-none">Maison</span>
                 </div>
                 <button class="text-white/80 p-2 hover:bg-white/10 rounded-full transition-colors"
                     onclick="toggleMobileMenu()">
@@ -226,16 +226,11 @@
                         onclick="toggleMobileMenu()">
                         <span class="material-symbols-outlined text-[28px]">menu</span>
                     </button>
-                    <a href="{{ home }}" class="flex shrink-0 items-center gap-2 text-luxury-charcoal cursor-pointer group">
-                        <div class="size-12 flex items-center justify-center text-primary group-hover:text-primary-dark transition-all">
-                            {# <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <path clip-rule="evenodd" d="M24 4L42 14V34L24 44L6 34V14L24 4Z" fill="none"
-                                    stroke="currentColor" stroke-width="2"></path>
-                                <path d="M24 14L32 24L24 34L16 24L24 14Z" fill="currentColor"></path>
-                            </svg> #}
-                            <img src="catalog/view/theme/maison/image/logo.png" alt="Maison Textile" class="block">
-                        </div>
-                        <h2 class="text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal">Maison Textile</h2>
+                    <a href="{{ home }}" class="flex min-w-0 shrink-0 items-center gap-3 text-luxury-charcoal no-underline hover:opacity-90 transition-opacity group">
+                        <span class="size-12 shrink-0 flex items-center justify-center text-primary group-hover:text-primary-dark transition-all">
+                            <img src="catalog/view/theme/maison/image/logo.png" alt="Maison Textile" width="48" height="48" class="block max-h-10 w-auto object-contain">
+                        </span>
+                        <h2 class="m-0 text-xl lg:text-3xl font-serif font-bold tracking-wide text-luxury-charcoal leading-none">Maison Textile</h2>
                     </a>
                     <nav class="header-nav hidden min-w-0 lg:flex items-center gap-8">
                         <a class="header-nav-link text-xs font-bold tracking-widest uppercase hover:text-primary transition-colors text-luxury-charcoal/80"
