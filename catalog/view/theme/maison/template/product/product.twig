@@ -219,9 +219,17 @@
 					<div>
 						<h3 class="text-3xl font-serif text-luxury-charcoal mb-6">Характеристики</h3>
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-sm">
-							{% for attribute_group in attribute_groups  | filter(attribute_group => attribute_group.attribute_group_id == 7) %}
+							{% for attribute_group in attribute_groups | filter(attribute_group => attribute_group.attribute_group_id == 7) %}
 								{% for attribute in attribute_group.attribute %}
-								<div class="flex justify-between items-end border-b border-gray-200 pb-2">
+									<div class="flex justify-between items-end border-b border-gray-200 pb-2">
+										<span class="text-gray-500">{{ attribute.name }}</span>
+										<span class="text-luxury-charcoal font-medium text-right">{{ attribute.text }}</span>
+									</div>
+								{% endfor %}
+							{% endfor %}
+							{% for attribute_group in attribute_groups | filter(attribute_group => attribute_group.attribute_group_id not in [7, 8, 9]) %}
+								{% for attribute in attribute_group.attribute %}
+									<div class="flex justify-between items-end border-b border-gray-200 pb-2">
 										<span class="text-gray-500">{{ attribute.name }}</span>
 										<span class="text-luxury-charcoal font-medium text-right">{{ attribute.text }}</span>
 									</div>
