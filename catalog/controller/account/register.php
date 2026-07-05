@@ -300,6 +300,8 @@ class ControllerAccountRegister extends Controller {
 
 		if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
 			$this->error['email'] = $this->language->get('error_email');
+		} elseif (!$this->isRuEmail($this->request->post['email'])) {
+			$this->error['email'] = $this->language->get('error_email_domain');
 		}
 
 		if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
@@ -443,5 +445,14 @@ class ControllerAccountRegister extends Controller {
 		}
 
 		return (int)$this->config->get('config_customer_group_id');
+	}
+
+	/**
+	 * Email в домене .ru: после trim и lower-case оканчивается на «.ru».
+	 */
+	private function isRuEmail($email) {
+		$email = utf8_strtolower(trim((string)$email));
+
+		return $email !== '' && substr($email, -3) === '.ru';
 	}
 }

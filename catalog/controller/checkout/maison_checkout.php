@@ -579,9 +579,12 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 
 		if (!$json) {
 			if (!$this->customer->isLogged() && isset($this->session->data['guest'])) {
-				$error = $this->createAccountAndLogin();
-				if ($error) {
-					$json['error']['warning'] = $error;
+				$guest_email = isset($this->session->data['guest']['email']) ? $this->session->data['guest']['email'] : '';
+				if ($this->isRuEmail($guest_email)) {
+					$error = $this->createAccountAndLogin();
+					if ($error) {
+						$json['error']['warning'] = $error;
+					}
 				}
 			}
 		}
@@ -612,9 +615,12 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 
 		if (!$json) {
 			if (!$this->customer->isLogged() && isset($this->session->data['guest'])) {
-				$error = $this->createAccountAndLogin();
-				if ($error) {
-					$json['error']['warning'] = $error;
+				$guest_email = isset($this->session->data['guest']['email']) ? $this->session->data['guest']['email'] : '';
+				if ($this->isRuEmail($guest_email)) {
+					$error = $this->createAccountAndLogin();
+					if ($error) {
+						$json['error']['warning'] = $error;
+					}
 				}
 			}
 
@@ -704,5 +710,14 @@ class ControllerCheckoutMaisonCheckout extends Controller {
 		unset($this->session->data['guest']);
 
 		return null;
+	}
+
+	/**
+	 * Email в домене .ru: после trim и lower-case оканчивается на «.ru».
+	 */
+	private function isRuEmail($email) {
+		$email = utf8_strtolower(trim((string)$email));
+
+		return $email !== '' && substr($email, -3) === '.ru';
 	}
 }
